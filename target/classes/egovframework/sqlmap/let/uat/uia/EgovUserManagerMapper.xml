@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.EgovUserManagerMapper">
+   <select id="selectUserManageListByPagination" resultType="GnrMberVO">     	      
+		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		    SELECT
+					      a.MBER_ID  "mberId",
+			              a.MBER_NM  "mberNm",
+			              a.MBTLNUM   "mbtlnum",
+			              b.GROUP_NM "groupNm",
+			              c.AUTHOR_NM "authorNm",
+			              e.CODE_NM "codeNm"           
+		    FROM   LETTNGNRLMBER a , LETTNAUTHORGROUPINFO b,
+                          LETTNAUTHORINFO c, LETTCCMMNDETAILCODE e
+			WHERE    a.GROUP_ID = b.GROUP_ID AND a.AUTHOR_CODE = c.AUTHOR_CODE
+			               AND a.MBER_STTUS =  e.CODE      
+		        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'mberId'">
+								and a.MBER_ID LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and a.MBER_NM LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>		        
+				<if test="mber_Sttus != ''">
+				         and a.MBER_STTUS = #{mber_Sttus}
+				</if>		     
+		        ORDER BY a.SBSCRB_DE  DESC
+	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
+   </select>
+      
+   <select id="selectUserManageDetail" resultType="GnrMberVO">
+     select MBER_ID, PASSWORD, MBER_NM, MBER_STTUS, MBTLNUM, GROUP_ID, MBER_EMAIL_ADRES, SBSCRB_DE, ROLE_CODE, AUTHOR_CODE, CENTER_ID
+     from LETTNGNRLMBER
+     where MBER_ID = #{mberId}
+   </select>
+   <select id="selectUserManageListTotCnt_S" resultType="java.lang.Integer">
+      SELECT  NVL(count(*),0)      
+		    FROM   LETTNGNRLMBER a , LETTNAUTHORGROUPINFO b,
+                          LETTNAUTHORINFO c, LETTCCMMNDETAILCODE e
+			WHERE    a.GROUP_ID = b.GROUP_ID AND a.AUTHOR_CODE = c.AUTHOR_CODE
+			               AND a.MBER_STTUS =  e.CODE      
+		        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'mberId'">
+								and a.MBER_ID LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and a.MBER_NM LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>		        
+				<if test="mber_Sttus != ''">
+				         and a.MBER_STTUS = #{mber_Sttus}
+				</if>		     
+   </select>
+   
+   <select id="selectUserMangerIDCheck" resultType="java.lang.Integer">
+            SELECT  NVL(count(*),0)      
+		    FROM   LETTNGNRLMBER
+		    WHERE  MBER_ID = #{mberId}
+   </select>
+   
+   <insert id="insertUserManage">
+      insert into LETTNGNRLMBER( MBER_ID, PASSWORD, MBER_NM, MBER_STTUS, MBTLNUM, GROUP_ID, MBER_EMAIL_ADRES, SBSCRB_DE, ROLE_CODE, AUTHOR_CODE, CENTER_ID)
+      values (#{mberId}, #{password}, #{mberNm}, #{mberSttus}, #{mbtlnum,jdbcType=VARCHAR }, #{groupId}, #{mberEmailAdres ,jdbcType=VARCHAR}, sysdate, #{roleCode ,jdbcType=VARCHAR},  #{authorCode}, #{centerId ,jdbcType=VARCHAR}  )
+   </insert>
+   <update id="updateUserManage">
+      update LETTNGNRLMBER set MBER_NM = #{mberNm}
+                                                  ,  MBER_STTUS = #{mberSttus}
+                                                  ,  MBTLNUM = #{mbtlnum, jdbcType=VARCHAR }
+                                                  ,  GROUP_ID = #{groupId}
+                                                  ,  MBER_EMAIL_ADRES = #{mberEmailAdres, jdbcType=VARCHAR }
+                                                  ,  ROLE_CODE = #{roleCode , jdbcType=VARCHAR }
+                                                  ,  AUTHOR_CODE = #{authorCode}
+                                                  ,  CENTER_ID = #{centerId , jdbcType=VARCHAR}                                                  
+                                                  <if test="password != ''">
+                                                  , PASSWORD = #{password}
+                                                  </if> 
+      where MBER_ID = #{mberId}
+   </update>
+   <delete id="deleteUserManage">
+      delete from LETTNGNRLMBER
+      where MBER_ID = #{mberId}   
+   </delete>
+
+</mapper>

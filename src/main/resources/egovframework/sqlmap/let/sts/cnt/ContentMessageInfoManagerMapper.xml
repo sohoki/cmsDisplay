@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.ContentMessageInfoManagerMapper">
+
+   <select id="selectContentMessageInfoListByPagination"  resultType="ContentMessageInfoVO">	
+		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		   select     A.SEND_DIDID as "sendDidId", 			             
+			             B.DID_NM  as "didNm",
+			             C.GROUP_NM  as "groupNm",
+			             A.SEND_MESSAGESTARTDAY  as "sendMessageStartDay",
+			             A.SEND_MESSAGE  as "sendMessage",                             
+			             A.SEND_MESSAGEENDDAY  as "sendMessageEndDay",
+			             A.SEND_MESSAGESTARTTIME  as "sendMessageStartTime",                         
+			             A.SEND_MESSAGEENDTIME  as "sendMessageEndTime",
+                         A.SEND_REGDATE as      sendRegDate,
+                         A.SEND_DIDCHECKDATE as      sendDidCheckDate,       
+                         A.SEND_MSGID as sendMsgId      
+		     FROM  TB_DIDSENDMESSAGE a, TB_DIDINFO b ,   TB_GROUP c , TB_GROUPDID d
+		     WHERE a.DID_ID = b.DID_ID and b.DID_ID = d.DID_ID and c.GROUP_CODE = D.GROUP_CODE                          	        
+	         <if test="searchKeyword != ''">
+					<choose>
+						<when test="searchCondition == 'SEND_MESSAGE'">
+							and A.SEND_MESSAGE LIKE '%' || #{searchKeyword} || '%'
+						</when>							
+						<otherwise>
+						   and C.GROUP_NM LIKE '%' || #{searchKeyword} || '%'
+						</otherwise>
+					</choose>
+		     </if>   	    
+		        ORDER BY a.SEND_REGDATE  DESC
+	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}          		 	    
+     </select>
+     <select id="selectContentMessageInfoDidList" resultType="ContentMessageInfo">
+         select     A.SEND_DIDID as "sendDidId", 			             
+			             A.SEND_MESSAGESTARTDAY  as "sendMessageStartDay",
+			             A.SEND_MESSAGE  as "sendMessage",                             
+			             A.SEND_MESSAGEENDDAY  as "sendMessageEndDay",
+			             A.SEND_MESSAGESTARTTIME  as "sendMessageStartTime",                         
+			             A.SEND_MESSAGEENDTIME  as "sendMessageEndTime",
+                         A.SEND_REGDATE as      sendRegDate,
+                         A.SEND_DIDCHECKDATE as      sendDidCheckDate,       
+                         A.SEND_MSGID as sendMsgId     , 
+                         A.SEND_FONTTYPE as sendFontType
+		     FROM  TB_DIDSENDMESSAGE a, TB_DIDINFO b
+		     where a.DID_ID = b.DID_ID and a.DID_ID = #{didId} and  A.SEND_DIDCHECKDATE is null
+     </select>
+      <select id="selectContentMessageInfoListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) 
+       FROM  TB_DIDSENDMESSAGE a, TB_DIDINFO b ,   TB_GROUP c , TB_GROUPDID d
+	   WHERE a.DID_ID = b.DID_ID and b.DID_ID = d.DID_ID and c.GROUP_CODE = D.GROUP_CODE                          	        
+       <if test="searchKeyword != ''">
+				<choose>
+					<when test="searchCondition == 'SEND_MESSAGE'">
+						and A.SEND_MESSAGE LIKE '%' || #{searchKeyword} || '%'
+					</when>							
+					<otherwise>
+					   and C.GROUP_NM LIKE '%' || #{searchKeyword} || '%'
+					</otherwise>
+				</choose>
+	   </if>        
+    </select>
+    <select id="selectContentMessageInfoDetail"  resultType="ContentMessageInfo">
+        select a.SEND_DIDID, a.DID_ID, a.GROUP_CODE, a.SEND_MESSAGE, a.SEND_MESSAGESTARTDAY, a.SEND_MESSAGEENDDAY, a.SEND_MESSAGESTARTTIME, 
+               a.SEND_MESSAGEENDTIME, a.SEND_FONTTYPE, a.SEND_USEYN, a.SEND_REGDATE, a.SEND_DIDCHECKDATE,
+               b.DID_NM, c.GROUP_NM, a.SEND_MSGID
+        from  TB_DIDSENDMESSAGE a, TB_DIDINFO b ,   TB_GROUP c , TB_GROUPDID d   
+        where a.DID_ID = b.DID_ID and b.DID_ID = d.DID_ID and c.GROUP_CODE = D.GROUP_CODE
+        and SEND_MSGID = #{sendMsgId} and rownum = 1           
+    </select> 
+           
+     <insert id="insertContentMessageInfo" >        
+             INSERT INTO TB_DIDSENDMESSAGE (SEND_DIDID, DID_ID, GROUP_CODE, SEND_MESSAGE, SEND_MESSAGESTARTDAY, SEND_MESSAGEENDDAY, 
+             SEND_MESSAGESTARTTIME, SEND_MESSAGEENDTIME, SEND_FONTTYPE, SEND_USEYN, SEND_REGDATE, SEND_MSGID)
+             VALUES (fn_didMessageInfo(#{didId}),  #{didId} , #{groupCode}, #{sendMessage}, #{sendMessageStartDay}, 
+             #{sendMessageEndDay}, #{sendMessageStartTime}, #{sendMessageEndTime}, #{sendFontType ,jdbcType=VARCHAR}, 'Y', sysdate, 
+             #{sendMsgId}             
+              )                          
+     </insert>     
+     <update id="updateContentMessageInfo">
+            UPDATE TB_DIDSENDMESSAGE set DID_ID = #{didId}
+                                         , GROUP_CODE = #{groupCode}
+                                         , SEND_MSGID = #{sendMsgId}
+                                         , SEND_MESSAGE = #{sendMessage}
+                                         , SEND_MESSAGESTARTDAY = #{sendMessageStartDay}
+                                         , SEND_MESSAGEENDDAY = #{sendMessageEndDay}
+                                         , SEND_MESSAGESTARTTIME = #{sendMessageStartTime}
+                                         , SEND_MESSAGEENDTIME = #{sendMessageEndTime}
+                                         , SEND_FONTTYPE = #{sendFontType}
+                                         , SEND_USEYN = #{sendUseYn}                                                                 
+                                         , send_RegDate = sysdate                                         
+                                                                 
+            where send_didID = #{senedDidId}                                                                    
+     </update>
+     <update id="updateContentMessageInfoMsgId">
+            UPDATE TB_DIDSENDMESSAGE set SEND_MESSAGE = #{sendMessage}
+                                         , SEND_MESSAGESTARTDAY = #{sendMessageStartDay}
+                                         , SEND_MESSAGEENDDAY = #{sendMessageEndDay}
+                                         , SEND_MESSAGESTARTTIME = #{sendMessageStartTime}
+                                         , SEND_MESSAGEENDTIME = #{sendMessageEndTime}
+                                         , SEND_FONTTYPE = #{sendFontType}
+                                         , SEND_USEYN = #{sendUseYn}                                                                 
+                                         , send_RegDate = sysdate   
+                                         ,  SEND_DIDCHECKDATE = null                                     
+                                                                 
+            where SEND_MSGID = #{sendMsgId}                                                                    
+     </update>     
+     <update id="updateContentMessageInfoClientManage">
+            UPDATE TB_DIDSENDMESSAGE set     SEND_DIDCHECKDATE = sysdate
+            where     send_didID = #{sendDidId}                                                                    
+     </update>
+     <delete id="deleteContentMessageInfo">
+           DELETE FROM TB_DIDSENDMESSAGE
+           WHERE  SEND_DIDID = #{sendDidId}            
+     </delete>
+     
+     <delete id="deleteContentMessageInfoMsgId">
+           DELETE FROM TB_DIDSENDMESSAGE
+           where SEND_MSGID = #{sendMsgId}                 
+     </delete>
+
+</mapper>

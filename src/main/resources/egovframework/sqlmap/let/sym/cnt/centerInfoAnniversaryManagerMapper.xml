@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.CenterAnniManagerMapper">
+	
+    <select id="selectCenterAnniManageListByPagination"  resultType="CenterInfoAnniversaryVo">
+		
+		 
+		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		    SELECT
+		        a.CENTER_ID               as "centerId",
+		        a.CENTER_ANNIDAY               as "centerAnniday",
+		        a.CENTER_ANNISTARTDAY             as "centerAnniStartDay",
+		        a.CENTER_ANNIENDDAY             as "centerAnniEndDay",
+		        a.START_TIME     as "startTime",
+		        a.END_TIME     as "endTime",
+                a.TIME_OVER       as "timeOver",
+                a.BROD_CODE             as "brodCode",
+                (select BROD_NAME from TB_BRODSCHEDULE b where a.brod_code = b.brod_code) as  "brodName"
+		    FROM    TB_CENTERANNIVERSARY a
+		    where 1=1 and a.CENTER_ID  = #{centerId}
+		                         		     
+		        ORDER BY a.CENTER_ANNIDAY  DESC
+	        ) TB ) WHERE  RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}    		 	    
+    </select>
+    <select id="selectCenterAnniManageDetail"  resultType="CenterInfoAnniversaryVo">
+           SELECT CENTER_ID, CENTER_ANNISTARTDAY, CENTER_ANNIENDDAY, START_TIME, END_TIME, TIME_OVER, BROD_CODE
+		    FROM TB_CENTERANNIVERSARY
+		    WHERE CENTER_ANNIDAY = #{centerAnniday}		  
+    </select>
+    <select id="selectCenterAnniRetgCheck"  resultType="java.lang.Integer">
+        SELECT NVL(COUNT(*),0)
+        FROM  TB_CENTERANNIVERSARY 
+        WHERE center_id = #{centerId}
+              AND ((CENTER_ANNISTARTDAY BETWEEN #{centerAnniStartDay} AND #{centerAnniEndDay}) OR (CENTER_ANNIENDDAY BETWEEN #{centerAnniStartDay} AND #{centerAnniEndDay}))
+              <if test="centerAnniday != 'null'">
+              and CENTER_ANNIDAY != #{centerAnniday, jdbcType=VARCHAR}
+              </if>
+    </select>
+    
+    <select id="selectCenterAnniManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) FROM TB_CENTERANNIVERSARY
+       where 1=1 and CENTER_ID  = #{centerId}        
+    </select>
+     <insert id="insertCenterAnniManage" >
+        <![CDATA[
+             INSERT INTO TB_CENTERANNIVERSARY (CENTER_ANNIDAY, CENTER_ID, CENTER_ANNISTARTDAY, CENTER_ANNIENDDAY, START_TIME, END_TIME, TIME_OVER, 
+                                               FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID, BROD_CODE
+                                 )
+             VALUES (EMARTCMS.fn_centerAnniCode(#{centerId}, #{centerAnniStartDay} ), #{centerId},    #{centerAnniStartDay}, #{centerAnniEndDay}, #{startTime}, #{endTime},  #{timeOver, jdbcType=VARCHAR},
+             SYSDATE,  #{frstRegisterId,jdbcType=VARCHAR}, sysdate,  #{frstRegisterId ,jdbcType=VARCHAR}, #{brodCode, jdbcType=VARCHAR}
+             )
+         ]]>
+     </insert>
+     <update id="updateCenterAnniManage" >
+       UPDATE  TB_CENTERANNIVERSARY SET CENTER_ID = #{centerId} ,
+                                CENTER_ANNISTARTDAY = #{centerAnniStartDay} ,
+                                CENTER_ANNIENDDAY = #{centerAnniEndDay} ,
+                                START_TIME = #{startTime} ,
+                                END_TIME = #{endTime} ,
+                                TIME_OVER = #{timeOver, jdbcType=VARCHAR}
+                               , LAST_UPDT_PNTTM = sysdate
+                               , LAST_UPDUSR_ID = #{lastUpdusrId, jdbcType=VARCHAR}      
+                               , BROD_CODE  = #{brodCode, jdbcType=VARCHAR}                         
+      WHERE CENTER_ANNIDAY = #{centerAnniday}           
+     </update>
+     <delete id="deleteCenterAnniManage">
+       DELETE FROM TB_CENTERANNIVERSARY
+       WHERE CENTER_ANNIDAY = #{centerAnniday}  
+     </delete>
+     <delete id="deleteCenterID">
+       DELETE FROM TB_CENTERANNIVERSARY
+       WHERE CENTER_ID = #{centerId}
+     </delete>
+</mapper>

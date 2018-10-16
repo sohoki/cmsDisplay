@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.GroupManagerMapper">
+
+   <select id="selectUserGroupManageListByPagination" resultType="GroupVO">
+      	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		    SELECT
+		         GROUP_ID               as "groupId",
+                 GROUP_NM             as "groupNm",
+                 GROUP_CREAT_DE             as "groupCreatDe",
+                 PARENT_GROUP_ID             as "parentGroupId", 
+                 CASE WHEN   PARENT_GROUP_ID = '0' THEN    '2'
+                      ELSE (SELECT b.GROUP_NM FROM LETTNAUTHORGROUPINFO b WHERE b.GROUP_ID = LETTNAUTHORGROUPINFO.PARENT_GROUP_ID)
+                 END AS    parentGroupNm,              
+                 USEYN as "useYn",
+                 LEVEL as  "lv"	              
+		    FROM    LETTNAUTHORGROUPINFO
+		    WHERE USEYN = 'Y'
+		     <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'GROUP_ID'">
+								and GROUP_ID LIKE '%' || #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and GROUP_NM LIKE '%' || #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>       
+			START WITH PARENT_GROUP_ID = '0'
+			CONNECT BY PRIOR GROUP_ID = PARENT_GROUP_ID		        		       		     		        
+	        ) TB )             
+   </select>
+   
+    <select id="selectGroupManageListTotCnt_S"  resultType="java.lang.Integer">
+               select NVL(count(*),0)
+                FROM    LETTNAUTHORGROUPINFO
+		        WHERE 1=1
+		        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'GROUP_ID'">
+								GROUP_ID LIKE '%' || #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								GROUP_NM LIKE '%' || #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>
+   </select>
+   
+    <select id="selectGroupManageCombo" resultType="GroupVO">
+      select  GROUP_ID               as "groupId",
+		        GROUP_NM             as "groupNm"
+      from 		LETTNAUTHORGROUPINFO
+      where USEYN = 'Y'  AND  parent_group_id != '0'
+      order by      GROUP_ID asc  
+   </select>
+   
+   <select id="selectGroupManageDetail" resultType="Group">
+     select GROUP_ID, GROUP_NM as groupNm , GROUP_CREAT_DE, GROUP_DC as groupDc , PARENT_GROUP_ID as parentGroupId , USEYN as useYn
+     from LETTNAUTHORGROUPINFO
+     where GROUP_ID = #{value}
+   </select>
+   
+   <insert id="insertGroupManage" >
+        insert into LETTNAUTHORGROUPINFO(GROUP_ID, GROUP_NM,  GROUP_CREAT_DE, GROUP_DC, PARENT_GROUP_ID, USEYN)
+        values ( EMARTCMS.fn_GROUPCODE , #{groupNm}, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), #{groupDc}, #{parentGroupId}  , #{useYn})
+   </insert>
+   <update id="updateGroupManage">
+          update LETTNAUTHORGROUPINFO set GROUP_NM =  #{groupNm}, 
+                                                                     GROUP_DC =     #{groupDc},
+                                                                     PARENT_GROUP_ID = #{parentGroupId}
+         where  GROUP_ID = #{groupId}   
+   </update>
+   <delete id="deleteGroupManage">
+        DELETE FROM LETTNAUTHORGROUPINFO where GROUP_ID = #{groupId}   
+   </delete>
+           
+</mapper>

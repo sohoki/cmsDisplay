@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.RoleInfoManagerMapper">
+	
+    <select id="selectRoleInfoManageListByPagination"  resultType="roleInfoVo">
+		
+		 
+		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		    SELECT
+		        a.ROLE_CODE               as "roleCode",
+		        a.ROLE_NM             as "roleNm",
+		        a.USEYN             as "useYn",
+		        EMARTCMS.fn_dayConvert( a.CREAT_DT)     as "creatDt",
+                a.ROLE_CHECK       as "roleCheck",
+                b.AUTHOR_NM as "authorNm"
+		    FROM    TB_AUTHORROLERELATE a , LETTNAUTHORINFO b
+		        WHERE a.AUTHOR_CODE = b.AUTHOR_CODE		        
+		        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'ROLE_NM'">
+								and a.ROLE_NM LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and b.AUTHOR_NM LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>		        		     
+		        ORDER BY CREAT_DT  DESC
+	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
+     </select>
+    <select id="selectRoleIInfoManageCombo"       resultType="roleInfoVo">
+       select  ROLE_CODE as roleCode, ROLE_NM as roleNm
+       from TB_AUTHORROLERELATE
+       where USEYN = 'Y'
+       order by  ROLE_CODE  asc
+    </select>
+    <select id="selectRoleAuthInfoManageCombo"       resultType="roleInfo">
+       select  AUTHOR_CODE  as authorCode, AUTHOR_NM   as authorNm, AUTHOR_DC as authorDc
+       from LETTNAUTHORINFO
+       where 1=1
+       order by  AUTHOR_CODE  asc
+    </select>
+    
+    <select id="selectRoleIInfoAuthorManageCombo"       resultType="roleInfoVo">
+        select  ROLE_CODE as roleCode, ROLE_NM as roleNm
+       from TB_AUTHORROLERELATE
+       where USEYN = 'Y' and AUTHOR_CODE = #{authorCode}
+       order by  ROLE_CODE  asc
+    </select>
+     <select id="selectNotAdminRoleIInfoAuthorManageCombo"       resultType="roleInfoVo">
+        select  ROLE_CODE as roleCode, ROLE_NM as roleNm
+       from TB_AUTHORROLERELATE
+       where USEYN = 'Y' and author_code !=   'ROLE_ADMIN'
+       order by  ROLE_CODE  asc
+    </select>
+    
+    
+    <select id="selectRoleIrInfoManageDetail"  resultType="roleInfoVo">
+           SELECT  ROLE_CODE as roleCode, ROLE_NM as roleNm, USEYN as useYn, ROLE_CHECK as roleCheck, AUTHOR_CODE as authorCode
+		    FROM TB_AUTHORROLERELATE
+		    WHERE ROLE_CODE = #{roleCode}		  
+    </select>
+    <select id="selectRoleIInfoManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) FROM TB_AUTHORROLERELATE a , LETTNAUTHORINFO b
+       where a.AUTHOR_CODE = b.AUTHOR_CODE 
+        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'ROLE_NM'">
+								and a.ROLE_NM LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and b.AUTHOR_NM LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>		  
+    </select>
+     <insert id="insertRoleIInfoManage" >
+        <![CDATA[
+             INSERT INTO TB_AUTHORROLERELATE (AUTHOR_CODE, ROLE_CODE, ROLE_NM, CREAT_DT, ROLE_CHECK, USEYN)
+             VALUES (#{authorCode},   EMARTCMS.fu_RoleCode(#{authorCode}) ,    #{roleNm}, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), #{roleCheck}, #{useYn,jdbcType=VARCHAR} )
+         ]]>
+     </insert>
+     <update id="updateRoleIInfoManage" >
+       UPDATE  TB_AUTHORROLERELATE SET AUTHOR_CODE = #{authorCode} ,
+                                ROLE_NM = #{roleNm} ,
+                                ROLE_CHECK = #{roleCheck} ,
+                                USEYN = #{useYn}                                 
+      WHERE ROLE_CODE = #{roleCode}           
+     </update>
+     <delete id="deleteRoleIInfoManage">
+       DELETE FROM TB_AUTHORROLERELATE
+       WHERE ROLE_CODE = #{roleCode}
+     </delete>
+</mapper>

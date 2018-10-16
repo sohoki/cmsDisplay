@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.DidInfoManagerMapper">	
+    <select id="selectDidManagerInfoManageListByPagination" resultType="DidInfoVO">
+       SELECT  X.didId, X.didNm, X.groupNm, NVL(X.schName, '없음') AS schName, X.didSttus, X.codeNm, X.RNUM FROM ( SELECT rownum RNUM, TB.* FROM (
+		    SELECT
+					     a.DID_ID AS didId, 
+			             a.DID_NM AS didNm, 
+			             b.GROUP_NM AS groupNm, 
+			               (SELECT C.SCH_NAME FROM 
+                            TB_SCHEDULE C, TB_GROUPDID g , TB_CONTENTSENDHISTORY f 
+                            WHERE TO_CHAR(SYSDATE, 'yyyyMMdd') BETWEEN c.SCH_STARTDAY AND c.SCH_ENDDAY
+                                     AND c.GROUP_CODE = e.GROUP_CODE     
+                                     AND c.GROUP_CODE = g.GROUP_CODE
+                                     AND c.sch_code = f.SCH_CODE AND f.DID_ID = a.DID_ID     
+                                     <if test="searchschCode != ''">
+											AND c.SCH_CODE = #{searchschCode}
+									</if>	    
+									   AND ROWNUM = 1  AND   f.DID_UPDATECHECK = 'Y'                          
+                                     ) AS schName,               
+			             a.DID_STTUS AS didSttus, 
+			             a.DID_MAC as didMac,
+			             EMARTCMS.FN_DETAILCODENM( a.DID_SWVER) AS codeNm
+			  FROM TB_DIDINFO a, TB_GROUP b, TB_GROUPDID e           
+		      WHERE a.DID_ID = e.DID_ID 	 AND b.GROUP_CODE = e.GROUP_CODE            		                            	            
+		        <if test="searchdidSwver != ''">
+					AND a.DID_SWVER = #{searchdidSwver}
+				</if>
+				<choose>
+				   <when test="author_Code == 'ROLE_ADMIN' and groupCode == 'EMART_00000000000009' ">
+				      and A.DID_MODELTYPE = 'DIDRMODELTYPE03'
+				   </when>
+				   <when test="author_Code == 'ROLE_ANONYMOUS' and parentGroupId =='EMART_00000000000001' ">
+				      and a.ROLE_CODE in (SELECT GROUP_ID FROM LETTNAUTHORGROUPINFO WHERE parent_group_id = #{groupCode}  )
+				   </when>
+				   <when test="author_Code == 'ROLE_USER_MEMBER' ">
+				      and a.ROLE_CODE = #{groupCode}
+				   </when>
+				</choose>													
+		        ORDER BY a.FRST_REGIST_PNTTM  DESC
+	        ) TB ) X WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	
+    </select>
+    <select id="selectDidManagerInfoManageListTotCnt_S"  resultType="java.lang.Integer">        
+         SELECT NVL(COUNT(*),0) 
+         FROM TB_DIDINFO a, TB_GROUP b, TB_GROUPDID e           
+		 WHERE a.DID_ID = e.DID_ID 	 AND b.GROUP_CODE = e.GROUP_CODE   			            
+	        <if test="searchdidSwver != ''">
+							AND a.DID_SWVER = #{searchdidSwver}
+			</if>	
+            <choose>
+				   <when test="author_Code == 'ROLE_ADMIN' and groupCode == 'EMART_00000000000009' ">
+				      and A.DID_MODELTYPE = 'DIDRMODELTYPE03'
+				   </when>
+				   <when test="author_Code == 'ROLE_ANONYMOUS' and parentGroupId == 'EMART_00000000000001' ">
+				      and a.ROLE_CODE in (SELECT GROUP_ID FROM LETTNAUTHORGROUPINFO WHERE parent_group_id = #{groupCode}  )
+				   </when>
+				   <when test="author_Code == 'ROLE_USER_MEMBER' ">
+				      and a.ROLE_CODE = #{groupCode}
+				   </when>
+			</choose>	  
+			<if test="centerId != null">
+				               AND a.CENTER_ID =  #{centerId} 
+			</if>
+			<if test="didModelType != null">
+				               AND a.DID_MODELTYPE =  #{didModelType} 
+			</if>	
+    </select>    
+    
+    <select id="selectDidInfoManageListByPagination"  resultType="DidInfoVO">	
+		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		    SELECT
+					     A.DID_ID as "didId", 
+			             A.DID_NM  as "didNm",
+			             A.DID_IPADDR  as "didIpaddr",
+			             B.CENTER_NM  as "centerNm",			             
+			             CASE A.DID_STTUS WHEN 'N' THEN 'OFF' 
+			                      ELSE 'ON'
+			             END AS didSttus,
+			             A.DID_USEYN  as "didUseYn",
+			             EMARTCMS.fn_DetailCodeNm(A.DID_OS) as didOs,
+			             a.DID_MAC as didMac,
+			             <![CDATA[
+			             	(SELECT COUNT(*) FROM TB_SCHEDULE WHERE GROUP_CODE=(SELECT group_code FROM TB_GROUPDID WHERE did_id=a.did_id) AND TO_CHAR(SYSDATE, 'YYYYMMDD') <= SCH_ENDDAY ) AS schCnt
+			             ]]>
+		    FROM    TB_DIDINFO a, TB_CENTERINFO b
+		        WHERE a.CENTER_ID = B.CENTER_ID 		        
+		        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'didId'">
+								and a.DID_ID LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and a.DID_NM LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>		  
+				<choose>
+				   <when test="author_Code == 'ROLE_ADMIN' and groupCode == 'EMART_00000000000009'">
+				      and A.DID_MODELTYPE = 'DIDRMODELTYPE03'
+				   </when>
+				   <when test="author_Code == 'ROLE_ANONYMOUS' and parentGroupId =='EMART_00000000000001'">
+				      and a.ROLE_CODE in (SELECT GROUP_ID FROM LETTNAUTHORGROUPINFO WHERE parent_group_id = #{groupCode}  )
+				   </when>
+				   <when test="author_Code == 'ROLE_USER_MEMBER' ">
+				      and a.ROLE_CODE = #{groupCode}
+				   </when>
+				</choose>	    	
+				<if test="centerId != ''">
+				               AND a.CENTER_ID =  #{centerId} 
+				</if>
+				<if test="didModelType != ''">
+				               AND a.DID_MODELTYPE =  #{didModelType} 
+				</if>	     
+		        ORDER BY a.FRST_REGIST_PNTTM  DESC
+	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
+     </select>
+    <select id="selectDidInfoManageCombo"    resultType="DidInfo">
+       select  DID_ID as "didId", DID_NM as "didNm"
+       from TB_DIDINFO
+       where DID_USEYN = 'Y'
+       order by  DID_ID  asc
+    </select>
+    <select id="selectDidrInfoManageDetail"  resultType="DidInfoVO">
+           SELECT  DID_ID as didId , DID_NM as didNm, DID_MAC as didMac, DID_IPADDR as didIpaddr, DID_SWVER as didSwver, CENTER_ID as centerId, 
+                        DID_TYPE as didType, DID_RESOLUTION as didResolution, DID_WIDTH as didWidth, DID_HEIGHT as didHeight,
+						DID_IPTYPE as didIptype, DID_MODELTYPE as didModelType, DID_USEYN as didUseYn, 
+						TO_CHAR(DID_ENDCONTIME, 'YYYY-MM-DD HH24:MI:SS') as didEndContime, DID_ENDTIME as didEndTime , FRST_REGIST_PNTTM as frstRegistPnttm, FRST_REGISTER_ID as frstRegisterId,
+						LAST_UPDT_PNTTM as lastRegistPnttm, LAST_UPDUSR_ID as lastRegisterId, 
+						DID_REMARK as didRemark, ROLE_CODE as roleCode, DID_STTUS as didSttus,
+						DID_OS as didOs, DID_SERIALTYPE as didSerialtype, DID_SERIALPORT as didSerialport,
+						DID_MONITERCNT as didMonitercnt, DID_STAETTIME as didStartTime,
+						DID_TIMEINTERVAL as didTimeInterval, DID_SERIALJAVASCRIPT as didSerialjavascript,
+						(SELECT e.GROUP_NM FROM TB_GROUPDID d, TB_GROUP e WHERE d.group_code=e.GROUP_CODE AND d.DID_ID=a.DID_ID) AS groupNm,
+    					(SELECT e.GROUP_CODE FROM TB_GROUPDID d, TB_GROUP e WHERE d.group_code=e.GROUP_CODE AND d.DID_ID=a.DID_ID) AS groupId
+		    FROM TB_DIDINFO a
+		    WHERE DID_ID = #{didId}		  
+    </select>
+    <select id="selectDidrInfoManageDetailView"  resultType="DidInfoVO">
+          SELECT  a.DID_ID as didId , a.DID_NM as didNm, a.DID_MAC as didMac, a.DID_IPADDR as didIpaddr, 
+                        fn_DetailCodeNm(a.DID_SWVER) as didSwver, b.CENTER_NM as centerNM, 
+                        fn_DetailCodeNm( a.DID_TYPE)  as didType, fn_DetailCodeNm( a.DID_RESOLUTION ) as didResolution, DID_WIDTH as didWidth, DID_HEIGHT as didHeight,
+						fn_DetailCodeNm( a.DID_IPTYPE) as didIptype, fn_DetailCodeNm(a.DID_MODELTYPE) as didModelType, DID_USEYN as didUseYn, 
+						TO_CHAR(DID_ENDCONTIME, 'YYYY-MM-DD HH24:MI:SS') as didEndContime, DID_ENDTIME as didEndTime ,  
+						DID_REMARK as didRemark, c.GROUP_NM as roleNm, DID_STTUS as didSttus,
+						fn_DetailCodeNm(a.DID_OS) as didOs, fn_DetailCodeNm(a.DID_SERIALTYPE) as didSerialtype, fn_DetailCodeNm(a.DID_SERIALPORT) as didSerialport, 
+						fn_DetailCodeNm(a.DID_MONITERCNT) as didMonitercnt, DID_STAETTIME as didStartTime,
+						DID_TIMEINTERVAL as didTimeInterval, DID_SERIALJAVASCRIPT as didSerialjavascript,
+						(SELECT e.GROUP_NM FROM TB_GROUPDID d, TB_GROUP e WHERE d.group_code=e.GROUP_CODE AND d.DID_ID=a.DID_ID) AS groupNm,
+  						(SELECT e.GROUP_CODE FROM TB_GROUPDID d, TB_GROUP e WHERE d.group_code=e.GROUP_CODE AND d.DID_ID=a.DID_ID) AS groupCode,
+						<![CDATA[
+			             	(SELECT COUNT(*) FROM TB_SCHEDULE WHERE GROUP_CODE=(SELECT group_code FROM TB_GROUPDID WHERE did_id=a.did_id) AND TO_CHAR(SYSDATE, 'YYYYMMDD') <= SCH_ENDDAY ) AS schCnt
+			             ]]>
+		    FROM TB_DIDINFO a, TB_CENTERINFO b, LETTNAUTHORGROUPINFO c
+            WHERE 
+            a.CENTER_ID = b.CENTER_ID AND a.ROLE_CODE = c.GROUP_ID AND a.DID_ID = #{didId}	  
+    </select>
+    <select id="selectDIDMac" resultType="java.lang.String">
+      select NVL(DID_MAC, 'N')
+      from TB_DIDINFO 
+      where DID_ID = #{didId}
+    </select>
+    <select id="selectDidInfoManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) 
+       FROM TB_DIDINFO a  , TB_CENTERINFO b
+       WHERE a.CENTER_ID = B.CENTER_ID        
+               <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'DID_ID'">
+								and a.DID_ID LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and a.DID_NM LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>	
+				<choose>
+				   <when test="author_Code == 'ROLE_ADMIN' and groupCode == 'EMART_00000000000009' ">
+				      and A.DID_MODELTYPE = 'DIDRMODELTYPE03'
+				   </when>
+				   <when test="author_Code == 'ROLE_ANONYMOUS' and parentGroupId == 'EMART_00000000000001' ">
+				      and a.ROLE_CODE in (SELECT GROUP_ID FROM LETTNAUTHORGROUPINFO WHERE parent_group_id = #{groupCode}  )
+				   </when>
+				   <when test="author_Code == 'ROLE_USER_MEMBER' ">
+				      and a.ROLE_CODE = #{groupCode}
+				   </when>
+				</choose>	
+				<if test="centerId != ''">
+				               AND a.CENTER_ID =  #{centerId} 
+				</if>
+				<if test="didModelType != ''">
+				               AND a.DID_MODELTYPE =  #{didModelType} 
+				</if>
+					  
+    </select>
+    <select id="selectDidDetailContentInfo" resultType="DidInfoVO">
+    SELECT
+		c.SCH_CODE as schCode, c.SCH_NAME as schNm, FN_DAYCONVERT(c.SCH_STARTDAY) as schStartday, FN_DAYCONVERT(c.SCH_ENDDAY) as schEndday, d.CON_SEQ as conSeq, d.con_nm as conNm
+	FROM
+		TB_DIDINFO a, TB_GROUPDID b, TB_SCHEDULE c, TB_CONTENTMUTIL d
+	WHERE
+		a.DID_ID=#{didId}
+	    AND a.did_id = b.DID_ID
+	    AND b.GROUP_CODE = c.GROUP_CODE
+	    AND c.CONTENT_CODE = d.con_seq
+<![CDATA[
+		AND TO_CHAR(SYSDATE, 'YYYYMMDD') <= c.SCH_ENDDAY
+]]>
+	ORDER BY c.SCH_ENDDAY ASC
+    </select>
+    <select id="selectLastInsertDid" resultType="java.lang.String">
+    	select EMARTCMS.fn_DIDId(#{centerId}) from dual
+    </select>
+     <insert id="insertDidInfoManage" >
+             INSERT INTO TB_DIDINFO (DID_ID, DID_NM, DID_SWVER, CENTER_ID, DID_TYPE, DID_RESOLUTION, DID_WIDTH, DID_HEIGHT,
+													 DID_IPTYPE, DID_MODELTYPE, DID_USEYN,  DID_ENDTIME,  ROLE_CODE, DID_STTUS, FRST_REGIST_PNTTM, 
+													 FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID, DID_OS, DID_SERIALTYPE, DID_SERIALPORT, 
+													 DID_MONITERCNT , DID_STAETTIME , DID_TIMEINTERVAL, DID_SERIALJAVASCRIPT
+													 )
+             VALUES ( #{didId} , #{didNm},  #{didSwver} , #{centerId},    #{didType}, #{didResolution}, #{didWidth}, #{didHeight}
+             , #{didIptype},    #{didModelType}, #{didUseYn,jdbcType=CHAR},  #{didEndTime,jdbcType=VARCHAR},   #{roleCode,jdbcType=VARCHAR},    'N',
+             sysdate, #{frstRegisterId,jdbcType=VARCHAR},sysdate ,#{lastUpdusrId,jdbcType=VARCHAR} , #{didOs,jdbcType=VARCHAR}, #{didSerialtype,jdbcType=VARCHAR}, #{didSerialport, jdbcType=VARCHAR}, 
+             #{didMonitercnt, jdbcType=VARCHAR}, #{didStartTime, jdbcType=VARCHAR},
+             #{didTimeInterval, jdbcType=VARCHAR}, #{didSerialjavascript, jdbcType=VARCHAR}
+             )
+     </insert>
+     <update id="updateDidMac">
+         update TB_DIDINFO set  DID_MAC = #{didMac} ,
+                                              DID_IPADDR = #{didIpaddr},
+                                              DID_SENDINTERVAL = #{didSendInterval},
+                                              DID_TYPE = #{didType}
+         WHERE DID_ID = #{didId}           
+     </update>
+     <update id="updateDidState">
+         update TB_DIDINFO set  DID_STTUS =  #{didSttus},  DID_ENDCONTIME = SYSDATE 
+         WHERE DID_ID = #{didId} and  TRIM(DID_MAC) = #{didMac}           
+     </update>
+     <update id="updateDidEndTime">
+         update TB_DIDINFO set  DID_ENDTIME =  #{didEndTime}  
+         WHERE DID_ID = #{didId} and  TRIM(DID_MAC) = #{didMac}           
+     </update>
+     <update id="updateDidInfoManage" >
+       UPDATE  TB_DIDINFO SET DID_NM = #{didNm} ,
+                                DID_MAC = #{didMac} ,
+                                DID_IPADDR = #{didIpaddr} ,
+                                DID_SWVER = #{didSwver} ,
+                                CENTER_ID = #{centerId},
+                                DID_TYPE = #{didType},
+                                DID_RESOLUTION = #{didResolution},
+                                DID_WIDTH = #{didWidth},
+                                DID_HEIGHT = #{didHeight},
+                                DID_IPTYPE = #{didIptype},
+                                DID_MODELTYPE = #{didModelType},
+                                DID_USEYN = #{didUseYn},                                
+                                DID_ENDTIME = #{didEndTime,jdbcType=VARCHAR},
+                                LAST_UPDT_PNTTM = sysdate,
+                                LAST_UPDUSR_ID = #{frstRegistPnttm,jdbcType=VARCHAR},
+                                DID_REMARK = #{didRemark,jdbcType=VARCHAR}, 
+                                ROLE_CODE = #{roleCode, jdbcType=VARCHAR},
+                                DID_OS = #{didOs, jdbcType=VARCHAR},
+                                DID_SERIALTYPE = #{didSerialtype, jdbcType=VARCHAR},
+                                DID_SERIALPORT = #{didSerialport, jdbcType=VARCHAR},
+                                DID_MONITERCNT = #{didMonitercnt, jdbcType=VARCHAR},
+                                DID_STAETTIME  = #{didStartTime, jdbcType=VARCHAR},
+                                DID_TIMEINTERVAL  = #{didTimeInterval, jdbcType=VARCHAR},
+                                DID_SERIALJAVASCRIPT  = #{didSerialjavascript, jdbcType=VARCHAR}
+      WHERE DID_ID = #{didId}            
+     </update>
+     <delete id="deleteDidInfoManage">
+       DELETE FROM TB_DIDINFO
+       WHERE DID_ID = #{didId}
+     </delete>
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     <!-- integrate -->     
+     
+     
+     <select id="selectIntegrateManageListByPagination"  resultType="DidInfoVO">	
+		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		    SELECT
+					     A.DID_ID as "didId", 
+			             A.DID_NM  as "didNm",
+			             A.DID_IPADDR  as "didIpaddr",
+			             B.CENTER_NM  as "centerNm",			             
+			             CASE A.DID_STTUS WHEN 'N' THEN 'OFF' 
+			                      ELSE 'ON'
+			             END AS didSttus,
+			             A.DID_USEYN  as "didUseYn",
+			             EMARTCMS.fn_DetailCodeNm(A.DID_OS) as didOs,
+			             a.DID_MAC as didMac, c.GROUP_NM AS roleNm,
+			             <![CDATA[
+			             	(SELECT COUNT(*) FROM TB_SCHEDULE WHERE GROUP_CODE=(SELECT group_code FROM TB_GROUPDID WHERE did_id=a.did_id) AND TO_CHAR(SYSDATE, 'YYYYMMDD') <= SCH_ENDDAY ) AS schCnt
+			             ]]>
+		    FROM    TB_DIDINFO a, TB_CENTERINFO b, LETTNAUTHORGROUPINFO c
+		        WHERE a.CENTER_ID = B.CENTER_ID 	
+      			AND a.role_code = c.group_id
+		        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'didId'">
+								and a.DID_ID LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and a.DID_NM LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>
+				
+				<if test="groupCode != 'EMART_00000000000002'">
+				and 
+               	(
+                	a.ROLE_CODE in (SELECT GROUP_ID FROM LETTNAUTHORGROUPINFO WHERE parent_group_id = #{groupCode}  )
+                 	OR
+                    a.ROLE_CODE = #{groupCode}
+                )	  
+				</if>
+						  
+				<choose>
+				   <when test="author_Code == 'ROLE_DID_ADMIN' or author_Code == 'ROLE_DID_USER'">
+					and A.DID_MODELTYPE in ('DIDRMODELTYPE01', 'DIDRMODELTYPE02')
+				   </when>
+				   <when test="author_Code == 'ROLE_MUSIC_ADMIN' or author_Code == 'ROLE_MUSIC_USER'">
+					and A.DID_MODELTYPE = 'DIDRMODELTYPE03'
+				   </when>
+				</choose>
+				<if test="centerId != ''">
+					AND a.CENTER_ID =  #{centerId} 
+				</if>	     
+		        ORDER BY a.FRST_REGIST_PNTTM  DESC
+	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
+     </select>
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     <select id="selectIntegrateRoleList"  resultType="DidInfoVO">
+		SELECT 
+			group_nm as roleNm, GROUP_ID as groupId, parent_group_id as parentGroupId
+		FROM LETTNAUTHORGROUPINFO
+		WHERE
+			<!-- 사이니지 인지 음원방송인지 확인하는 조건문 추가 --> 
+			<choose>
+				<when test="requestSystemType == 'SIGNAGE'">
+					group_id != 'EMART_00000000000004' AND parent_group_id != 'EMART_00000000000004' 
+				</when>
+				<otherwise>
+					group_id != 'EMART_00000000000003' AND parent_group_id != 'EMART_00000000000003' 
+				</otherwise>
+			</choose>
+		START WITH parent_group_id = 'EMART_00000000000001'
+		CONNECT BY PRIOR GROUP_ID = parent_group_id
+     </select>
+     
+     <select id="selectIntegrateCenterList"  resultType="DidInfoVO">
+     SELECT 
+     	center_id, center_nm
+     	<!-- , COUNT(center_id) AS centerCnt -->
+     FROM 
+     	TB_CENTERINFO 
+     WHERE 
+     	role_code IN 
+     	(
+		  SELECT 
+		  	GROUP_ID
+		  FROM 
+		  	LETTNAUTHORGROUPINFO
+		  WHERE
+			<!-- 사이니지 인지 음원방송인지 확인하는 조건문 추가 --> 
+			<choose>
+				<when test="requestSystemType == 'SIGNAGE'">
+					group_id != 'EMART_00000000000004' AND parent_group_id != 'EMART_00000000000004' 
+				</when>
+				<otherwise>
+					group_id != 'EMART_00000000000003' AND parent_group_id != 'EMART_00000000000003' 
+				</otherwise>
+			</choose>
+		  START WITH parent_group_id = 'EMART_00000000000001'
+		  CONNECT BY PRIOR GROUP_ID = parent_group_id
+		)
+     </select>
+     
+	<select id="selectIntegrateDeviceList"  resultType="DidInfoVO">
+		SELECT * FROM 
+		( 
+			SELECT rownum RNUM, TB.* FROM 
+			( 
+				SELECT A.DID_ID as "didId", A.DID_NM as "didNm", A.DID_IPADDR as "didIpaddr", B.CENTER_NM as "centerNm", 
+				CASE A.DID_STTUS WHEN 'N' THEN 'OFF' ELSE 'ON' END AS didSttus, A.DID_USEYN as "didUseYn", 
+				EMARTCMS.fn_DetailCodeNm(A.DID_OS) as didOs, a.DID_MAC as didMac, 
+				(
+					SELECT COUNT(*) FROM TB_SCHEDULE 
+					<![CDATA[
+					WHERE GROUP_CODE=(SELECT group_code FROM TB_GROUPDID WHERE did_id=a.did_id) AND TO_CHAR(SYSDATE, 'YYYYMMDD') <= SCH_ENDDAY
+					]]> 
+				) AS schCnt
+				FROM TB_DIDINFO a, TB_CENTERINFO b
+				WHERE 
+					a.CENTER_ID = B.CENTER_ID
+					<choose>
+						<when test="centerId != ''">
+							AND a.CENTER_ID =  #{centerId} 
+						</when>
+						<otherwise>
+						    and 
+						    ( 
+						    a.ROLE_CODE in (SELECT GROUP_ID FROM LETTNAUTHORGROUPINFO WHERE parent_group_id = #{groupCode} ) 
+						    OR 
+						    a.ROLE_CODE = #{groupCode}
+						    ) 
+						</otherwise>
+					</choose>
+				ORDER BY a.FRST_REGIST_PNTTM  DESC     
+			) TB 
+		) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}  
+	</select>
+     
+     
+     
+     
+</mapper>

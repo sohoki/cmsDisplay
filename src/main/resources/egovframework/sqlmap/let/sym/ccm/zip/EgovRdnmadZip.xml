@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.RdnmadZipManagerMapper">
+
+    <select id="selectRdnmadZipManageListByPagination"  resultType="RdnmadZipVO">	
+		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		    select   RDMN_CODE  as "rdmnCode"
+		 				 ,  SN   as "sn"
+		 			     ,  CTPRVN_NM   as "ctprvnNm"
+		 			     ,  SIGNGU_NM   as "signguNm"
+		 			     ,  RDMN   as "rdmn"
+		 			     ,  BDNBR_MNNM   as "bdnbrMnnm"
+		 			     ,  BDNBR_SLNO   as "bdnbrSlno"
+		 			     ,  BULD_NM   as "buldNm"
+		 			     ,  DETAIL_BULD_NM   as "detailBuldNm"
+		 			     ,  ZIP   as "zip"
+            from COMTRDNMADRZIP      		              
+		    WHERE 1=1		        
+		        <if test="searchKeyword != ''">
+						and (  RDMN LIKE '%'|| #{searchKeyword} || '%' or BULD_NM LIKE '%'|| #{searchKeyword} || '%' or DETAIL_BULD_NM LIKE '%'|| #{searchKeyword} || '%') 						
+				</if>		        		     		        
+	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} AND #{lastIndex}         		 	    
+     </select>
+    
+     <select id="selectRdnmadZipManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) FROM COMTRDNMADRZIP 
+       WHERE 1=1  
+       <if test="searchKeyword != ''">
+						and (  RDMN LIKE '%'|| #{searchKeyword} || '%' or BULD_NM LIKE '%'|| #{searchKeyword} || '%' or DETAIL_BULD_NM LIKE '%'|| #{searchKeyword} || '%') 						
+	   </if>		           
+    </select>
+
+
+</mapper>

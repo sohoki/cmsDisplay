@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.DashBoardManagerMapper">
+
+   <select id="selectDidStatus" resultType="DashBoardInfo" >
+     SELECT didCnt, onCnt, real_per, offdid, offCnt  FROM did_state    
+   </select>
+   <select id="selectBrodStatus" resultType="DashBoardInfo">
+     SELECT didCnt, onCnt, real_per, offdid, offCnt  FROM brod_state    
+   </select>
+   <select id="selectBrodStatusPage01" resultType="DashBoardInfo">
+   SELECT  X.* FROM ( SELECT rownum RNUM, TB.* FROM (
+    SELECT a.DID_NM as didNm, b.CENTER_NM as centerNm,
+       CASE a.DID_STTUS
+          WHEN 'N' THEN 'OFFLINE'
+          ELSE 'ERROR'
+       END AS didStatus, 
+       TO_CHAR(A.DID_ENDCONTIME, 'YYYY-MM-DD HH24:MI:SS') AS didEndcontime , A.did_id
+	FROM TB_DIDINFO a, TB_CENTERINFO b 
+	WHERE a.DID_USEYN = 'Y' AND a.DID_MODELTYPE IN ('DIDRMODELTYPE01','DIDRMODELTYPE02')
+	      AND  a.DID_STTUS != 'Y'
+	      AND a.CENTER_ID = b.CENTER_ID
+	ORDER BY A.DID_ENDCONTIME DESC
+	 ) TB ) X WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}               
+   </select>
+   <select id="selectBrodStatusPage01Cnt" resultType="java.lang.Integer">
+       SELECT count(*)       
+	FROM TB_DIDINFO a, TB_CENTERINFO b 
+	WHERE a.DID_USEYN = 'Y' AND a.DID_MODELTYPE IN ('DIDRMODELTYPE01','DIDRMODELTYPE02')
+	      AND  a.DID_STTUS != 'Y'
+	      AND a.CENTER_ID = b.CENTER_ID
+   </select>
+   <select id="selectBrodStatusPage02" resultType="DashBoardInfo">
+   SELECT  X.* FROM ( SELECT rownum RNUM, TB.* FROM (
+   SELECT a.DID_NM as didNm, b.CENTER_NM as centerNm, 
+       CASE a.DID_STTUS
+          WHEN 'N' THEN 'OFFLINE'
+          ELSE 'ERROR'
+       END AS didStatus, 
+       TO_CHAR(A.DID_ENDCONTIME, 'YYYY-MM-DD HH24:MI:SS') AS didEndcontime , A.did_id
+	FROM TB_DIDINFO a, TB_CENTERINFO b 
+	WHERE a.DID_USEYN = 'Y' AND a.DID_MODELTYPE = 'DIDRMODELTYPE03'
+	      AND  a.DID_STTUS != 'Y'
+	      AND a.CENTER_ID = b.CENTER_ID
+	ORDER BY A.DID_ENDCONTIME DESC
+	 ) TB ) X WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+   </select>
+   <select id="selectBrodStatusPage02Cnt" resultType="java.lang.Integer">
+    SELECT count(*)
+	FROM TB_DIDINFO a, TB_CENTERINFO b 
+	WHERE a.DID_USEYN = 'Y' AND a.DID_MODELTYPE = 'DIDRMODELTYPE03'
+	      AND  a.DID_STTUS != 'Y'
+	      AND a.CENTER_ID = b.CENTER_ID
+   </select>   
+   <update id="dashStateUpdateStep01">
+     <![CDATA[ 
+      UPDATE TB_DIDINFO a SET a.DID_STTUS =  'Y' WHERE (did_endcontime +  2/1440) >= SYSDATE       
+      ]]>
+   </update>
+   <update id="dashStateUpdateStep02">
+     <![CDATA[ 
+      UPDATE TB_DIDINFO a SET a.DID_STTUS =  'N' WHERE  (did_endcontime +  2/1440) < SYSDATE       
+      ]]>
+   </update>   
+   
+   
+</mapper>

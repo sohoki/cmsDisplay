@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.MenuInfoManagerMapper">	
+    <select id="selectManuInfoManageListByPagination"  resultType="MenuInfoVO">
+		
+		 
+		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		    SELECT
+		        a.MENU_ID               as "menuId",
+		        a.MENU_NM             as "menuNm",
+		        a.PARENT_MENU_ID             as "parentMenuId",
+		        (select b.MENU_NM from TB_MENU b where a.PARENT_MENU_ID = b.MENU_ID ) as "parentMenuNm",
+		        a.DID_ID     as "didId",
+		       CASE  a.DID_ID WHEN '' THEN '연결없음'
+               ELSE  (SELECT b.DID_NM FROM    tb_DIDInfo b WHERE a.did_id = b.DID_ID) END as "didNm" ,
+               a.MENU_USEYN       as "menuUseYn",
+               a.CENTER_ID as centerId
+		    FROM    TB_MENU a
+		        WHERE 1=1		        
+		        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'DID_ID'">
+								and a.DID_ID LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and a.MENU_NM LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>		        		     
+		        ORDER BY a.MENU_ID  DESC
+	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
+     </select>
+     <!--  메뉴에 나올 DID 콤보  -->
+     <select id="selectMenuComboLst"   resultType="MenuInfoVO">
+       SELECT a.DID_ID AS "didID" , a.DID_NM AS "didNm" 
+       FROM TB_DIDINFO a 
+       WHERE (a.DID_ID NOT  IN (SELECT did_id FROM TB_MENU WHERE DID_ID IS NOT NULL) OR a.DID_ID = #{didId}  )
+    </select>
+     <select id="selectLeftMenuLst"  resultType="MenuInfo">
+		   SELECT a.MENU_ID, a.MENU_NM, a.PARENT_MENU_ID, a.DID_ID as didId, LEVEL as lv,
+		             CASE   
+		                WHEN  LENGTH(DID_ID) > 0  THEN (SELECT b.DID_NM FROM   TB_DIDINFO b WHERE a.DID_ID = b.DID_ID)
+		                ELSE ''
+		             END  didNm     ,
+		             a.CENTER_ID, a.MENU_TYPE ,
+		             'C' as menuGubun   
+		FROM TB_MENU  a
+		WHERE a.MENU_USEYN = 'Y'
+		           <if test="authorCode != 'ROLE_ADMIN'">
+						and ROLE_CODE = #{roleCode}
+				   </if>		   		
+		START WITH PARENT_MENU_ID = '0'				
+		CONNECT BY PRIOR MENU_ID = PARENT_MENU_ID  
+     </select>
+     
+    <select id="selectMenuInfoManageCombo"       resultType="MenuInfoVO">
+       select  MENU_ID as "menuId", MENU_NM as "menuNm"
+       from TB_MENU
+       where MENU_USEYN = 'Y'                 
+				 and (MENU_TYPE = 'MENU_TYPE01' or PARENT_MENU_ID = 0)
+       order by  MENU_ID  asc
+    </select>
+    <select id="selectMenurInfoManageDetail"  resultType="MenuInfoVO">
+           SELECT  MENU_ID as menuId, MENU_NM as menuNm, PARENT_MENU_ID as parentMenuId, DID_ID as didId, MENU_USEYN as menuUseYn,
+                        ROLE_CODE as roleCode, CENTER_ID as centerId, MENU_TYPE as menuType
+		    FROM TB_MENU
+		    WHERE MENU_ID = #{menuId}		  
+    </select>
+    <select id="selectMenuInfoManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) FROM TB_MENU
+       where 1=1 
+        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'DID_ID'">
+								and DID_ID LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and MENU_NM LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>		  
+    </select>
+     <insert id="insertMenuInfoManage" >
+        <![CDATA[
+             INSERT INTO TB_MENU (MENU_ID, MENU_NM, PARENT_MENU_ID, DID_ID, MENU_USEYN, ROLE_CODE, CENTER_ID, MENU_TYPE)
+             VALUES (
+             MENU_SEQ.NEXTVAL, #{menuNm},    #{parentMenuId}, #{didId}, #{menuUseYn}, #{roleCode,jdbcType=VARCHAR}, 
+             #{ centerId, jdbcType=VARCHAR }, #{ menuType, jdbcType=VARCHAR} 
+             )
+         ]]>
+     </insert>
+     <update id="updateMenuInfoManage" >
+       UPDATE  TB_MENU SET MENU_NM = #{menuNm} ,
+                                PARENT_MENU_ID = #{parentMenuId} ,
+                                DID_ID = #{didId} ,
+                                MENU_USEYN = #{menuUseYn} ,
+                                ROLE_CODE = #{roleCode,jdbcType=VARCHAR} ,
+                                CENTER_ID = #{centerId, jdbcType=VARCHAR} ,
+                                MENU_TYPE = #{menuType, jdbcType=VARCHAR} 
+      WHERE MENU_ID = #{menuId}           
+     </update>
+     <delete id="deleteMenuInfoManage">
+       DELETE FROM TB_MENU
+       WHERE MENU_ID = #{menuId}
+     </delete>
+</mapper>

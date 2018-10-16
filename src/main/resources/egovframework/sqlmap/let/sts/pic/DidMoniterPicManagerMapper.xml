@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.DidMoniterPicManagerMapper">	
+    <select id="selectDidMoniterPicManageListByPagination"  resultType="DidMoniterPicVO">	
+		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		   select      a.DID_FILENM as "didFileNm",
+                         a.DID_ID as "didId",
+                         a.DID_REGDATE as "didRegDate",
+                         a.DID_MAC  as "didMac",          
+                         b.DID_NM as "didNm"
+		     FROM   TB_DIDSTATEPIC a, TB_DIDINFO b
+	         WHERE a.DID_ID = b.DID_ID
+				<if test="strDate != null ">
+				   and TO_CHAR(DID_REGDATE, 'yyyyMMdd') >= #{strDate} 
+				</if>		        		     
+				<if test="endDate !=  null">
+				  <![CDATA[
+				   and TO_CHAR(DID_REGDATE, 'yyyyMMdd') <= #{endDate}
+				   ]]> 
+				</if>		        		     
+		        ORDER BY a.MSG_SEQ  DESC
+	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
+     </select>
+      <select id="selectDidMoniterPicManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) 
+       FROM   TB_DIDSTATEPIC a, TB_DIDINFO b
+	         WHERE a.DID_ID = b.DID_ID	         
+		       <if test="strDate != null ">
+				   and TO_CHAR(DID_REGDATE, 'yyyyMMdd') >= #{strDate} 
+				</if>		        		     
+				<if test="endDate !=  null">
+				  <![CDATA[
+				   and TO_CHAR(DID_REGDATE, 'yyyyMMdd') <= #{endDate}
+				   ]]> 
+				</if>		       
+    </select>
+   
+     <insert id="insertDidMoniterPicManage" >        
+             INSERT INTO TB_DIDSTATEPIC (DID_FILENM, DID_ID, DID_REGDATE, DID_MAC, MSG_SEQ)
+             VALUES ( #{didFileNm},  #{didId} ,   sysdate , #{didMac} , #{msgSeq} )                          
+     </insert>   
+     
+     <delete id="deleteDIDStatePic">
+	    delete from TB_DIDSTATEPIC
+	    where DID_FILENM = #{didFileNm}
+	 </delete>
+     
+</mapper>     

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.BrodContentDetailManagerMapper">
+	   
+   
+  <select id="selectBrodContentDetailLst" resultType="BrodContentDetailVO">
+  SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+	     select a.BROD_SEQ, a.BROD_CODE, a.ATCH_FILE_ID, a.INTERVAL_SECTION, a.CONTENT_STARTDAY, a.CONTENT_ENDDAY, a.CONTENT_ORDER,
+	            b.ORIGNL_FILE_NM  as orignlFileNm, b.PLAY_TIME playTime, b.FILE_THUMNAIL as fileThumnail
+	     from TB_BRODCONTENTDETAIL a, LETTNFILEDETAIL b
+	     where  a.BROD_CODE = #{brodCode} and a.ATCH_FILE_ID = b.ATCH_FILE_ID
+         <if test="intervalSection != ''">				
+			  and TO_NUMBER(A.INTERVAL_SECTION) = #{intervalSection} 				
+		</if>
+		<if test="brodDay != ''">
+		and #{brodDay} between CONTENT_STARTDAY and  CONTENT_ENDDAY
+		</if>		 
+		and CONTENT_ENDDAY >=  to_char(sysdate,'yyyyMMdd')
+		ORDER BY INTERVAL_SECTION asc, CONTENT_ORDER asc
+    ) TB ) WHERE 1=1         
+  </select>   
+  
+  <select id="selectTimeCombo" resultType="BrodContentDetail">
+    select TIME_CODE timeCode from TB_TIME
+    where TIME_CODE between '000' and #{endTime}
+  </select>
+ 
+  <select id="selectTimeHourCombo" resultType="BrodContentDetail">
+    select TIME_CODE timeCode from TB_TIME
+    where TIME_CODE IN ('060','120','180','240')
+  </select>
+  
+  
+  
+  
+   
+  <select id="selectBrodContenDetailt" resultType="BrodContentDetailVO">
+   	 select a.BROD_SEQ, a.BROD_CODE, a.ATCH_FILE_ID, a.INTERVAL_SECTION, a.CONTENT_STARTDAY, a.CONTENT_ENDDAY, a.CONTENT_ORDER
+     from TB_BRODCONTENTDETAIL a
+     where a.BROD_SEQ = #{brodSeq}  
+  </select>
+
+  <select id="selectContentRegCnt" resultType="java.lang.Integer">
+     select NVL(count(*), 0)
+      from TB_BRODCONTENTDETAIL a
+      where  a.BROD_CODE = #{brodCode}
+             <if test="intervalSection != ''">
+             and A.INTERVAL_SECTION= #{intervalSection}
+             </if> 
+             and A.ATCH_FILE_ID = #{atchFileId}
+  </select>
+  
+  <select id="selectContentRegTimeOverCheck" resultType="java.lang.Integer">
+     SELECT NVL(X.PLAY_TIME,0) + C.PLAY_TIME
+	 FROM (
+	      select sum(NVL(b.PLAY_TIME, 0)) AS PLAY_TIME
+	      from TB_BRODCONTENTDETAIL a, LETTNFILEDETAIL b
+	      where a.ATCH_FILE_ID = b.ATCH_FILE_ID 
+	            and A.INTERVAL_SECTION= #{intervalSection} and a.BROD_CODE = #{brodCode}
+	 ) X ,   LETTNFILEDETAIL c where c.ATCH_FILE_ID = #{atchFileId}             
+  </select>
+  
+  <select id="selectContentRegTimeImsiOverTableCheck" resultType="java.lang.Integer">
+     SELECT NVL(X.PLAY_TIME,0) + e.PLAY_TIME
+	 FROM (
+	      SELECT SUM(B.PLAY_TIME) AS PLAY_TIME FROM 
+          (
+          select sum(NVL(b.PLAY_TIME, 0)) AS PLAY_TIME
+	      from TB_BRODCONTENTDETAIL a, LETTNFILEDETAIL b
+	      where a.ATCH_FILE_ID = b.ATCH_FILE_ID 
+	            and TO_NUMBER(A.INTERVAL_SECTION)= #{intervalSection} and a.BROD_CODE = #{brodCode}
+          UNION ALL 
+          select sum(NVL(d.PLAY_TIME, 0)) AS PLAY_TIME
+	      from TB_BRODIMSI c, LETTNFILEDETAIL d
+	      where c.ATCH_FILE_ID = d.ATCH_FILE_ID 
+	            and TO_NUMBER(c.INTERVAL_SECTION) = #{intervalSection} and c.BROD_CODE =  #{brodCode}
+          ) B
+	 ) X ,   LETTNFILEDETAIL e where e.ATCH_FILE_ID = #{atchFileId}   
+  </select>
+  
+   <select id="selectContentFileTime" resultType="java.lang.Integer">
+     select PLAY_TIME from LETTNFILEDETAIL where ATCH_FILE_ID = #{atchFileId}
+   </select>
+   <select id="selectBrodContentDetailPageCnt" resultType="java.lang.Integer">
+      select NVL(count(*), 0)
+      from TB_BRODCONTENTDETAIL a
+      where  1=1 and a.BROD_CODE = #{brodCode} 
+         <if test="intervalSection != ''">				
+			  and A.INTERVAL_SECTION = #{intervalSection} 				
+		</if>
+   </select>
+   
+   <select id="selectBrodFileList" resultType="BrodContentDetail">  
+	      SELECT X.ATCH_FILE_ID, X.fileStreCours, X.streFileNm FROM (
+			SELECT a.ATCH_FILE_ID  , substr(b.FILE_STRE_COURS,INSTR(b.FILE_STRE_COURS,'/',-2)) as fileStreCours, b.STRE_FILE_NM as streFileNm 
+				FROM TB_BRODCONTENTDETAIL  a ,  LETTNFILEDETAIL b, TB_CENTERINFO c, TB_DIDINFO d, TB_BRODCENTERSCH e 
+				WHERE a.BROD_CODE = #{brodCode} AND a.BROD_CODE = e.BROD_CODE AND e.CENTER_ID = c.CENTER_ID 
+				      AND  c.CENTER_ID = d.CENTER_ID AND trim(d.did_id) = #{didId} AND trim(d.DID_MAC) = #{didMac} 
+				      AND a.atch_file_id = b.atch_file_id
+				      AND e.CREATE_CHECK ='Y'   
+				      GROUP BY a.atch_file_id , b.FILE_STRE_COURS, b.STRE_FILE_NM   
+			UNION ALL
+			SELECT a.ATCH_FILE_ID  , substr(b.FILE_STRE_COURS,INSTR(b.FILE_STRE_COURS,'/',-2)) as fileStreCours, b.STRE_FILE_NM as streFileNm 
+				FROM TB_BRODANNIVERSARY  a ,  LETTNFILEDETAIL b, TB_CENTERINFO c, TB_DIDINFO d, TB_BRODCENTERSCH e 
+				WHERE a.BROD_CODE = #{brodCode} AND a.BROD_CODE = e.BROD_CODE AND e.CENTER_ID = c.CENTER_ID 
+				      AND  c.CENTER_ID = d.CENTER_ID AND trim(d.did_id) = #{didId} AND trim(d.DID_MAC) = #{didMac} 
+				      AND a.atch_file_id = b.atch_file_id
+				      AND e.CREATE_CHECK ='Y'   
+				      GROUP BY a.atch_file_id , b.FILE_STRE_COURS, b.STRE_FILE_NM   
+          ) X
+          GROUP BY  X.ATCH_FILE_ID, X.fileStreCours, X.streFileNm
+   </select>   
+   <insert id="insertBrodContentDetail">
+   	    INSERT INTO TB_BRODCONTENTDETAIL (BROD_SEQ, BROD_CODE, ATCH_FILE_ID, INTERVAL_SECTION, CONTENT_STARTDAY, CONTENT_ENDDAY, CONTENT_ORDER, 
+   	    FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID)
+   	    values (BRODCONDETAIL_SEQ.NEXTVAL, #{brodCode}, #{atchFileId}, #{intervalSection}, #{contentStartDay} , #{contentEndDay},  
+   	    #{contentOrder}, sysdate, #{frstRegisterId, jdbcType=VARCHAR}, sysdate, #{frstRegisterId, jdbcType=VARCHAR})          
+   </insert>
+   
+   <insert id="insertBrodContentCopy">
+       INSERT INTO TB_BRODCONTENTDETAIL(BROD_SEQ, BROD_CODE, ATCH_FILE_ID, INTERVAL_SECTION, CONTENT_STARTDAY, CONTENT_ENDDAY, 
+                                 FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID, CONTENT_ORDER)
+		SELECT BRODCONDETAIL_SEQ.NEXTVAL, #{brodCode}, ATCH_FILE_ID, INTERVAL_SECTION, #{contentStartDay}, #{contentEndDay}, 
+		SYSDATE, #{frstRegisterId, jdbcType=VARCHAR},SYSDATE, #{frstRegisterId, jdbcType=VARCHAR}, CONTENT_ORDER
+		FROM TB_BRODCONTENTDETAIL
+		WHERE brod_code = #{prebrodCode}     
+   </insert>
+   <insert id="insertBrodContentCenterCopy">
+       INSERT INTO TB_BRODCONTENTDETAIL(BROD_SEQ, BROD_CODE, ATCH_FILE_ID, INTERVAL_SECTION, CONTENT_STARTDAY, CONTENT_ENDDAY, 
+                                 FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID, CONTENT_ORDER)
+		SELECT BRODCONDETAIL_SEQ.NEXTVAL, #{brodCode}, ATCH_FILE_ID, INTERVAL_SECTION, CONTENT_STARTDAY, CONTENT_ENDDAY, 
+		SYSDATE, #{frstRegisterId, jdbcType=VARCHAR},SYSDATE, #{frstRegisterId, jdbcType=VARCHAR}, CONTENT_ORDER
+		FROM TB_BRODCONTENTDETAIL
+		WHERE brod_code = #{prebrodCode}     
+   </insert>   
+   
+   <insert id="insertBrodContentScheduleOtherCopy">
+       INSERT INTO TB_BRODCONTENTDETAIL(BROD_SEQ, BROD_CODE, ATCH_FILE_ID, INTERVAL_SECTION, CONTENT_STARTDAY, CONTENT_ENDDAY, 
+                                 FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID, CONTENT_ORDER)
+       SELECT BRODCONDETAIL_SEQ.NEXTVAL, b.BROD_CODE, a.ATCH_FILE_ID, a.INTERVAL_SECTION, a.CONTENT_STARTDAY, a.CONTENT_ENDDAY, 
+              a.FRST_REGIST_PNTTM, a.FRST_REGISTER_ID, a.LAST_UPDT_PNTTM, a.LAST_UPDUSR_ID, a.CONTENT_ORDER 
+       FROM TB_BRODCONTENTDETAIL a, TB_BRODSCHEDULE b
+       WHERE a.brod_code = #{brodCode}
+             AND b.BASIC_BROD_CODE = a.BROD_CODE 
+             AND b.BROD_CODE != a.BROD_CODE
+   </insert>
+   
+   <update id="updateBrodContentDetail">
+          update TB_BRODCONTENTDETAIL set BROD_CODE =  #{brodCode},
+                                     ATCH_FILE_ID =     #{atchFileId},
+                                     INTERVAL_SECTION =     #{intervalSection}, 
+                                     CONTENT_STARTDAY =     #{contentStartDay},
+                                     CONTENT_ENDDAY =     #{contentEndDay},
+                                     CONTENT_ORDER =     #{contentOrder},
+                                     LAST_UPDT_PNTTM =  sysdate,
+                                     LAST_UPDUSR_ID =     #{lastUpdusrId,jdbcType=VARCHAR}
+          where BROD_SEQ = #{brodSeq}
+   </update>
+   
+   
+   <delete id="deleteBrodContentDetail">
+        DELETE FROM TB_BRODCONTENTDETAIL where BROD_SEQ = #{brodSeq}   
+   </delete>
+   
+   <delete id="deleteBrodContentBrodCode">
+        DELETE FROM TB_BRODCONTENTDETAIL where BROD_CODE = #{brodCode}
+   </delete>
+   
+   <delete id="deleteBrodContentBrodCodeALL">
+        DELETE FROM TB_BRODCONTENTDETAIL 
+        WHERE BROD_CODE IN (SELECT BROD_CODE FROM TB_BRODSCHEDULE WHERE (BROD_CODE = #{brodCode} or BASIC_BROD_CODE = #{brodCode}))        
+   </delete>
+   
+   <delete id="deleteBrodContentTimeDel">
+      DELETE FROM TB_BRODCONTENTDETAIL where BROD_CODE = #{brodCode} and INTERVAL_SECTION > ${intervalSection}
+   </delete>
+   
+   <delete id="deleteBrodBasicBrod">
+      DELETE FROM  TB_BRODCONTENTDETAIL 
+             WHERE BROD_CODE IN (SELECT a.BROD_CODE FROM TB_BRODSCHEDULE a WHERE a.BASIC_BROD_CODE = #{brodCode} )
+   </delete>
+   
+   <delete id="deleteContentDetailBasciContent">
+      DELETE FROM TB_BRODCONTENTDETAIL
+		WHERE BROD_SEQ in (
+		SELECT a.BROD_SEQ
+		FROM TB_BRODCONTENTDETAIL a , TB_BRODSCHEDULE b
+		WHERE a.brod_code = b.brod_code AND b.BASIC_BROD_CODE = #{brodCode}
+		      AND a.brod_code != #{brodCode}
+		AND  (a.atch_file_id||a.interval_section||a.content_startday||a.content_endday||a.content_order)
+		= (SELECT c.atch_file_id||c.interval_section||c.content_startday||c.content_endday||c.content_order FROM TB_BRODCONTENTDETAIL c 
+		   WHERE c.brod_code = #{brodCode} AND c.brod_seq = #{brodSeq})
+		)
+   </delete>
+   
+   
+
+</mapper>

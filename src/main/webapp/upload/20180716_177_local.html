@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>   
+ <html>   
+<head>  
+ <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>  
+ <title>1807_백업_테스트1</title>   
+<script type='text/javascript' src='./jquery-2.2.4.min.js'></script>   
+<script type='text/javascript'> 
+var albumLst0= '[{"atchFileId":"FILE_000000000004164","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"230","fileOrder":"0","fileSeq":"727","fileStreCours":"/upload/201807/","fileThumnail":"","fileWidth":"270","firstIndex":1,"lastIndex":1,"mediaType":"IMAGE","orignlFileNm":"1807부츠여름.png","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000004164.png","timeInterval":"5"},{"atchFileId":"FILE_000000000004163","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"230","fileOrder":"1","fileSeq":"728","fileStreCours":"/upload/201807/","fileThumnail":"","fileWidth":"270","firstIndex":1,"lastIndex":1,"mediaType":"IMAGE","orignlFileNm":"1807_부츠슈가크러쉬.png","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000004163.png","timeInterval":"5"}]';
+var timeId0= '';
+ $(document).ready(function(){    
+   console.log('contents play start');    
+  var jsonData = JSON.parse(albumLst0);             
+  if (jsonData.length > 0){    
+      $('#nowFileCnt0').val('0');  
+        myHandler0(jsonData[0].streFileNm, jsonData[0].mediaType, jsonData[0].timeInterval, jsonData[0].fileStreCours);    
+   }  
+  });   
+   function myHandler0(fileNm, fileType, file_Interval, fileStreCours) {              
+           var contentLoad0 = setTimeout(videoPlay0, 3*1000);  
+      if (fileType == 'IMAGE'){       
+       var img0 = '<img id="Image0" src="./'+fileNm+'" width="1080" height="1920" />';    
+       $("#content_show0").html(img0);     
+       $("#Image0").on("load", function(){    
+  	          clearTimeout(contentLoad0);   
+	          $("#content_show0").animate({opacity:1}, 500, function(){  
+		      setTimeout(videoPlay0, file_Interval*1000);   
+	         });  
+        }); 
+       $("#Image0").on("error", function(err){  
+            videoPlay0(); 			
+       }); 
+   } else { 
+   var vod0 = '<video id="Video0" autoplay><source src="" type="video/mp4" /></video>'; 
+        $("#content_show0").html(vod0);   
+        $("#Video0").attr('src','./'+fileNm);   
+             clearTimeout(contentLoad0);     
+        $("#Video0").on('loadstart', function(){   
+           $("#content_show0").animate({opacity:1}, 500, function(){  
+		       $("#Video0").on('ended', function(){ 
+                 videoPlay0();   
+               });   
+           });    
+        });    
+        $("#Video0").on("error", function(err){   
+           videoPlay0(); 		  
+      });   
+ };  
+ };  
+ function videoPlay0(){    
+ $("#content_show0").animate({opacity:0}, 500, function(){  
+ 	var jsonData = JSON.parse(albumLst0);     
+ 	   if ($("#nowFileCnt0").val() == parseInt(jsonData.length-1)){  
+ 		   var link=document.location.href;    
+ 		   location.href=link;    
+ 		   $('#nowFileCnt0').val('0');    
+ 		   var num = 0;    
+ 	   } else {    
+ 		   var num = +$("#nowFileCnt0").val() + 1;  
+ 		   $("#nowFileCnt0").val(num);        
+ 	   }   
+ 	   $("#content_show0").html('');  
+ 	   myHandler0(jsonData[num].streFileNm, jsonData[num].mediaType, jsonData[num].timeInterval, jsonData[num].fileStreCours);  
+   });  
+ }  
+</script>	
+<style>	
+ .container { position: relative; width: 100%; }	
+ .container video { float: left; }	
+    #Video0 {	
+    width: 1080px; height: auto ; 
+    }	
+    #content_show0 {	
+    position: relative; top: 0;	
+    width: 1080px; height: auto ; z-index: 102;	
+    float:left;               	
+    }               	
+.clear { clear: both; }  
+</style>	
+</head>	
+<body style='margin:0;background:#000'>	
+   <input type='hidden' name='nowFileCnt0' id='nowFileCnt0'>	
+   <div id='content_show0' style='opacity:0;'></div>  
+   </body>	
+</html>	

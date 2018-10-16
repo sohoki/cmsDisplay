@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.GroupDidInfoManagerMapper">	
+    <select id="selectGroupInfoManageListByPagination"  resultType="GroupDidInfoVO">			 	
+		    SELECT
+					     A.GROUP_CODE as "groupCode", 
+			             A.DID_ID  as "didId",
+			             C.DID_NM  as "didNm"
+		    FROM    TB_GROUPDID a, TB_GROUP b, TB_DIDINFO c
+		    WHERE a.GROUP_CODE = b.	GROUP_CODE and a.DID_ID = c.DID_ID
+		                and  	  A.GROUP_CODE = #{groupCode}      		              		    
+		    ORDER BY c.DID_NM  ASC
+	                 		 	    
+     </select>      
+     <select id="selectgroupCodeidCheckInfoManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) FROM TB_GROUPDID a, TB_GROUP b, TB_DIDINFO c
+       WHERE a.GROUP_CODE = b.	GROUP_CODE and a.DID_ID = c.DID_ID 
+       and    GROUP_CODE  = #{groupCode} and a.DID_ID = #{didId}	           
+    </select>
+    <select id="selectGroupInfoManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) FROM TB_GROUP a
+       FROM  TB_GROUPDID a, TB_GROUP b, TB_DIDINFO c
+	   WHERE a.GROUP_CODE = b.	GROUP_CODE and a.DID_ID = c.DID_ID
+		           and  	  A.GROUP_CODE = #{groupCode}      		      
+    </select>
+    <select id="selectComboLst"   resultType="GroupDidInfo">
+       SELECT a.DID_ID AS "didID" , a.DID_NM AS "didNm" 
+       FROM TB_DIDINFO a 
+       WHERE a.DID_ID NOT  IN (SELECT did_id FROM TB_GROUPDID)
+    </select>
+     <insert id="insertGroupInfoManage" >        
+             INSERT INTO TB_GROUPDID (GROUP_CODE, DID_ID)
+             VALUES ( #{groupCode}   , #{didId} )                          
+     </insert>     
+     <delete id="deleteGroupInfoManage">
+       DELETE FROM TB_GROUPDID
+       WHERE DID_ID = #{didId}
+     </delete>
+</mapper>

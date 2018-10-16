@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title> New Document </title>
+  
+   <style type="text/css">
+	.album-wrap {position:relative; width:1920px; height:540px; margin:0 auto; overflow:hidden;}
+	.album-wrap ul.album {position:absolute;}
+	.album-wrap ul.album li {float:left; width:221px;}
+   </style>   
+<script type="text/javascript">
+	//var $list = $('ul.album');
+	//var size = $list.children().outerWidth();
+	//var len =  $list.children().length;
+	var speed = 3000;
+	var timer = null;
+	var auto = true;
+	var cnt = 1;
+
+	//$list.css('width',len*size);
+
+	if(auto) timer = setInterval(autoSlide, speed);
+    /*
+	$list.children().bind({
+		'mouseenter': function(){
+			if(!auto) return false;
+			clearInterval(timer);
+			auto = false;
+		},
+		'mouseleave': function(){
+			timer = setInterval(autoSlide, speed);
+			auto = true;
+		}
+	})
+	*/
+    /*
+	$('.bt-roll').children().bind({
+		'click': function(){
+			var idx = $('.bt-roll').children().index(this);
+			cnt = idx;
+			autoSlide();
+			return false;
+		},
+		'mouseenter': function(){
+			if(!auto) return false;
+			clearInterval(timer);
+			auto = false;
+		},
+		'mouseleave': function(){
+			timer = setInterval(autoSlide, speed);
+			auto = true;
+		}
+	});		
+    */
+	function autoSlide(){
+		if(cnt>len-1){
+			cnt = 0;
+		}
+		$list.animate({'left': -(cnt*size)+'px' },'normal');
+		/*
+		var source2 = $('.bt-roll').children().find('img').attr('src').replace('_.png','.png');
+		$('.bt-roll').children().find('img').attr('src',source2);
+         
+		var source = $('.bt-roll').children().find('img').attr('src').replace('.png','_.png');
+		$('.bt-roll').children().eq(cnt).find('img').attr('src',source);
+        */  
+		cnt++;
+	}
+</script>
+ </head>
+
+ <body>
+  <div class="album-wrap">
+	<ul class="album clfix">
+		<li><img alt="" src="./santorini.jpg"></li>
+		<li><img alt="" src="./santorini2.jpg"></li>
+		<li><img alt="" src="./santorini3.jpg"></li>
+		<li><img alt="" src="./santorini4.jpg"></li>
+	</ul>
+</div>
+ </body>
+</html>

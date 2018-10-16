@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.CenterInfoManagerMapper">
+	
+    <select id="selectCenterInfoManageListByPagination"  resultType="CenterInfoVO">
+		
+		 
+		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		    SELECT
+		        CENTER_ID          as "centerId",
+		        CENTER_NM          as "centerNm",
+                CENTER_STARTTIME   as "centerStartTime",
+                CENTER_ENDTIME     as "centerEndTime",
+		        CENTER_USEYN       as "centerUseYn",      	
+		        CENTER_GUBUN       as "centerGubun",	        
+		        CENTER_REGDATE	   as "centerRegdate"		        
+		    FROM    TB_CENTERINFO
+		        WHERE 1=1		        
+		        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'centerId'">
+								and CENTER_ID LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and CENTER_NM LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>	
+				<choose>
+				   <when test="author_Code == 'ROLE_ADMIN' and groupCode == 'EMART_00000000000009'">
+				      and CENTER_GUBUN = 'BRANCH01'
+				   </when>	  
+				   <when test="author_Code == 'ROLE_ANONYMOUS' and groupCode == 'EMART_00000000000017'">
+				      and CENTER_GUBUN = 'BRANCH01' 
+				   </when>
+				</choose>		        		     
+		        ORDER BY CENTER_ID  DESC
+	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
+     </select>
+    <select id="selectCenterInfoManageCombo"       resultType="CenterInfoVO">
+       select  CENTER_ID as centerId, CENTER_NM as centerNm
+       from TB_CENTERINFO
+       where CENTER_USEYN = 'Y'
+       <if test="searchKeyword != ''">
+	   		AND CENTER_NM LIKE '%'|| #{searchKeyword} || '%'
+       </if>
+       order by  CENTER_NM  asc
+    </select>
+    <select id="selectCenterInfoManageDetail"  resultType="CenterInfoVO">
+           SELECT  CENTER_ID as centerId, CENTER_NM as centerNm, CENTER_ZIPCODE as centerZipcode, CENTER_ADDR1 as centerAddr1, CENTER_ADDR2 as centerAddr2, CENTER_TEL as centerTel,
+						CENTER_FAX as centerFax, CENTER_USERID as centerUserId, CENTER_REGDATE as centerRegdate, CENTER_UPDATEID as centerUpdateId, CENTER_UPDATE_DT as centerUpdateDt, 
+						CENTER_IMG as centerImg, CENTER_URL as centerUrl, CENTER_IMG_MAP as centerImgMap, CENTER_EQUIPMENT_CMT as centerEquipmentCmt, CENTER_USEYN as centerUseYn, 
+						CENTER_LOUNGE as centerLounge, CENTER_MEETINGROOM as centerMeetingRoom, CENTER_INFO as       centerInfo,
+						SUBSTR(CENTER_ZIPCODE,0,3) AS centerZipcode1, SUBSTR(CENTER_ZIPCODE,4,6) AS centerZipcode2       ,
+						ROLE_CODE as roleCode, CENTER_STARTTIME as centerStartTime, CENTER_ENDTIME as centerEndTime,
+						CENTER_GUBUN as centerGubun, BROD_CODE brodCode
+		    FROM TB_CENTERINFO
+		    WHERE CENTER_ID = #{centerId}		  
+    </select>
+    <select id="selectCenterInfoBrod" resultType="java.lang.String">
+          select BROD_CODE
+          FROM TB_CENTERINFO
+		  WHERE CENTER_ID = #{centerId}  
+    </select>
+    <select id="selectCenterTimeInfo" resultType="java.lang.String">
+          select fn_centerBrodInfo(#{centerId}, #{centerSearchDay}) from dual 
+    </select>
+    <select id="selectCenterBrodCombo" resultType="CenterInfo">
+       SELECT center_id, center_nm , brod_code
+       FROM TB_CENTERINFO
+       WHERE center_gubun = 'BRANCH01' AND brod_code IS NOT  NULL
+    </select>
+    
+    <select id="selectCenterInfoManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) FROM TB_CENTERINFO
+       where 1=1 
+        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'centerId'">
+								and CENTER_ID LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and CENTER_NM LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>		  
+    </select>
+     <insert id="insertCenterInfoManage" >
+        <![CDATA[
+             INSERT INTO TB_CENTERINFO (CENTER_ID, CENTER_NM, CENTER_ZIPCODE, CENTER_ADDR1, CENTER_ADDR2, CENTER_TEL,CENTER_FAX, 
+                                 CENTER_USERID, CENTER_REGDATE, CENTER_IMG, CENTER_URL, CENTER_IMG_MAP, CENTER_EQUIPMENT_CMT, 
+                                 CENTER_USEYN, CENTER_LOUNGE, CENTER_MEETINGROOM, CENTER_INFO,
+                                 ROLE_CODE, CENTER_STARTTIME, CENTER_ENDTIME, CENTER_GUBUN, BROD_CODE
+                                 )
+             VALUES (EMARTCMS.fn_CenterID, #{centerNm},    #{centerZipcode}, #{centerAddr1}, #{centerAddr2}, #{centerTel,jdbcType=VARCHAR},  #{centerFax,jdbcType=VARCHAR},
+             #{centerUserId,jdbcType=VARCHAR}, SYSDATE,  #{centerImg,jdbcType=VARCHAR}, #{centerUrl ,jdbcType=VARCHAR}, #{centerImgMap,jdbcType=VARCHAR}, 0,
+             #{centerUseYn,jdbcType=VARCHAR}, #{centerLounge,jdbcType=VARCHAR}, #{centerMeetingRoom,jdbcType=VARCHAR},  '' , 
+             #{roleCode,jdbcType=VARCHAR}, #{centerStartTime,jdbcType=VARCHAR}, #{centerEndTime, jdbcType=VARCHAR}, #{centerGubun, jdbcType=VARCHAR} , #{brodCode, jdbcType=VARCHAR}
+             )
+         ]]>
+     </insert>
+     <update id="updateCenterInfoManage" >
+       UPDATE  TB_CENTERINFO SET CENTER_NM = #{centerNm} ,
+                                CENTER_ZIPCODE = #{centerZipcode} ,
+                                CENTER_ADDR1 = #{centerAddr1} ,
+                                CENTER_ADDR2 = #{centerAddr2} ,
+                                CENTER_TEL = #{centerTel,jdbcType=VARCHAR} ,
+                                CENTER_FAX = #{centerFax,jdbcType=VARCHAR} ,
+                                CENTER_UPDATEID =#{centerUserId,jdbcType=VARCHAR} ,
+                                CENTER_UPDATE_DT = SYSDATE ,
+                                CENTER_URL = #{centerUrl ,jdbcType=VARCHAR} ,
+                                CENTER_USEYN = #{centerUseYn,jdbcType=VARCHAR} ,
+                                CENTER_LOUNGE = #{centerLounge,jdbcType=VARCHAR} ,
+                                CENTER_MEETINGROOM = #{centerMeetingRoom,jdbcType=VARCHAR} ,
+                                CENTER_STARTTIME = #{centerStartTime,jdbcType=VARCHAR} ,  
+                                CENTER_ENDTIME = #{centerEndTime,jdbcType=VARCHAR} ,
+                                BROD_CODE = #{brodCode,jdbcType=VARCHAR} ,       
+                                CENTER_INFO = #{centerInfo,jdbcType=CLOB}   
+                                <if test="centerImg != null ">                                    
+                               , CENTER_IMG = #{centerImg,jdbcType=VARCHAR}
+                               </if>
+                                <if test="centerImgMap !=  null ">                     
+                               , CENTER_IMG_MAP = #{centerImgMap,jdbcType=VARCHAR}
+                               </if>
+                               , ROLE_CODE = #{roleCode, jdbcType=VARCHAR}
+                               , CENTER_GUBUN  = #{centerGubun, jdbcType=VARCHAR}
+      WHERE CENTER_ID = #{centerId}           
+     </update>
+     
+     <delete id="deleteCenterInfoManage">
+       DELETE FROM TB_CENTERINFO
+       WHERE CENTER_ID = #{centerId}
+     </delete>
+</mapper>

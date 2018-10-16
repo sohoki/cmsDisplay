@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.LoginUsrManageMapper">
+   <select id="selectactionLogin" resultType="LoginVO">  
+   	      SELECT mber_id AS mberId
+			     , mber_nm AS mberNm			     
+			     , password AS password
+			     , MBTLNUM AS mbtlNum
+			     , MBER_EMAIL_ADRES AS mberEmailAddress
+			     , AUTHOR_CODE AS authorCode
+			     , GROUP_ID AS groupId			     
+			     , MBER_STTUS  AS mberSttus		
+			     , (SELECT parent_group_id FROM   LETTNAUTHORGROUPINFO b WHERE LETTNGNRLMBER.GROUP_ID = b.GROUP_ID)AS parentGroupId  
+			  FROM LETTNGNRLMBER
+			 WHERE mber_id = #{mberId}
+			   AND password = #{password}
+			   AND mber_sttus = 'STATE_01'
+   </select>
+
+</mapper>

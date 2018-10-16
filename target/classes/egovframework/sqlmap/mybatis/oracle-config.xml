@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>		
+		<setting name="mapUnderscoreToCamelCase" value="true" />		
+		<setting name="lazyLoadingEnabled" value="true" />
+		<setting name="cacheEnabled" value="true"/>		
+	</settings>
+	
+	<!-- 전자정부 프레임워크 공통 Alias 정의-->
+	  
+	<typeAliases>       
+	
+		<package name="egovframework.let.sym.ccm.cca.service"/>
+		<package name="egovframework.let.sym.ccm.ccc.service"/>
+		<package name="egovframework.let.sym.ccm.cde.service"/>
+		<package name="egovframework.let.sym.ccm.zip.service"/>
+		
+		<package name="egovframework.let.cmm.use.service"/>
+		 
+		<package name="egovframework.let.sym.cnt.service"/>
+		<package name="egovframework.let.sym.mnu.service"/>
+		<package name="egovframework.let.sym.rnt.service"/>
+		
+		
+		<package name="egovframework.let.sym.did.service"/>
+		<package name="egovframework.let.sym.grp.service"/>
+		<package name="egovframework.let.sym.sch.service"/>
+		
+		<package name="egovframework.let.sts.xml.service"/>
+		<package name="egovframework.let.uat.uia.service"/>
+		<package name="egovframework.let.sts.snd.service"/>
+		
+		<package name="egovframework.let.sts.cnt.service"/>
+		<package name="egovframework.let.uat.uia.service"/>
+		
+		<package name="egovframework.com.cmm"/>
+		<package name="egovframework.let.sym.log.clg"/>
+		
+		<package name="egovframework.let.sts.pic.service"/>
+		
+		<package name="egovframework.let.sts.brd.service"/>
+		
+		<package name="egovframework.let.utl.fcc.service"/>
+		
+		<package name="egovframework.let.sym.dbd.service"/>
+		
+		
+	</typeAliases>
+	
+    <typeHandlers>       
+       <typeHandler handler="egovframework.let.utl.fcc.service.OracleUsTypeHandler" javaType="java.lang.String"/>  
+    </typeHandlers>
+	
+	<!-- Mapper 정의 -->
+	<mappers>
+		<!-- 전자정부 프레임워크 공통 컴포넌트 -->
+		<mapper resource="egovframework/sqlmap/let/sym/ccm/cca/EgovCmmnCodeManageMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sym/ccm/ccc/EgovCmmnClCodeManageMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sym/ccm/cde/EgovCmmnDetailCodeManageMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sym/ccm/zip/EgovRdnmadZip.xml"/>
+		
+		<!--  사용자 정의 컴포넌트 -->
+		
+		<mapper resource="egovframework/sqlmap/let/cmm/use/GroupManagerMapper.xml" /> 		
+		<mapper resource="egovframework/sqlmap/let/sym/cnt/centerInfoManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sym/cnt/centerInfoAnniversaryManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sym/mnu/MenuInfoManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sym/mnu/TMenuInfoManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sym/rnt/RoleInfoManagerMapper.xml"/>		
+		<mapper resource="egovframework/sqlmap/let/sym/rnt/AuthorInfoManagerMapper.xml"/>		
+		<mapper resource="egovframework/sqlmap/let/sym/did/DidInfoManagerMapper.xml"/>
+		
+		<mapper resource="egovframework/sqlmap/let/sym/grp/GroupDidInfoManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sym/grp/GroupManagerMapper.xml"/>
+		
+		<mapper resource="egovframework/sqlmap/let/sym/dbo/DashBoardManagerMapper.xml"/>
+		
+		<mapper resource="egovframework/sqlmap/let/sts/xml/XmlInfoManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/snd/SendMsgInfoManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/pic/DidMoniterPicManagerMapper.xml"/>
+		
+		
+		<!--  콘텐츠 연동 -->
+		<mapper resource="egovframework/sqlmap/let/sts/cnt/ContentInfoManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/cnt/ContentMutiInfoManagerMapper.xml"/>		
+		<mapper resource="egovframework/sqlmap/let/sts/cnt/ContentFileManagerMapper.xml"/>		
+		<mapper resource="egovframework/sqlmap/let/sts/cnt/ContentDetailManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/cnt/ContentDetailFileInfoManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/cnt/ContentMessageInfoManagerMapper.xml"/>
+		
+		
+			
+		
+		<mapper resource="egovframework/sqlmap/let/sym/sch/ScheduleInfoManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sym/sch/ContentSendHistoryInfoManagerMapper.xml"/>
+		
+		
+		<mapper resource="egovframework/sqlmap/let/uat/uia/EgovLoginUsrMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/uat/uia/EgovUserManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sym/log/clg/LoginLogManagerMapper.xml"/>
+		
+		
+		
+		<!--  음원방송 -->
+		<mapper resource="egovframework/sqlmap/let/sts/brd/BrodContentInfoManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/brd/BrodContentDetailManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/brd/BrodAnniversaryManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/brd/BrodOrganizationManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/brd/BrodScheduleInfoManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/brd/BrodContentDetailTimeManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/brd/BasciBrodManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/brd/BasciBrodFileManagerMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/brd/BasicBrodScheduleManageMapper.xml"/>
+		
+		
+		
+		
+		<!--  기초 코드 -->
+		<mapper resource="egovframework/sqlmap/let/utl/UniTableManagerMapper.xml"/>
+		
+						
+	</mappers>
+</configuration>

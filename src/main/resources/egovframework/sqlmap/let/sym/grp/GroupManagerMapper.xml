@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.GroupInfoManagerMapper">	
+    <select id="selectGroupInfoManageListByPagination"  resultType="GroupInfoVO">	
+		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		    select  A.GROUP_CODE as "groupCode", 
+		              A.GROUP_NM as "groupNm", 
+		              A.GROUP_USEYN as "groupUseYn"
+            from TB_GROUP a     		              
+		    WHERE 1=1		        
+		        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'GROUP_ID'">
+								and a.GROUP_CODE LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and a.GROUP_NM LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>		        		     
+		        ORDER BY a.GROUP_NM  ASC
+	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
+     </select>
+    <select id="selectGroupInfoManageCombo" resultType="GroupInfoVO">
+       select  GROUP_CODE as groupCode, GROUP_NM as groupNm
+       from TB_GROUP
+       where GROUP_USEYN = 'Y'
+       <if test="searchKeyword != ''">
+	   		AND GROUP_NM LIKE '%'|| #{searchKeyword} || '%'
+       </if>
+       order by  GROUP_CODE  asc
+    </select>
+    <select id="selectGroupInfoManageDetail"  resultType="GroupInfo">
+           SELECT  GROUP_CODE as groupCode , GROUP_NM as groupNm, GROUP_USEYN as groupUseYN
+		    FROM TB_GROUP
+		    WHERE GROUP_CODE = #{groupCode}		  
+    </select>  
+     <select id="selectGroupIDInfoManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) FROM TB_GROUP a
+       WHERE 1=1  and    GROUP_CODE = #{groupCode}	           
+    </select>
+    <select id="selectGroupInfoManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) FROM TB_GROUP a
+       WHERE 1=1       
+               <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'GROUP_ID'">
+								and a.GROUP_CODE LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and a.GROUP_NM LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>		  
+    </select>
+     <insert id="insertGroupInfoManage" >        
+             INSERT INTO TB_GROUP (GROUP_CODE, GROUP_NM, GROUP_USEYN)
+             VALUES ( #{groupCode}   , #{groupNm}, 'Y')                          
+     </insert>
+     <update id="updateGroupInfoManage" >
+       UPDATE  TB_GROUP SET GROUP_NM = #{groupNm}                             
+      WHERE GROUP_CODE = #{groupCode}           
+     </update>
+     <delete id="deleteGroupInfoManage">
+       DELETE FROM TB_GROUP
+       WHERE GROUP_CODE = #{groupCode}
+     </delete>
+</mapper>

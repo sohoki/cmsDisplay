@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.ContentDetailManagerMapper">
+
+
+  <select id="selectContentDetail" resultType="ContentDetailInfo">
+     select DETAIL_SEQ as detailSeq, CON_SEQ conSeq, REG_DATE regDate, CON_REMARK conRemark,DETAIL_ORDER detailOrder, 
+              CON_TYPE  conType, IMAGE_SLIDTYPE imageSlidtype, TIME_INTERVAL timeInterval 
+     from TB_CONDETAIL
+     where DETAIL_SEQ = #{detailSeq}
+   </select>
+   
+   
+   <select id="selectContentDetailDidPage" resultType="ContentDetailInfo">
+	   SELECT      a.HIS_SEQ  hisSeq, b.SCH_CODE  schCode,
+	               d.CON_SEQ  conSeq, d.CON_FILE conFile  
+	   FROM TB_CONTENTSENDHISTORY a, TB_SCHEDULE b,
+	          TB_DIDINFO c ,  TB_CONTENTMUTIL d 
+	  WHERE a.SCH_CODE = b.SCH_CODE AND a.DID_ID = c.DID_ID
+	            AND d.CON_SEQ = b.CONTENT_CODE
+	            AND TO_CHAR(SYSDATE, 'yyyyMMdd') >= b.SCH_STARTDAY AND b.SCH_ENDDAY >= TO_CHAR(SYSDATE, 'yyyyMMdd') AND a.CON_PAGEUPDATECHECK = 'N'
+	            and c.DID_ID = #{didId}   and  B.SCH_USEYN = 'Y'
+	            AND b.SCH_CODE = #{schCode}      
+   </select>
+  <select id="selectContentDetailLst" resultType="ContentDetailInfo">
+     select DETAIL_SEQ as detailSeq, CON_SEQ conSeq, REG_DATE regDate, CON_REMARK conRemark,DETAIL_ORDER detailOrder, 
+              CON_TYPE  conType, IMAGE_SLIDTYPE imageSlidtype, TIME_INTERVAL timeInterval 
+     from TB_CONDETAIL
+     where CON_SEQ = #{conSeq} 
+     order by DETAIL_ORDER asc
+   </select>   
+   
+   <select id="selectMaxDetail" resultType="java.lang.Integer">
+      select max(DETAIL_SEQ)
+      from TB_CONDETAIL   
+   </select>
+   
+   <select id="selectConDetailCnt"  resultType="java.lang.Integer">
+   	  select  NVL(count(DETAIL_SEQ), 0)
+     from TB_CONDETAIL
+     where CON_SEQ = #{conSeq} 
+   </select>
+   
+   <select id="selectConDetailCombo" resultType="ContentDetailInfo">
+   	  select DETAIL_SEQ  detailSeq ,    DETAIL_ORDER detailOrder
+   	  from TB_CONDETAIL
+     where CON_SEQ = #{conSeq}   	
+   	</select>   
+   <select id="selectPageSeqCheckPage01Cnt" resultType="java.lang.Integer">
+     select NVL(count(DETAIL_SEQ), 0)
+     from TB_CONDETAIL
+     where CON_SEQ = #{conSeq} and DETAIL_ORDER = '1'
+   </select>
+   <select id="selectPageSeqCheckPage02Cnt" resultType="java.lang.Integer">
+     select NVL(count(DETAIL_SEQ), 0)
+     from TB_CONDETAIL
+     where CON_SEQ = #{conSeq} and DETAIL_ORDER = '2'
+   </select>
+   
+   
+   <select id="selectPageSeqCheckPage01" resultType="java.lang.Integer">
+     select NVL(DETAIL_SEQ, 0)
+     from TB_CONDETAIL
+     where CON_SEQ = #{conSeq} and DETAIL_ORDER = '1'
+   </select>
+   <select id="selectPageSeqCheckPage02" resultType="java.lang.Integer">
+     select NVL(DETAIL_SEQ, 0)
+     from TB_CONDETAIL
+     where CON_SEQ = #{conSeq} and DETAIL_ORDER = '2'
+   </select>
+   
+   <insert id="insertContentDetailManage" >
+        insert into TB_CONDETAIL(DETAIL_SEQ, CON_SEQ, REG_DATE, CON_REMARK,  DETAIL_ORDER, CON_TYPE, TIME_INTERVAL, IMAGE_SLIDTYPE)
+        values ( CONDETAIL_SEQ.NEXTVAL , #{conSeq}, sysdate, #{conRemark ,jdbcType=VARCHAR}, #{detailOrder,jdbcType=VARCHAR}, #{conType,jdbcType=VARCHAR}, #{timeInterval,jdbcType=VARCHAR} ,  #{imageSlidtype,jdbcType=VARCHAR} )
+   </insert>
+   <update id="updateContentDetailManage">
+          update TB_CONDETAIL set CON_SEQ =  #{conSeq}, 
+                                                   REG_DATE =  sysdate,
+                                                   CON_REMARK =     #{conRemark,jdbcType=VARCHAR},
+                                                   DETAIL_ORDER =     #{detailOrder,jdbcType=VARCHAR},
+                                                   CON_TYPE =     #{conType,jdbcType=VARCHAR},
+                                                   TIME_INTERVAL =     #{timeInterval,jdbcType=VARCHAR} ,
+                                                   IMAGE_SLIDTYPE =     #{imageSlidtype,jdbcType=VARCHAR} 
+         where DETAIL_SEQ = #{detailSeq}
+   </update>
+   
+   <update id="updateContentDetailTimeManage">
+       UPDATE TB_CONDETAIL SET time_interval = 
+            (SELECT TRUNC(sum(NVL(time_interval,0)),0) FROM TB_CONTENTFILEINFO WHERE detail_seq = #{detailSeq} )
+       WHERE detail_seq = #{detailSeq}
+    </update>
+   <delete id="deleteContentDetailManage">
+        DELETE FROM TB_CONDETAIL where DETAIL_SEQ = #{detailSeq}   
+   </delete>
+   
+   <delete id="deleteContentDetailConSeq">
+        DELETE FROM TB_CONDETAIL where CON_SEQ = #{conSeq}   
+   </delete>
+   
+
+   
+
+</mapper>

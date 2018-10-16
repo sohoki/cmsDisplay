@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.BasicBrodFileManagerMapper">
+   <select id="selectBasicBrodFileLst" resultType="BasciBrodFileInfoVO">
+     SELECT 
+     	a.BASIC_SEQ, 
+     	a.BASIC_CODE, 
+     	a.ATCH_FILE_ID, 
+     	a.USEYN, 
+     	a.BASIC_ORDER,
+        b.ORIGNL_FILE_NM, 
+        b.STRE_FILE_NM, 
+        substr(b.FILE_STRE_COURS,INSTR(b.FILE_STRE_COURS,'/',-2)) as fileStreCours
+     FROM TB_BRODBASICFILE a, LETTNFILEDETAIL b
+     WHERE a.ATCH_FILE_ID = b.ATCH_FILE_ID
+           AND  a.BASIC_CODE = #{basicCode} 
+     ORDER BY   a.BASIC_ORDER ASC     
+   </select>
+   
+   
+   <insert id="insertBasciBrodFile">
+   	    INSERT INTO TB_BRODBASICFILE(BASIC_SEQ, BASIC_CODE, ATCH_FILE_ID, USEYN, BASIC_ORDER,
+                                     FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID)
+   	    values (BASICBRODFILE_SEQ.NEXTVAL , #{basicCode}, #{atchFileId}, 'Y',#{basicOrder}  
+   	            ,sysdate, #{frstRegisterId, jdbcType=VARCHAR}, sysdate, #{frstRegisterId, jdbcType=VARCHAR})          
+   </insert>
+   <insert id="insertBasciBrodFileCopy">
+      INSERT INTO TB_BRODBASICFILE(BASIC_SEQ, BASIC_CODE, ATCH_FILE_ID, USEYN, BASIC_ORDER,
+                                   FRST_REGIST_PNTTM,  FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID)
+      select   BASICBRODFILE_SEQ.NEXTVAL , #{basicCode},  ATCH_FILE_ID , USEYN, BASIC_ORDER,
+               sysdate, #{frstRegisterId, jdbcType=VARCHAR}, sysdate, #{frstRegisterId, jdbcType=VARCHAR}
+      from TB_BRODBASICFILE where   BASIC_CODE =#{basicCodeCp}                               
+   </insert>   
+   <delete id="deleteBasciBrodFile">
+        DELETE FROM TB_BRODBASICFILE where BASIC_SEQ = #{basicSeq}   
+   </delete>
+   <delete id="deleteBasciBrodBasicCode">
+        DELETE FROM TB_BRODBASICFILE where BASIC_CODE = #{basicCode}
+   </delete>
+
+</mapper>

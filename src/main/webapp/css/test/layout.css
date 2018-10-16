@@ -1,0 +1,64 @@
+@import url(reset.css);
+
+#header{ 
+	width: 100%;
+    position: fixed;
+    background-color: #ffd800;
+    height: 68px;
+    z-index: 50;
+    top:0;
+}
+.log{ height: 20px;	background: #d8d8d8;}
+.conIn{
+	width: 960px;
+	margin:0 auto;
+	position: relative;
+}
+.log a { 
+	float: right;
+	line-height: 1.6em; 
+	text-decoration: none; 
+	color:#4a4a4a; 
+}
+#header .topmenu{ padding-top: 18px;}
+.topmenu h1{ display: inline-block;	}
+.topmenu .gnb{ position: absolute; left:320px; top: 8px; }
+.topmenu .gnb>li {
+	display: inline-block;
+	vertical-align: top;
+	position: relative;
+	padding:10px 15px;
+}
+.topmenu li a { 
+	font-size: 14px;
+	font-weight: bold;
+	color: #363636;
+	text-decoration: none;
+	letter-spacing:-1px;
+	margin: 0 20px;
+	line-height: 3;
+}
+.topmenu li a:hover {
+	color: #fff;
+}
+/* @group subnav */
+#nav ul { position: absolute; top:55px; z-index: 99999;left:-20px; display: none; margin: 0; padding: 0; list-style: none; background-color: #fff; border-bottom: 3px solid #5f584b;  border-top: 3px solid #5f584b;}  
+#nav ul li { width:160px; text-align: left; }
+#nav ul li:hover { border-left:0px solid transparent; border-right: 0px solid transparent;background:#eee }
+.topmenu li ul li a {font-size: 14px}
+#nav ul a { display: block; height: 20px; line-height: 20px; padding: 8px 5px; color: #666; border-bottom: 1px solid transparent; text-transform:  uppercase; color: #797979; font-weight: normal; }
+#nav ul a:hover { text-decoration: none; border-right-color: transparent; border-left-color: transparent; background: transparent; color: #4e4e4e; }
+
+* html #nav ul { margin: 0 0 0 -2px; }
+#container{
+	position: relative;
+	top:130px;
+	width: 960px;
+	margin:0 auto;
+	padding-bottom: 30px;
+	box-sizing: border-box;
+}
+#footer { position: fixed; bottom: 0; width: 100%; height:40px; border-top:1px solid #cbcbcb;  background: #fff; padding-top: 20px; margin-top: 130px;}
+#footer span {float: left}
+#footer  address { float: left; margin-left: 50px;color: #767676;  line-height: 2em;}
+#footer  address span { padding: 0 15px; }

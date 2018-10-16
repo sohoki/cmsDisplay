@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.SchedulenfoManagerMapper">	
+    <select id="selectScheduleInfoManageListByPagination"  resultType="ScheduleInfoVO">	
+		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		    SELECT
+					     A.SCH_CODE as "schCode", 
+			             A.SCH_NAME  as "schName",			             
+			             FN_DAYCONVERT(A.SCH_STARTDAY)  as "schStartDay",
+			             FN_DAYCONVERT(A.SCH_ENDDAY)  as "schEndDay",			             
+			             A.GROUP_CODE  as "groupCode",
+			             B.GROUP_NM  as "groupNm",
+			             A.CONTENT_CODE  as "contentCode",			             
+			              EMARTCMS.fn_contentNm(A.CONTENT_CODE) as "conNm",
+			             A.SCH_EMERGUBUN  as "schEmerGubun",
+			             A.SCH_USEYN  as "schUseYn"
+		    FROM    TB_SCHEDULE a, TB_GROUP b
+		    WHERE 1=1 and A.GROUP_CODE = b.GROUP_CODE			                      
+		        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'schName'">
+								and a.SCH_NAME LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and a.SCH_CODE LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>		        		     
+		        ORDER BY a.FRST_REGIST_PNTTM  DESC
+	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
+     </select>
+     <select id="selectScheduleMaxInfo" resultType="java.lang.String">
+        SELECT SCH_CODE AS schCode  FROM TB_SCHEDULE WHERE ROWNUM = 1 ORDER BY SCH_CODE desc      
+     </select>
+    <select id="selectScheduleInfoManageCombo"    resultType="ScheduleInfo">
+       select  SCH_CODE as "schCode", SCH_NAME as "schName"
+       from TB_SCHEDULE
+       where SCH_USEYN = 'Y'
+       order by  SCH_NAME  asc
+    </select>
+    <select id="selectScheduleInfoManageDetail"  resultType="ScheduleInfoVO">
+           SELECT SCH_CODE as schCode, SCH_NAME as schName, SCH_STARTDAY as schStartDay, SCH_ENDDAY as schEndDay, 
+                      GROUP_CODE as groupCode, CONTENT_CODE as contentCode, 
+                       SCH_EMERGUBUN as schEmerGubun, SCH_USEYN as schUseYn                       
+		    FROM TB_SCHEDULE
+		    WHERE SCH_CODE = #{schCode}		  
+    </select>
+    <select id="selectScheduleInfoManageDetailView"  resultType="ScheduleInfoVO">
+          SELECT a.SCH_CODE as schCode, a.SCH_NAME as schName, 
+                      FN_DAYCONVERT(a.SCH_STARTDAY) as schStartDay, FN_DAYCONVERT(a.SCH_ENDDAY) as schEndDay, 
+                      a.GROUP_CODE as groupCode, a.CONTENT_CODE as contentCode, 
+                      a.SCH_EMERGUBUN as schEmerGubun, a.SCH_USEYN as schUseYn,
+                      EMARTCMS.fn_contentNm(a.CONTENT_CODE) as "conNm",
+                       ( select b.GROUP_NM from TB_GROUP b where a.GROUP_CODE = b.GROUP_CODE) as groupNm                             
+		    FROM TB_SCHEDULE a
+            WHERE 1=1            
+		    and SCH_CODE = #{schCode}		  
+    </select>
+    <select id="selectScheduleInfoManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) 
+         FROM    TB_SCHEDULE a, TB_GROUP b, TB_CONTENTMUTIL c
+		    WHERE 1=1 and A.GROUP_CODE = b.GROUP_CODE	
+		                and a.CONTENT_CODE = c.CON_SEQ    
+               <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'schName'">
+								and a.SCH_NAME LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and a.SCH_CODE LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>			  
+    </select>
+    <select id="selectScheduleConSeqList" resultType="ScheduleInfoVO">
+     <![CDATA[
+     SELECT sch_code, group_code FROM TB_SCHEDULE
+     WHERE sch_endDay >= TO_CHAR(SYSDATE, 'yyyyMMdd') AND content_code = #{contentCode} 
+     ]]>
+    </select>
+    <insert id="insertScheduleInfoManage" >
+        
+             INSERT INTO TB_SCHEDULE (SCH_CODE, SCH_NAME, SCH_STARTDAY, SCH_ENDDAY, GROUP_CODE, 
+                                                     CONTENT_CODE, SCH_EMERGUBUN, SCH_USEYN,
+                                                     FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID
+                                                      )
+             VALUES ( EMARTCMS.fn_SCHCODE(), #{schName}, #{schStartDay},  #{schEndDay} , #{groupCode,jdbcType=VARCHAR},   
+              #{contentCode ,jdbcType=VARCHAR }, #{schEmerGubun ,jdbcType=CHAR}, #{schUseYn ,jdbcType=CHAR},
+             sysdate, '',sysdate ,'' 
+             )                          
+     </insert>
+     <update id="updateScheduleInfoManage" >
+       UPDATE  TB_SCHEDULE SET SCH_NAME = #{schName} ,
+                                SCH_STARTDAY = #{schStartDay} ,
+                                SCH_ENDDAY = #{schEndDay} ,
+                                GROUP_CODE = #{groupCode} ,
+                                CONTENT_CODE = #{contentCode  ,jdbcType=VARCHAR},
+                                SCH_EMERGUBUN = #{schEmerGubun  ,jdbcType=CHAR},
+                                SCH_USEYN = #{schUseYn},                                
+                                LAST_UPDT_PNTTM = sysdate,
+                                LAST_UPDUSR_ID = ''                                
+       WHERE SCH_CODE = #{schCode}          
+     </update>
+     <delete id="deleteScheduleInfoManage">
+       DELETE FROM TB_SCHEDULE
+       WHERE SCH_CODE = #{schCode}
+     </delete>
+</mapper>

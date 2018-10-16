@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.ContentDetailFileInfoManagerMapper">
+	   
+   
+  <select id="selectContentDetailFileLst" resultType="ContentDetailFileInfoVO">
+     select a.FILE_SEQ  as fileSeq, a.ATCH_FILE_ID atchFileId , a.TIME_INTERVAL timeInterval, a.FILE_ORDER fileOrder,         
+              b.PLAY_TIME  as playTime , b.FILE_WIDTH fileWidth , b.FILE_HEIGHT fileHeight, b.ORIGNL_FILE_NM orignlFileNm , b.STRE_FILE_NM streFileNm
+              , CASE 
+                      WHEN  b.FILE_EXTSN IN ('mp4', 'avi', 'mpeg') THEN 'MEDIA'
+                      WHEN  b.FILE_EXTSN IN ('jpg', 'jpeg', 'gif', 'png', 'bmp') THEN 'IMAGE'
+                   END AS mediaType , 
+                   b.FILE_THUMNAIL  fileThumnail,
+                   substr(b.FILE_STRE_COURS, INSTR(b.FILE_STRE_COURS, '/',-1,3)) AS fileStreCours
+     from TB_CONTENTFILEINFO a , LETTNFILEDETAIL b 
+     where a.CON_SEQ = #{conSeq} and a.DETAIL_SEQ = #{detailSeq}
+               and a.ATCH_FILE_ID = b.ATCH_FILE_ID                
+     order by to_number(a.FILE_ORDER) asc
+   </select>   
+   
+   <select id="selectContentDetailFileInfo" resultType="ContentDetailFileInfoVO">
+   	     select a.FILE_SEQ  as fileSeq, a.ATCH_FILE_ID atchFileId , a.TIME_INTERVAL timeInterval, a.FILE_ORDER fileOrder,         
+                b.PLAY_TIME  as playTime , b.FILE_WIDTH fileWidth , b.FILE_HEIGHT fileHeight, b.ORIGNL_FILE_NM orignlFileNm , b.STRE_FILE_NM streFileNm
+                , CASE 
+                      WHEN  b.FILE_EXTSN IN ('mp4', 'avi', 'mpeg') THEN 'MEDIA'
+                      WHEN  b.FILE_EXTSN IN ('jpg', 'jpeg', 'gif', 'png', 'bmp') THEN 'IMAGE'
+                END AS mediaType ,
+                b.FILE_EXTSN fileExtsn,
+                a.FILE_ORDER  fileOrder,
+                b.FILE_THUMNAIL  fileThumnail,
+                substr(b.FILE_STRE_COURS, INSTR(b.FILE_STRE_COURS, '/',-1,3)) AS fileStreCours
+     from TB_CONTENTFILEINFO a , LETTNFILEDETAIL b
+     where a.ATCH_FILE_ID = #{atchFileId} and 
+               a.ATCH_FILE_ID = b.ATCH_FILE_ID and rownum = 1 
+   </select>
+
+   <select id="selectContentDetailFileInfoFileSeq" resultType="ContentDetailFileInfoVO">
+   	     select a.FILE_SEQ  as fileSeq, a.ATCH_FILE_ID atchFileId , a.TIME_INTERVAL timeInterval, a.FILE_ORDER fileOrder,         
+              CEIL(b.PLAY_TIME)  as playTime , b.FILE_WIDTH fileWidth , b.FILE_HEIGHT fileHeight, b.ORIGNL_FILE_NM orignlFileNm , b.STRE_FILE_NM streFileNm
+              , CASE 
+                      WHEN  b.FILE_EXTSN IN ('mp4', 'avi', 'mpeg') THEN 'MEDIA'
+                      WHEN  b.FILE_EXTSN IN ('jpg', 'jpeg', 'gif', 'png', 'bmp') THEN 'IMAGE'
+                   END AS mediaType ,
+                   b.FILE_EXTSN fileExtsn,
+                   a.FILE_ORDER  fileOrder,
+                   b.FILE_THUMNAIL  fileThumnail,
+                   substr(b.FILE_STRE_COURS, INSTR(b.FILE_STRE_COURS, '/',-1,3)) as fileStreCours
+     from TB_CONTENTFILEINFO a , LETTNFILEDETAIL b
+     where a.FILE_SEQ = #{fileSeq} and 
+               a.ATCH_FILE_ID = b.ATCH_FILE_ID 
+   </select>   
+   
+   <select id="selectPageSeqCheckFilePageCnt" resultType="java.lang.Integer">
+     select NVL(count(FILE_SEQ), 0)
+     from TB_CONTENTFILEINFO
+     where CON_SEQ = #{conSeq} and DETAIL_SEQ = #{detailSeq}
+   </select>
+   
+   <select id="selectMaxfileSeq" resultType="java.lang.Integer">
+     select NVL(MAX(FILE_SEQ), 0)
+     from TB_CONTENTFILEINFO
+     where CON_SEQ = #{conSeq} and DETAIL_SEQ = #{detailSeq}
+   </select>
+   <select id="selectTimeIntevalNullCheck" resultType="java.lang.Integer">
+     SELECT NVL(COUNT(*),0) 
+     FROM TB_CONTENTFILEINFO a, TB_CONDETAIL b
+     where a.CON_SEQ = #{conSeq} AND a.CON_SEQ = b.CON_SEQ and a.time_interval IS null   
+   </select>
+   
+   <select id="selectDetailContentSumTime" resultType="java.lang.String">
+   	  SELECT sum(NVL(time_interval,0)) FROM TB_CONTENTFILEINFO WHERE DETAIL_SEQ = #{detailSeq}
+   	</select>
+   
+   <insert id="insertContentDetailFileManage">
+   	    INSERT INTO TB_CONTENTFILEINFO (FILE_SEQ, DETAIL_SEQ, CON_SEQ, ATCH_FILE_ID, TIME_INTERVAL, FILE_ORDER, REG_DATE)
+   	    values (CONTENTFILE_SEQ.NEXTVAL, #{detailSeq}, #{conSeq}, #{atchFileId}, #{timeInterval,jdbcType=VARCHAR} , #{fileOrder,jdbcType=VARCHAR}, sysdate)          
+   </insert>
+   <update id="updateContentDetailFileManage">
+          update TB_CONTENTFILEINFO set CON_SEQ =  #{conSeq}, 
+                                                              REG_DATE =  sysdate,
+                                                              DETAIL_SEQ =     #{detailSeq},
+                                                              ATCH_FILE_ID =     #{atchFileId},                                                              
+                                                              TIME_INTERVAL =     #{timeInterval,jdbcType=VARCHAR} ,
+                                                              FILE_ORDER =     #{fileOrder} 
+         where FILE_SEQ = #{fileSeq}
+   </update>
+   
+   <update id="updateContentDetailFileTimeIntervalManage">
+   	    update TB_CONTENTFILEINFO set  TIME_INTERVAL =     #{timeInterval }
+   	    where FILE_SEQ = #{fileSeq}
+   </update>
+   <update id="updateContentOrderDetailFileManage">
+   	          update TB_CONTENTFILEINFO set FILE_ORDER =  #{fileOrder}
+   	          where FILE_SEQ = #{fileSeq}     
+   </update>
+   <delete id="deleteContentDetailFileManage">
+        DELETE FROM TB_CONTENTFILEINFO where FILE_SEQ = #{FILE_SEQ}   
+   </delete>
+   
+   
+   
+
+</mapper>

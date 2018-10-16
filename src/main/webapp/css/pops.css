@@ -1,0 +1,70 @@
+.clear { clear: both; }
+.contents {
+	width: 100%;	
+	height: auto;
+	margin: 0 auto;
+}
+.header {
+	width: 100%;
+	background: #f3f3f3;
+	height: 50px;
+	border-bottom: 1px solid #c4c4c4;
+}
+.header h2{
+	font-weight: bold;
+	font-size: 18px;
+	padding-top: 15px;
+	padding-left: 40px;
+}
+
+.textT{ 
+	position: relative;
+	margin: 0 auto;
+	padding: 20px 40px
+ }
+.textT table { width: 100%; }
+div table {border-collapse: collapse;width: 100%;text-align: center;border-top: 3px solid #ffc547;margin-top: 10px;}
+div table th{background: #ececec;color: #484848;font-weight: bold;/* border-bottom: 1px dashed #dfdfdf; */font-size: 14px;}
+div table td { padding:10px}
+td, th { padding: 10px 0; border-top: 1px dashed #dfdfdf;  border-bottom: 1px dashed #dfdfdf; }
+tbody.text_left td{ text-align: left; }
+.didDe th{width: 15%}
+/*button*/
+.yellowBtn { 
+	background-color:#f7a900; 
+	border-radius:8px;
+	border:1px solid #d47300;
+	display:inline-block;
+	cursor:pointer;
+	color: #fff;
+	font-size:14px;
+	padding:3px 15px;
+}
+.yellowBtn:hover {
+	background-color:#d47300;
+}
+.grayBtn {
+	background-color:#808080; 
+	border-radius:8px;
+	border:1px solid #5e5e5e;
+	display:inline-block;
+	cursor:pointer;
+	color: #fff;
+	font-size:14px;
+	padding:3px 15px;
+}
+.grayBtn:hover {
+	background-color:#5e5e5e;
+}
+.blueBtn {
+	background-color:#5692dc; 
+	border-radius:8px;
+	border:1px solid #1a5cac;
+	display:inline-block;
+	cursor:pointer;
+	color: #fff;
+	font-size:14px;
+	padding:3px 15px;
+}
+.linkClick { color: red; }
+.footerBox { text-align: right; margin-top: 20px; }

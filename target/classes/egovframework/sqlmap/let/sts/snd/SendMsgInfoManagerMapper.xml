@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.SendMsgInfoManagerMapper">	
+    <select id="selectSendMsgInfoManageListByPagination"  resultType="SendMsgInfoVO">	
+		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+		   select      A.MSG_SEQ as "msgSeq", 			             
+			             A.XML_PROCESS_NAME  as "xmlProcessName",
+			             C.PROCESS_REMARK as "processRemark",			             
+			             A.SEND_RESULT  as "sendResult",
+			             A.SEND_REGDATE  as "sendRegDate",	
+			             B.DID_NM as "didNm",
+                         D.GROUP_NM AS "groupNm"		,
+                         A.DID_PLAYTIME as "didPlayTime" ,
+                         A.DID_MACADDRESS as "didMacAddress",
+                         b.DID_IPADDR as "didIpAddr",
+                         A.ERROR_MESSAGE as "errorMessage"            
+		     FROM   TB_MESSAGEHISTORY a, TB_DIDINFO b, TB_SENDMESSAGETYPR c, 
+                          TB_GROUP d , TB_GROUPDID e
+	         WHERE a.DID_ID =  b.DID_ID and        a.XML_PROCESS_NAME = c.XML_PROCESS_NAME
+                          AND e.DID_ID = a.DID_ID AND d.GROUP_CODE = e.GROUP_CODE	        
+		        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'XML_PROCESS_NAME'">
+								and C.XML_PROCESS_NAME LIKE '%' || #{searchKeyword} || '%'
+							</when>							
+							<otherwise>
+								and A.DID_ID LIKE '%' || #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>
+				<choose>
+				   <when test="author_Code == 'ROLE_ADMIN' and groupCode == 'EMART_00000000000009' ">
+				      and b.DID_MODELTYPE = 'DIDRMODELTYPE03'
+				   </when>
+				   <when test="author_Code == 'ROLE_ANONYMOUS' and parentGroupId == 'EMART_00000000000001' ">
+				      and b.ROLE_CODE in (SELECT GROUP_ID FROM LETTNAUTHORGROUPINFO WHERE parent_group_id = #{groupCode}  )
+				   </when>
+				   <when test="author_Code == 'ROLE_USER_MEMBER' ">
+				      and b.ROLE_CODE = #{groupCode}
+				   </when>
+				</choose>
+				<if test="didId != null ">
+				   and A.DID_ID = #{didId} 
+				</if>		        		     
+				<if test="msgSeq !=  null">
+				   and A.MSG_SEQ = #{msgSeq} 
+				</if>		
+				<if test="xmlProcessName != ''">
+				  and A.XML_PROCESS_NAME = #{xmlProcessName}
+				</if> 	
+				<if test="schStartDay != ''">
+				  and to_char(A.SEND_REGDATE, 'yyyyMMdd') between #{schStartDay} and #{schEndDay}
+				</if> 
+				<if test="centerId != ''">
+				  and b.CENTER_ID = #{centerId}
+				</if> 				
+		        ORDER BY a.MSG_SEQ  DESC
+	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
+     </select>
+      <select id="selectSendMsgInfoManageListTotCnt_S"  resultType="java.lang.Integer">        
+       SELECT NVL(COUNT(*),0) 
+       FROM   TB_MESSAGEHISTORY a, TB_DIDINFO b, TB_SENDMESSAGETYPR c, 
+                    TB_GROUP d , TB_GROUPDID e
+	    WHERE a.DID_ID =  b.DID_ID and        a.XML_PROCESS_NAME = c.XML_PROCESS_NAME
+                          AND e.DID_ID = a.DID_ID AND d.GROUP_CODE = e.GROUP_CODE	        
+		        <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'XML_PROCESS_NAME'">
+								and C.XML_PROCESS_NAME LIKE '%' || #{searchKeyword} || '%'
+							</when>							
+							<otherwise>
+								and A.DID_ID LIKE '%' || #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>
+				<choose>
+				   <when test="author_Code == 'ROLE_ADMIN' and groupCode == 'EMART_00000000000009' ">
+				      and b.DID_MODELTYPE = 'DIDRMODELTYPE03'
+				   </when>
+				   <when test="author_Code == 'ROLE_ANONYMOUS' and parentGroupId == 'EMART_00000000000001' ">
+				      and b.ROLE_CODE in (SELECT GROUP_ID FROM LETTNAUTHORGROUPINFO WHERE parent_group_id = #{groupCode}  )
+				   </when>
+				   <when test="author_Code == 'ROLE_USER_MEMBER' ">
+				      and b.ROLE_CODE = #{groupCode}
+				   </when>
+				</choose>
+				<if test="didId != null ">
+				   and A.DID_ID = #{didId} 
+				</if>		        		     
+				<if test="msgSeq !=  null">
+				   and A.MSG_SEQ = #{msgSeq} 
+				</if>	
+				<if test="xmlProcessName != ''">
+				  and A.XML_PROCESS_NAME = #{xmlProcessName}
+				</if> 	
+				<if test="schStartDay != ''">
+				  and to_char(A.SEND_REGDATE, 'yyyyMMdd') between #{schStartDay} and #{schEndDay}
+				</if> 
+				<if test="centerId != ''">
+				  and b.CENTER_ID = #{centerId}
+				</if> 				
+    </select>
+    <select id="selectDIDScheduleCount" resultType="java.lang.Integer">
+	       select  NVL(COUNT(XX.sch_code),0) from (
+		      SELECT  X.sch_code, X.CON_UPDATECHECK FROM ( 
+		  	     SELECT a.sch_code , a.CON_UPDATECHECK
+			     FROM     TB_CONTENTSENDHISTORY a,       TB_SCHEDULE b , TB_DIDINFO c 
+			     WHERE a.SCH_CODE = b.SCH_CODE AND a.DID_ID = c.DID_ID
+			                 AND TO_CHAR(SYSDATE, 'yyyyMMdd') >= b.SCH_STARTDAY AND b.SCH_ENDDAY >= TO_CHAR(SYSDATE, 'yyyyMMdd') 
+			                 AND  B.SCH_USEYN = 'Y' and  c.DID_ID = #{didId} AND TRIM(c.DID_MAC) = #{didMacAddress}     
+			                 AND a.DID_UPDATECHECK = 'N'  
+			                ORDER BY (
+			                  CASE b.SCH_EMERGUBUN WHEN 'Y' THEN '1'
+			                   ELSE  '2'
+			                 END               
+			              ) ASC , a.HIS_SEQ  DESC     
+		       ) X WHERE ROWNUM = 1 
+		   ) XX WHERE  XX.CON_UPDATECHECK = 'N'    
+    </select>
+    
+    <select id="selectDIDOrderCount" resultType="java.lang.Integer">
+	     SELECT NVL(COUNT(a.MSG_SEQ),0) 
+	     FROM TB_MESSAGEHISTORY a , TB_SENDMESSAGETYPR b
+	     WHERE a.XML_PROCESS_NAME = b.XML_PROCESS_NAME
+            AND b.WORK_GUBUN = 'WORKGUBUN02'
+            AND a.SEND_RESULT = 'N'
+            AND a.DID_ID = #{didId} AND TRIM(a.DID_MACADDRESS) = #{didMacAddress}         
+    </select>
+    
+    <select id="selectDIDMessageCount" resultType="java.lang.Integer">
+	    SELECT NVL(COUNT(*),0) 
+	     FROM TB_DIDSENDMESSAGE a , TB_DIDINFO b
+	     WHERE  a.SEND_DIDCHECKDATE IS NULL
+            AND a.DID_ID = b.did_id 
+            AND a.DID_ID = #{didId} AND    b.DID_MAC= #{didMacAddress}
+    </select>
+    
+    <select id="selectDIDOrderLst" resultType="SendMsgInfoVO">
+          SELECT  a.MSG_SEQ as msgSeq, a.XML_PROCESS_NAME as xmlProcessName, 
+                       a.SEND_REGDATE as sendRegdate , a.SEND_RESULT AS sendResult   
+	     FROM TB_MESSAGEHISTORY a , TB_SENDMESSAGETYPR b
+	     WHERE a.XML_PROCESS_NAME = b.XML_PROCESS_NAME
+            AND b.WORK_GUBUN = 'WORKGUBUN02'
+            AND a.SEND_RESULT = 'N'
+            AND a.DID_ID = #{didId} AND TRIM(a.DID_MACADDRESS) = #{didMacAddress}   
+            ORDER BY MSG_SEQ ASC       
+    </select>
+    
+    <select id="selectMaxSeq" resultType="java.lang.Integer">
+       SELECT  MSG_SEQ   FROM  TB_MESSAGEHISTORY   WHERE  rownum = 1  order by  MSG_SEQ desc
+    </select>
+    <select id="selectSendDidIDCheckCnt" resultType="java.lang.Integer">
+        SELECT  NVL(count(*),0)   FROM  TB_MESSAGEHISTORY   WHERE  SEND_DIDID = #{sendDidId}
+    </select>
+    
+    <select id="selectSendDidIDMsgSeq" resultType="java.lang.String">
+        SELECT   MSG_SEQ  FROM  TB_MESSAGEHISTORY   WHERE  SEND_DIDID = #{sendDidId} and rownum = 1
+    </select>
+    
+    
+     <insert id="insertSendMsgInfoManage" >        
+             INSERT INTO TB_MESSAGEHISTORY (MSG_SEQ, DID_ID, XML_PROCESS_NAME, SEND_RESULT, SEND_REGDATE, DID_MACADDRESS, ERROR_MESSAGE)
+             VALUES (MSG_SEQ.NEXTVAL, #{didId},  #{xmlProcessName} , #{sendResult},    sysdate , #{didMacAddress}, #{errorMessage, jdbcType=VARCHAR} )                          
+     </insert>
+     <insert id="insertSendMsgInfoManageState" >        
+             INSERT INTO TB_MESSAGEHISTORY (MSG_SEQ, DID_ID, XML_PROCESS_NAME, SEND_RESULT, SEND_REGDATE, DID_MACADDRESS, DID_PLAYTIME)
+             VALUES (MSG_SEQ.NEXTVAL, #{didId},  'SP_DIDSTATE' , 'OK',    sysdate , #{didMacAddress} , sysdate)                          
+     </insert>
+     <insert id="insertSendMessageInsertManage">
+            INSERT INTO TB_MESSAGEHISTORY (MSG_SEQ, DID_ID, XML_PROCESS_NAME, SEND_RESULT, SEND_REGDATE, DID_MACADDRESS, SEND_DIDID)
+            select MSG_SEQ.NEXTVAL , #{didId}, 'SP_MESSAGEUPDATE', 'N', sysdate, #{didMacAddress}, a.SEND_DIDID
+            from TB_DIDSENDMESSAGE a where SEND_DIDID = #{sendDidId}
+     </insert>
+     <update id="updateSendMsgInfoManage">
+            UPDATE TB_MESSAGEHISTORY set SEND_RESULT = #{sendResult}
+                                                                 , DID_MACADDRESS = #{didMacAddress}
+                                                                 , DID_PLAYTIME = sysdate
+                                                                 , ERROR_MESSAGE = #{errorMessage}
+            where      MSG_SEQ = #{msgSeq}                                                                    
+     </update>
+</mapper>     

@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.BrodScheduleManagerMapper">
+	   
+   
+
+   <select id="selectBrodRigthLst" resultType="BrodScheduleInfoVO">
+   
+      SELECT a.center_id , a.center_nm, a.CENTER_STARTTIME, a.CENTER_ENDTIME,
+       CASE WHEN ((SELECT COUNT(b.BROD_CODE) FROM  TB_BRODSCHEDULE b
+                   WHERE b.BASIC_BROD_CODE = #{brodCode} AND a.CENTER_ID = b.center_id) > 0) THEN 'Y'
+        ELSE  'N'
+       END AS BROD_CODE
+      FROM TB_CENTERINFO a
+      where  CENTER_USEYN = 'Y' and CENTER_GUBUN = 'BRANCH01' 
+      <if test="searchKeyword != ''">
+	        and b.center_nm like '%' || #{searchKeyword} || '%'
+	  </if>
+      order by center_nm asc 
+   </select>
+   
+   <select id="selectBrodScheduleUpdateChanage" resultType="BrodScheduleInfoVO">
+      select BROD_CODE,  CENTER_ID, BROD_DAY, CREATE_CHECK, SCHEDULE_SEQ from TB_BRODCENTERSCH
+      where BROD_CODE = #{brodCode} 
+   </select>
+   
+   <select id="selectBrodScheduleCreateCheckList" resultType="BrodScheduleInfo">
+      select SCHEDULE_SEQ, BROD_CODE, CENTER_ID, BROD_DAY from TB_BRODCENTERSCH where CREATE_CHECK ='N' and CENTER_ID = #{centerId} and BROD_DAY =#{brodDay} 
+   </select>
+   
+   
+   <select id="selectBrodScheduleStatusPageCnt" resultType="java.lang.Integer">
+        select NVL(count(*), 0)
+        FROM TB_BRODSCHEDULE a, TB_BRODCENTERSCH b, TB_CENTERINFO c
+		WHERE a.BROD_CODE = b.BROD_CODE AND b.CENTER_ID = c.CENTER_ID
+		 <if test="searchKeyword != ''">
+				<choose>
+					<when test="searchCondition == 'CENTER_NM'">
+						and A.CENTER_NM LIKE '%' || #{searchKeyword} || '%'
+					</when>							
+					<otherwise>
+					   and A.BROD_NAME LIKE '%' || #{searchKeyword} || '%'
+					</otherwise>
+				</choose>
+		</if>		
+		<if test="createCheck != ''">
+		   and b.CREATE_CHECK = #{createCheck}
+		</if>
+   </select>
+   
+   
+   
+   <select id="selectBrodScheduleStatusLst" resultType="BrodScheduleInfoVO">
+   SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+       SELECT a.BROD_NAME, c.CENTER_NM, b.BROD_DAY as brodDay, b.CENTER_ID, b.BROD_CODE as brodCode, B.SCHEDULE_SEQ,
+		       CASE b.BROD_DAY 
+		         WHEN '20991231' THEN 
+		          c.CENTER_STARTTIME||'/'||c.CENTER_ENDTIME          
+		       ELSE 
+		          ( SELECT d.START_TIME ||'/'||d.END_TIME FROM TB_CENTERANNIVERSARY d WHERE d.CENTER_ID = b.CENTER_ID AND b.BROD_DAY BETWEEN d.CENTER_ANNISTARTDAY AND    d.CENTER_ANNIENDDAY) 
+		       END AS CENTER_STARTTIME,
+		       b.CREATE_CHECK,
+		       CASE b.CREATE_CHECK
+		         WHEN 'N' THEN '00000000'
+		         ELSE  TO_CHAR(b.CREATE_REGDATE,'yyyyMMdd')
+		       END AS CREATE_REGDATE,
+		       b.DID_DOWNCHECK as didDownCheck, b.DID_DOWNLOADDATE as didDownLoadDate 
+		FROM TB_BRODSCHEDULE a, TB_BRODCENTERSCH b, TB_CENTERINFO c
+		WHERE a.BROD_CODE = b.BROD_CODE AND b.CENTER_ID = c.CENTER_ID
+		 <if test="searchKeyword != ''">
+				<choose>
+					<when test="searchCondition == 'CENTER_NM'">
+						and A.CENTER_NM LIKE '%' || #{searchKeyword} || '%'
+					</when>							
+					<otherwise>
+					   and A.BROD_NAME LIKE '%' || #{searchKeyword} || '%'
+					</otherwise>
+				</choose>
+		</if>
+		<if test="createCheck != ''">		
+		   and b.CREATE_CHECK = #{createCheck}
+		</if>
+        ORDER BY b.SCHEDULE_SEQ  DESC
+    ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}      
+   </select>
+   
+   <select id="selectBrodScheduleCnt" resultType="java.lang.Integer">
+      select NVL(count(*), 0)
+      from TB_BRODCENTERSCH 
+      where BROD_CODE = #{brodCode} and CENTER_ID = #{centerId}            
+   </select>
+   
+   <select id="selectBrodScheduleStateCnt" resultType="java.lang.Integer">
+      select NVL(count(*), 0)
+      from TB_BRODCENTERSCH 
+      where BROD_CODE = #{brodCode} and CENTER_ID = #{centerId} and CREATE_CHECK = #{createCheck}           
+   </select>
+   
+   <select id="selectBrodScheduleCenterCnt" resultType="java.lang.Integer">
+      select NVL(count(*), 0)
+      from TB_BRODCENTERSCH 
+      where CENTER_ID = #{centerId}            
+   </select>
+   
+   <select id="selectBrodScheduleAnniScheduleSeqDay" resultType="java.lang.String">   
+     SELECT a.SCHEDULE_SEQ||'/'||#{brodDay}  FROM TB_BRODCENTERSCH a, TB_CENTERANNIVERSARY b
+     WHERE a.CENTER_ID = b.CENTER_ID
+           AND a.CENTER_ID = #{centerId}
+           AND #{brodDay} BETWEEN  b.CENTER_ANNISTARTDAY AND b.CENTER_ANNIENDDAY      
+   </select>
+   <!--  전문 관련 작업 -->
+   
+   <select id="selectBordScheduleCount" resultType="java.lang.Integer">
+        SELECT NVL(count(*), 0)
+		FROM TB_BRODSCHEDULE a, TB_BRODCENTERSCH b, TB_CENTERINFO c, TB_DIDINFO d
+		WHERE a.BROD_CODE = b.BROD_CODE AND b.CENTER_ID = c.CENTER_ID AND 
+		      c.CENTER_ID = d.CENTER_ID AND trim(d.DID_ID) = #{didId} AND trim(d.DID_MAC) = #{didMac}
+              AND b.CREATE_CHECK ='Y' AND b.DID_DOWNCHECK ='N'        
+   </select>
+   <select id="selectBordScheduleCode" resultType="BrodScheduleInfo">
+                SELECT  a.BROD_CODE as brodCode,c.CENTER_STARTTIME as centerStartTime, c.CENTER_ENDTIME as centerEndTime,  
+                substr(e.FILE_STRE_COURS,INSTR(e.FILE_STRE_COURS,'/',-2)) as fileStreCours, e.STRE_FILE_NM as streFileNm  ,
+                c.CENTER_ID as centerId       
+		FROM TB_BRODSCHEDULE a, TB_BRODCENTERSCH b, TB_CENTERINFO c, TB_DIDINFO d, LETTNFILEDETAIL e
+		WHERE a.BROD_CODE = b.BROD_CODE AND b.CENTER_ID = c.CENTER_ID AND c.CENTER_ID = d.CENTER_ID 
+		      AND trim(d.did_id) = #{didId} AND trim(d.DID_MAC) = #{didMac}
+              AND b.CREATE_CHECK ='Y' AND b.DID_DOWNCHECK ='N'   
+              AND a.BASIC_FILE_ID = e.ATCH_FILE_ID  
+   </select>
+   <select id="selectBordScheduleCodeRedown" resultType="BrodScheduleInfo">
+        SELECT  a.BROD_CODE as brodCode,c.CENTER_STARTTIME as centerStartTime, c.CENTER_ENDTIME as centerEndTime,  
+                substr(e.FILE_STRE_COURS,INSTR(e.FILE_STRE_COURS,'/',-2)) as fileStreCours, e.STRE_FILE_NM as streFileNm  ,
+                c.CENTER_ID as centerId       
+		FROM TB_BRODSCHEDULE a, TB_BRODCENTERSCH b, TB_CENTERINFO c, TB_DIDINFO d, LETTNFILEDETAIL e
+		WHERE a.BROD_CODE = b.BROD_CODE AND b.CENTER_ID = c.CENTER_ID AND c.CENTER_ID = d.CENTER_ID 
+		      AND trim(d.did_id) = #{didId} AND trim(d.DID_MAC) = #{didMac}
+              AND b.CREATE_CHECK ='Y'    
+              AND a.BASIC_FILE_ID = e.ATCH_FILE_ID
+              AND ROWNUM = 1
+              ORDER BY B.SCHEDULE_SEQ DESC      
+   </select>
+   
+   <insert id="insertBrodSchedule">
+   	    INSERT INTO TB_BRODCENTERSCH (SCHEDULE_SEQ, BROD_CODE, CENTER_ID, BROD_DAY, CREATE_CHECK, CREATE_REGDATE)
+   	    values (SCHEDULE_SEQ.nextval, #{brodCode}, #{centerId}, #{brodDay}, 'N' , sysdate)          
+   </insert>
+   
+   <update id="updateCenterSchedule">
+      update TB_CENTERINFO set BROD_CODE = #{brodCode}
+      where CENTER_ID = #{centerId}  
+   </update>
+   
+   <update id="updateBrodSchedule">
+          update TB_BRODCENTERSCH set CREATE_CHECK =     #{createCheck},
+                                      CREATE_REGDATE = sysdate
+          where SCHEDULE_SEQ = #{scheduleSeq}
+   </update>
+   
+   <update id="updateBrodScheduleReset">
+          update TB_BRODCENTERSCH set CREATE_CHECK =     #{createCheck},
+                                      CREATE_REGDATE = sysdate
+                                      DID_DOWNCHECK =#{didDownCheck},
+                                      DID_DOWNLOADDATE = sysdate
+          where SCHEDULE_SEQ = #{scheduleSeq}
+   </update>
+   
+   <update id="updateBrodScheduleCenterBrod">
+          update TB_BRODCENTERSCH set CREATE_CHECK =     #{createCheck},
+                                      CREATE_REGDATE = sysdate,
+                                      DID_DOWNCHECK ='N',
+                                      DID_DOWNLOADDATE = null
+          where SCHEDULE_SEQ = #{scheduleSeq}
+   </update>
+   
+   
+   
+   <update id="updateBrodScheduleCenter">
+          update TB_BRODCENTERSCH set CREATE_CHECK =     #{createCheck},
+                                      CREATE_REGDATE = sysdate,
+                                      DID_DOWNCHECK ='N',
+                                      DID_DOWNLOADDATE = null
+          where CENTER_ID = #{centerId} and  BROD_CODE = #{brodCode} 
+   </update>
+   
+   <update id="updateBrodScheduleCenterNotUse">
+          update TB_BRODCENTERSCH set CREATE_CHECK =     Y,
+                                      CREATE_REGDATE = sysdate,
+                                      DID_DOWNCHECK ='N',
+                                      DID_DOWNLOADDATE = null
+          where CENTER_ID = #{centerId} 
+   </update>   
+   
+   <update id="updateBrodDidCenterID">
+          update TB_BRODCENTERSCH set DID_DOWNCHECK =     #{didDownCheck},
+                                      DID_DOWNLOADDATE = sysdate
+          where CENTER_ID = #{centerId} and  BROD_CODE = #{brodCode}
+   </update>
+   
+   
+ 
+   
+   <delete id="deleteBrodScheduleSeq">
+       DELETE FROM TB_BRODCENTERSCH where SCHEDULE_SEQ = #{scheduleSeq} 
+   </delete>
+   <delete id="deleteBrodSchedule">
+       DELETE FROM TB_BRODCENTERSCH where BROD_CODE = #{brodCode} and CENTER_ID = #{centerId}
+   </delete>
+   <delete id="deleteBrodScheduleOther">
+       DELETE FROM TB_BRODCENTERSCH where BROD_CODE != #{brodCode} and CENTER_ID = #{centerId}
+   </delete>
+   <delete id="deleteBrodScheduleAll">
+       DELETE FROM TB_BRODCENTERSCH 
+      WHERE BROD_CODE IN (SELECT BROD_CODE FROM TB_BRODSCHEDULE WHERE (BROD_CODE = #{brodCode} or BASIC_BROD_CODE = #{brodCode}))
+   </delete>   
+   <delete id="deleteBrodScheduleState">
+     <![CDATA[
+      delete from TB_BRODCENTERSCH where BROD_CODE = #{brodCode} and CREATE_CHECK = #{createCheck}  and CENTER_ID = #{centerId}
+                                    and SCHEDULE_SEQ < (select max(SCHEDULE_SEQ) from TB_BRODCENTERSCH where BROD_CODE = #{brodCode} and CREATE_CHECK = #{createCheck}  and CENTER_ID = #{centerId})
+     ]]>                                
+   </delete>
+
+</mapper>
