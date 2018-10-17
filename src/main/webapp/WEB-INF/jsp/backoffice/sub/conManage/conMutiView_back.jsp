@@ -42,6 +42,18 @@
     	background-color:#dcdcdc;
     	cursor : pointer;
     }
+    .whiteBtn{
+	    background-color: #fff;
+	    border: solid 1px #adadad;
+	    color: #000;
+	    font-weight: normal;
+	    font-size: 14px;
+	    padding : 4px 8px;
+	    margin : 0px 2px;
+    }
+    .whiteBtn:hover{
+    	background-color: #adadad;
+    }
 </style>
 </head>
 <body>
@@ -166,9 +178,16 @@
 											</td>		
 										</tr>
 										<tr>
-										  <td>페이지 구분</td>
-										  <td colspan="7" align="right">
+										  <th>페이지 구분</th>
+										  <td align="right">
 										    <select id="comPageInfo"  onChange="javascript:pageChange()"></select>
+										  </td>
+										  <td colspan="6" style="text-align:right">
+										  	<a href="javascript:preView();" class="excel boxH whiteBtn">화면생성</a>
+											<a href="javascript:sendSchedule();" class="excel boxH whiteBtn">스케줄전송</a>	
+											<a href="javascript:listPage('regist','/backoffice/sub/conManage/conMutiList.do' )" class="excel boxH whiteBtn">목록</a> 					
+											<a href="javascript:check_form()" class="modi boxH whiteBtn" id="btnUpdate">수정</a>
+											<a href="javascript:del_form('${regist.schCnt}')" class="delkey boxH whiteBtn">삭제</a>	
 										  </td>
 										</tr>
 										<tr border="0">
@@ -205,7 +224,10 @@
 										       <div class="btnBox md_btn">
 										       		<div style="margin:4px;">					
 														<a href="javascript:preView();" class="excel boxH blueBtn">화면생성</a>
-														<a href="javascript:sendSchedule();" class="excel boxH blueBtn">스케줄전송</a>					
+														<a href="javascript:sendSchedule();" class="excel boxH blueBtn">스케줄전송</a>	
+														<a href="javascript:listPage('regist','/backoffice/sub/conManage/conMutiList.do' )" class="excel boxH yellowBtn">목록</a> 					
+														<a href="javascript:check_form()" class="modi boxH yellowBtn" id="btnUpdate">수정</a>
+														<a href="javascript:del_form('${regist.schCnt}')" class="delkey boxH redBtn">삭제</a>				
 													</div>	
 										       		<div style="margin:4px;">	
 														<a href="javascript:listPage('regist','/backoffice/sub/conManage/conMutiList.do' )" class="excel boxH yellowBtn">목록</a> 					
@@ -304,9 +326,9 @@
 										
 										if(obj.timeInterval == null){
 											
-											timeIntervalInfo = "<input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='' placeholder='미등록'> <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a>";
+											timeIntervalInfo = "<input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='' placeholder='미등록'> 초 <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a>";
 			    						}else{
-			    							timeIntervalInfo = "<input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='"+obj.timeInterval+"' placeholder='미등록'> <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a>";
+			    							timeIntervalInfo = "<input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='"+obj.timeInterval+"' placeholder='미등록'> 초 <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a>";
 			    						}
 										if (obj.mediaType == "IMAGE"){
 											condivLst += "<div id='listItem_"+obj.fileOrder+"' class='listDiv'><table border='0'><tr><td><a class='dragHandle'></a></td><td class='orderSeq'></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'><img class='listImg' src='"+obj.fileStreCours + obj.streFileNm +"' style='width:"+newConWidth+"; height:"+newConHeight+";' id='file_"+obj.fileSeq+"' ></a></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'>"+obj.orignlFileNm+"<br>("+obj.streFileNm+")</a></td><td class='mediaTime"+obj.fileSeq+"'>"+timeIntervalInfo+"</td><td><a class='delkey boxH grayBtn' href='javascript:del_Content(&#39;"+obj.fileSeq+"&#39;, &#39;"+detailSeqCode+"&#39; )'>제외</a></td><td>"+obj.fileWidth+"x"+obj.fileHeight+"</td></tr></table></div>";
@@ -676,7 +698,7 @@
 					if (result != null) {    					
 						for (var i=0; i<result.jobCombo.length; i++) {
 							var obj = result.jobCombo[i];
-							$("<option value='"+ obj.detailSeq +"'>"+ obj.detailOrder +"페이지</option>").appendTo("#comPageInfo");
+							$("<option value='"+ obj.detailSeq +"'>"+ (Number(obj.detailOrder)+1) +"페이지</option>").appendTo("#comPageInfo");
 						}    					
 						//이쪽 부분 다시 정리 하기
 						setTimeout( contentListDetail($("#comPageInfo").val()), 400);
@@ -736,7 +758,7 @@
 								
 								if(obj.timeInterval == null){
 									// $("#conTimeInterval").text("0");
-									timeIntervalInfo = "<span style='color:#FF4b4b; font-weight:bold;'><input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='' placeholder='미등록'> <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a></span>";
+									timeIntervalInfo = "<span style='color:#FF4b4b; font-weight:bold;'><input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='' placeholder='미등록'> 초 <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a></span>";
 	    						}else{
 	    							// $("#conTimeInterval").text();
 	    							timeIntervalInfo = "<span><input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value="+obj.timeInterval+"> 초 <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a></span>";

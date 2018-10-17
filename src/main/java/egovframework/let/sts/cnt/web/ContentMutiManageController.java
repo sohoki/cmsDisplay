@@ -1027,7 +1027,7 @@ public class ContentMutiManageController {
 			    htmlPage.append(" 		   $(\"#nowFileCnt"+i+"\").val(num);        \r\n");
 			    htmlPage.append(" 	   }   \r\n");
 			    htmlPage.append(" 	   $(\"#content_show"+i+"\").html('');  \r\n");
-			    htmlPage.append(" 	   myHandler0(jsonData[num].streFileNm, jsonData[num].mediaType, jsonData[num].timeInterval, jsonData[num].fileStreCours);  \r\n");  
+			    htmlPage.append(" 	   myHandler"+i+"(jsonData[num].streFileNm, jsonData[num].mediaType, jsonData[num].timeInterval, jsonData[num].fileStreCours);  \r\n");  
 			    htmlPage.append("   });  \r\n");
 			    htmlPage.append(" }  \r\n");
 			}			

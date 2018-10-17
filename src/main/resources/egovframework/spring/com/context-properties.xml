@@ -12,7 +12,7 @@
                 <entry key="pageSize" value="10"/>
                 <entry key="pageSizeImage" value="12"/>
                 <entry key="posblAtchFileSize" value="5242880"/>                
-                <entry key="Globals.fileStorePath" value="C:/Program/ProgramData/java6/emart_new_test3.2/src/main/webapp/upload/"/>
+                <entry key="Globals.fileStorePath" value="C:/Program/ProgramData/java6/emart_cms/src/main/webapp/upload"/>
                 <entry key="Globals.addedOptions" value="false"/>
             </map>
         </property>

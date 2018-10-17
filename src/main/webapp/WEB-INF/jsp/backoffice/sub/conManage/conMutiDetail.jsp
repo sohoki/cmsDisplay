@@ -110,20 +110,37 @@
 											<input type="radio" name="conUseYn" value="N" <c:if test="${regist.conUseYn == 'N' }"> checked </c:if> />미사용
 											</td>							
 											<th>화면 사이즈</th>
-											<td class="smiddleBox" colspan="3"  style="text-align:left">
-											넓이 : <form:input path="conWidth" id="conWidth" title="Width" size="5"  numberonly="true" /> 
-											높이 : <form:input path="conHeight" id="conHeight" title="Height" size="5"  numberonly="true" /></td>						
-										</tr>
-										<tr>
-										    <th>중간넓이</th>
-										    <td  style="text-align:left"><form:input path="conMid" id="conMid" title="중간넓이" size="5"  numberonly="true" /></td>
-										    <th>다음시퀀스</th>
-										    <td colspan="3"  style="text-align:left">
+											<td class="smiddleBox" style="text-align:left">
+												넓이 : <form:input path="conWidth" id="conWidth" title="Width" size="5"  numberonly="true" /> 
+												높이 : <form:input path="conHeight" id="conHeight" title="Height" size="5"  numberonly="true" />
+											</td>
+											<th>다음시퀀스</th>
+										    <td style="text-align:left">
 										    <form:select path="conNextSeq" id="conNextSeq" title="소속">
 											         <form:option value="" label="--선택하세요--"/>
 							                        <form:options items="${selectNextSeq}" itemValue="conSeq" itemLabel="conNm"/>
 											</form:select>							
-										    </td>	
+										    </td>							
+										</tr>
+										<tr>
+										    <th>분할사이즈</th>
+										    <td  style="text-align:left">
+										    	<form:input path="conMid" id="conMid" title="중간넓이" size="5"  numberonly="true" /> (px)
+										    	<span> *가로 : 좌측(넓이) / 세로 : 상단(높이)의 사이즈를 입력</span>
+										    </td>
+											<th>분할재생기준</th>
+											<td colspan="3" style="text-align:left">
+										       	<select id="conPartPlayMethod" title="콘텐츠플레이방식">
+										    		<option value="PAGE01">1번페이지기준</option>
+													<option value="PAGE02">2번페이지기준</option>
+													<option value="PAGE00">최종플레이대기</option>
+										    	</select>
+										    	<%-- <form:select path="conPartPlayMethod" id="conPartPlayMethod" title="콘텐츠플레이방식">
+													<form:options items="1번페이지기준" itemValue="PAGE01" itemLabel="1번페이지기준"/>
+													<form:options items="2번페이지기준" itemValue="PAGE02" itemLabel="2번페이지기준"/>
+													<form:options items="최종플레이대기" itemValue="PAGE00" itemLabel="최종플레이대기"/>
+												</form:select> --%>
+											</td>
 										</tr>												
 									</tbody>
 								</table>				
