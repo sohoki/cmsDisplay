@@ -115,8 +115,8 @@
             and c.DID_ID = #{didId}   and  B.SCH_USEYN = 'Y'
             AND b.SCH_CODE = #{schCode}   
    GROUP BY   a.HIS_SEQ,  b.SCH_CODE, e.CON_SEQ, e.DETAIL_SEQ, d.FILE_STRE_COURS,  
-              d.ATCH_FILE_ID, d.STRE_FILE_NM, d.FILE_EXTSN, 
-              d.FILE_SIZE   
+              d.ATCH_FILE_ID, d.STRE_FILE_NM, d.FILE_EXTSN, d.FILE_SIZE,
+              e.TIME_INTERVAL, e.FILE_ORDER
   
    </select>
    <select id="selectFileContentList" resultType="ContentFileInfoVO">

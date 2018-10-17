@@ -585,7 +585,7 @@ public class ContentMutiManageController {
 		
 	}
 	
-	// 전체 페이지 구성
+	// 전체 페이지 구성, 웹내페이지
 	public String MainPageView( String conSeq ){
 		StringBuilder htmlPage = new StringBuilder();
 		StringBuilder htmlPageFile = new StringBuilder();
@@ -716,6 +716,7 @@ public class ContentMutiManageController {
 		return htmlPage.toString();
 	}
 	
+	// 로컬페이지
 	public boolean ContentFileCreateLocal (String htmlFile, String conSeq){
 		boolean htmlCreate = false;
 		try{
@@ -900,10 +901,10 @@ public class ContentMutiManageController {
 			htmlPage.append(" $(document).ready(function(){    \r\n");
 			htmlPage.append("   console.log('contents play start');    \r\n"); // 신규 추가 2017.11.30 // 박성민, 안드로이드 확인 필요사항
 			for (int i = 0 ; i < detailInfo.size() ; i++ ){
-				htmlPage.append("  var jsonData = JSON.parse(albumLst"+i+");             \r\n");
-				htmlPage.append("  if (jsonData.length > 0){    \r\n ");
+				htmlPage.append("  var jsonData"+i+" = JSON.parse(albumLst"+i+");             \r\n");
+				htmlPage.append("  if (jsonData"+i+".length > 0){    \r\n ");
 				htmlPage.append("     $('#nowFileCnt"+i+"').val('0');  \r\n ");
-				htmlPage.append("       myHandler"+i+"(jsonData[0].streFileNm, jsonData[0].mediaType, jsonData[0].timeInterval, jsonData[0].fileStreCours);    \r\n ");
+				htmlPage.append("       myHandler"+i+"(jsonData"+i+"[0].streFileNm, jsonData"+i+"[0].mediaType, jsonData"+i+"[0].timeInterval, jsonData"+i+"[0].fileStreCours);    \r\n ");
 				htmlPage.append("  }  \r\n ");
 			}
 			htmlPage.append(" });   \r\n ");
@@ -943,7 +944,7 @@ public class ContentMutiManageController {
 				    htmlPage.append("           });    \r\n");
 				    htmlPage.append("        });    \r\n");
 				    htmlPage.append("        $(\"#Video"+i+"\").on(\"error\", function(err){   \r\n"); 
-				    htmlPage.append("           videoPlay0(); 		  \r\n");
+				    htmlPage.append("           videoPlay"+i+"(); 		  \r\n");
 				    htmlPage.append("      });   \r\n");				    
 				    htmlPage.append(" };  \r\n");
 				    htmlPage.append(" };  \r\n"); // 누락 부분 추가 체크

@@ -15,12 +15,13 @@
 <link href="<c:url value='/'/>css/test/paragraph.css" rel="stylesheet" type="text/css" >
 <link href="<c:url value='/'/>css/test/reset.css" rel="stylesheet" type="text/css" >
 <link href="<c:url value='/'/>css/test/jquery.treemenu.css" rel="stylesheet" type="text/css" >
-<script type="text/javascript" src="/js/common.js"></script>
-<script type="text/javascript" src="/js/jquery-ui.min.js"></script>
 <!--leftMenu-->
 <script type="text/javascript" src="/js/jquery-2.2.4.min.js"></script>
+<script type="text/javascript" src="/js/jquery-ui.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
 <script type="text/javascript" src="/js/leftMenu.js"></script>
+
 <style type="text/css">
     div.block { width: 100% !important; height: auto !important;  }
     .contentPlaytimeInput{
@@ -142,7 +143,7 @@
 										</tr>
 										<tr>
 											<th>총 송출 시간</th>
-											<td style="text-align:left"><span id="conTimeInterval">${regist.conTime} 초</span></td>
+											<td style="text-align:left"><span id="conTimeInterval">${regist.conTime}</span>  초</td>
 											<th>사용여부</th>
 											<td style="text-align:left">
 											<c:choose>
@@ -302,9 +303,10 @@
 										var timeIntervalInfo = "";
 										
 										if(obj.timeInterval == null){
-											timeIntervalInfo = "<input class='contentPlaytimeInput' type='text' id='content_interval' size='2' value='' placeholder='미등록'> <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a>";
+											
+											timeIntervalInfo = "<input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='' placeholder='미등록'> <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a>";
 			    						}else{
-			    							timeIntervalInfo = "<input class='contentPlaytimeInput' type='text' id='content_interval' size='2' value='"+obj.timeInterval+"' placeholder='미등록'> <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a>";
+			    							timeIntervalInfo = "<input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='"+obj.timeInterval+"' placeholder='미등록'> <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a>";
 			    						}
 										if (obj.mediaType == "IMAGE"){
 											condivLst += "<div id='listItem_"+obj.fileOrder+"' class='listDiv'><table border='0'><tr><td><a class='dragHandle'></a></td><td class='orderSeq'></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'><img class='listImg' src='"+obj.fileStreCours + obj.streFileNm +"' style='width:"+newConWidth+"; height:"+newConHeight+";' id='file_"+obj.fileSeq+"' ></a></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'>"+obj.orignlFileNm+"<br>("+obj.streFileNm+")</a></td><td class='mediaTime"+obj.fileSeq+"'>"+timeIntervalInfo+"</td><td><a class='delkey boxH grayBtn' href='javascript:del_Content(&#39;"+obj.fileSeq+"&#39;, &#39;"+detailSeqCode+"&#39; )'>제외</a></td><td>"+obj.fileWidth+"x"+obj.fileHeight+"</td></tr></table></div>";
@@ -431,7 +433,12 @@
 	    	
 	    	/* alert($("#conInterval_"+fileSeq).val() + "초 입력"); */
 	    	
-	    	var inputInterval = $("#conInterval_"+selectFileSeq).val()+"";
+	    	var inputInterval = $("#conInterval_"+selectFileSeq).val();
+	    	
+	    	if(typeof inputInterval === "undefined"){
+	    		alert(selectFileSeq + "에서 에러가 발생하였습니다. " + inputInterval);
+	    		return false;	
+	    	}
 	    	
 	    	if(inputInterval == "" || inputInterval == "0"){
 	    		alert("송출시간을 입력하지 않았습니다.\n(1초 이상 입력)");
@@ -449,7 +456,7 @@
 	       				if (result != null) {    					
 	       					//시간 변경값 가지고 오기    					
 	       					if (result != "F"){
-	       						$("#conTimeInterval").html('<span>'+result+'</span> 초');
+	       						$("#conTimeInterval").text(result);
 	       						$(".mediaTime"+$("#fileSeq").val()).html("<span class='fileTime"+$("#fileSeq").val()+"'>"+$("#content_interval").val()+"초 <a class='time_"+$("#fileSeq").val()+" timeIntervalBtn' href='javascript:saveInterval("+selectFileSeq+")'>적용</a></span>");
 	       					}
 	       				}
@@ -728,10 +735,10 @@
 								var timeIntervalInfo = "";
 								
 								if(obj.timeInterval == null){
-									''
+									// $("#conTimeInterval").text("0");
 									timeIntervalInfo = "<span style='color:#FF4b4b; font-weight:bold;'><input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='' placeholder='미등록'> <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a></span>";
 	    						}else{
-	    							$("#conTimeInterval").html();
+	    							// $("#conTimeInterval").text();
 	    							timeIntervalInfo = "<span><input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value="+obj.timeInterval+"> 초 <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a></span>";
 	    						}
 	    						
@@ -921,7 +928,7 @@
 					if (result != null) {	         							 							
 						if (result != "F"){
 							//동영상시  자동으로 입력되게 하기 
-							$("#conTimeInterval").html(result+" 초");        									
+							$("#conTimeInterval").text(result);        									
 						}else {
 							alert("등록시 문제가 생겼습니다.");
 						}
@@ -942,8 +949,9 @@
     			null,
     			function(result) {
     				if (result != null) {    					
-    					//시간 변경값 가지고 오기    					    			
-    					$("#conTimeInterval").html(result+" 초");        						    			
+    					//시간 변경값 가지고 오기    		
+    					console.log(result);
+    					$("#conTimeInterval").text(result);        						    			
     				}
     			},
     			null,
@@ -1210,7 +1218,7 @@
 	   					var strArray = result.split('|');
 	   					//여기 부분 다시 정리 하기	    					
 	   					//contentBlock = content_blockInfo(itemSeq, strArray[1]);
-	   					$("#conTimeInterval").html(strArray[2]+" 초");
+	   					$("#conTimeInterval").text(strArray[2]);
 	   					apiExecute(
 							"POST", 
 							"/backoffice/sub/conManage/conDetailFileInfoTableSeq.do",
