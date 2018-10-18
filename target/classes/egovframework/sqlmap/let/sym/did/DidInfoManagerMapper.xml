@@ -363,31 +363,13 @@
      </select>
      
      <select id="selectIntegrateCenterList"  resultType="DidInfoVO">
-     SELECT 
-     	center_id, center_nm
-     	<!-- , COUNT(center_id) AS centerCnt -->
-     FROM 
-     	TB_CENTERINFO 
-     WHERE 
-     	role_code IN 
-     	(
-		  SELECT 
-		  	GROUP_ID
-		  FROM 
-		  	LETTNAUTHORGROUPINFO
-		  WHERE
-			<!-- 사이니지 인지 음원방송인지 확인하는 조건문 추가 --> 
-			<choose>
-				<when test="requestSystemType == 'SIGNAGE'">
-					group_id != 'EMART_00000000000004' AND parent_group_id != 'EMART_00000000000004' 
-				</when>
-				<otherwise>
-					group_id != 'EMART_00000000000003' AND parent_group_id != 'EMART_00000000000003' 
-				</otherwise>
-			</choose>
-		  START WITH parent_group_id = 'EMART_00000000000001'
-		  CONNECT BY PRIOR GROUP_ID = parent_group_id
-		)
+	     SELECT 
+	     	center_id, center_nm
+	     FROM 
+	     	TB_CENTERINFO 
+	     WHERE 
+	     	role_code = #{groupId}
+	     order by CENTER_ID ASC
      </select>
      
 	<select id="selectIntegrateDeviceList"  resultType="DidInfoVO">
@@ -397,7 +379,7 @@
 			( 
 				SELECT A.DID_ID as "didId", A.DID_NM as "didNm", A.DID_IPADDR as "didIpaddr", B.CENTER_NM as "centerNm", 
 				CASE A.DID_STTUS WHEN 'N' THEN 'OFF' ELSE 'ON' END AS didSttus, A.DID_USEYN as "didUseYn", 
-				EMARTCMS.fn_DetailCodeNm(A.DID_OS) as didOs, a.DID_MAC as didMac, 
+				EMARTCMS.fn_DetailCodeNm(A.DID_OS) as didOs, a.DID_MAC as didMac, DID_WIDTH as didWidth, DID_HEIGHT as didHeight,
 				(
 					SELECT COUNT(*) FROM TB_SCHEDULE 
 					<![CDATA[
@@ -412,12 +394,7 @@
 							AND a.CENTER_ID =  #{centerId} 
 						</when>
 						<otherwise>
-						    and 
-						    ( 
-						    a.ROLE_CODE in (SELECT GROUP_ID FROM LETTNAUTHORGROUPINFO WHERE parent_group_id = #{groupCode} ) 
-						    OR 
-						    a.ROLE_CODE = #{groupCode}
-						    ) 
+						    AND a.ROLE_CODE = #{groupCode}
 						</otherwise>
 					</choose>
 				ORDER BY a.FRST_REGIST_PNTTM  DESC     

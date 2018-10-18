@@ -88,7 +88,6 @@ public class ContentFileInfoManageController {
 		}else {
 			return "F";
 		}
-		
 	}
 	
 	@RequestMapping(value="/backoffice/sub/brodManage/brodContentPlayList.do")

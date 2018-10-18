@@ -24,6 +24,7 @@
 
 <style type="text/css">
     div.block { width: 100% !important; height: auto !important;  }
+    .file_info{display:none;}
     .contentPlaytimeInput{
     	width : 56px;
     	border : none;
@@ -208,7 +209,7 @@
 										   		</table>
 										   	</div>
 										    <div class="content scrollStyle1 ui-sortable" id="test-list"></div>
-										    <div class="file_info">
+										    <div class="file_info" style="display:none;">
 										         <table border="1" width="100" height="100">
 												        <tr>
 												          <td colspan="2">
@@ -225,9 +226,6 @@
 										       		<div style="margin:4px;">					
 														<a href="javascript:preView();" class="excel boxH blueBtn">화면생성</a>
 														<a href="javascript:sendSchedule();" class="excel boxH blueBtn">스케줄전송</a>	
-														<a href="javascript:listPage('regist','/backoffice/sub/conManage/conMutiList.do' )" class="excel boxH yellowBtn">목록</a> 					
-														<a href="javascript:check_form()" class="modi boxH yellowBtn" id="btnUpdate">수정</a>
-														<a href="javascript:del_form('${regist.schCnt}')" class="delkey boxH redBtn">삭제</a>				
 													</div>	
 										       		<div style="margin:4px;">	
 														<a href="javascript:listPage('regist','/backoffice/sub/conManage/conMutiList.do' )" class="excel boxH yellowBtn">목록</a> 					
@@ -972,7 +970,7 @@
     			function(result) {
     				if (result != null) {    					
     					//시간 변경값 가지고 오기    		
-    					console.log(result);
+    					/* console.log(result); */
     					$("#conTimeInterval").text(result);        						    			
     				}
     			},

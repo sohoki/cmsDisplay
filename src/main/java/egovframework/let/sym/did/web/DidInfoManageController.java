@@ -23,6 +23,7 @@ import egovframework.let.sym.grp.service.GroupDidInfoManageService;
 import egovframework.let.sym.cnt.service.CenterInfoManageService;
 import egovframework.let.sym.cnt.service.CenterInfoVO;
 import egovframework.let.sym.sch.service.ScheduleInfoManageService;
+import egovframework.let.sts.cnt.service.ContentFileInfo;
 import egovframework.let.sts.snd.service.SendMsgInfo;
 import egovframework.let.sts.snd.service.SendMsgInfoManageService;
 import egovframework.let.sts.xml.service.XmlInfoManageService;
@@ -723,8 +724,6 @@ public class DidInfoManageController {
 	
 	
 	
-	
-	
 	@RequestMapping ("/backoffice/sub/equiManage/integrate.do")
 	public String selectIntegrateListByPagination(@ModelAttribute("loginVO") LoginVO loginVO
 														, @ModelAttribute("searchVO") DidInfoVO searchVO
@@ -751,7 +750,7 @@ public class DidInfoManageController {
 			    	return "/backoffice/login";
 			 }			  			    
 			 
-			 System.out.println("로그인 계정 ROLE CODE ? " + user.getGroupId());
+			 // System.out.println("로그인 계정 ROLE CODE ? " + user.getGroupId());
 			 
 			
 		
@@ -775,19 +774,25 @@ public class DidInfoManageController {
 		  searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 		  
 		  try{
-			  //model.addAttribute("resultList",   didInfoManageService.selectDidInfoManageListByPagination(searchVO) ); 
 			  
-			   searchVO.setRequestSystemType("SIGNAGE");
+			  String requestSystemType = request.getParameter("systemType") == null ? request.getParameter("systemType") : "SIGNAGE";
+			  searchVO.setRequestSystemType(requestSystemType);
 			  
+			  System.out.println(user.getAuthorCode());
+			  if(user.getAuthorCode() != null && (user.getAuthorCode().equals("ROLE_ADMIN") || user.getAuthorCode().equals("ROLE_ANONYMOUS") || 
+					  user.getAuthorCode().equals("ROLE_USER_MEMBER") || user.getAuthorCode().equals("ROLE_DID_ADMIN") || user.getAuthorCode().equals("ROLE_DID_USER"))){
+				  // 통합 및 사이니지 유저
+				  requestSystemType = "SIGNAGE";
+			  } else {
+				  // 음원방송 유저
+				  requestSystemType = "MUSIC";
+			  }
 			  
+			  searchVO.setRequestSystemType(requestSystemType);
 			  
 			  model.addAttribute("roleList",   didInfoManageService.selectIntegrateRoleList(searchVO) ); // selectIntegrateRoleList
 			  model.addAttribute("centerList",   didInfoManageService.selectIntegrateCenterList(searchVO) ); // selectIntegrateCenterList
-			  model.addAttribute("deviceList",   didInfoManageService.selectIntegrateDeviceList(searchVO) );  // selectIntegrateDeviceList
-			  
-			  
-			  
-			  
+			  // model.addAttribute("deviceList",   didInfoManageService.selectIntegrateDeviceList(searchVO) );  // selectIntegrateDeviceList
 			  
 		  }catch(Exception e){
 				LOGGER.debug("error:" + e.toString());
@@ -807,7 +812,59 @@ public class DidInfoManageController {
 	}
 	
 	
+	@RequestMapping(value="/backoffice/sub/conManage/selectIntegrateCetnerList.do")
+	@ResponseBody
+	public ModelAndView selectIntegrateCetnerList(HttpServletRequest request) throws Exception{
+		
+		DidInfoVO didInfoVO = new DidInfoVO();
+		ModelAndView model = new ModelAndView("jsonView");
+
+		String groupId				= request.getParameter("groupId") != null ? request.getParameter("groupId") : "";
+		String firstIndex 			= request.getParameter("firstIdx") != null ? request.getParameter("firstIdx") : "0";
+		String lastIndex 			= request.getParameter("lastIdx") != null ? request.getParameter("lastIdx") : "0"; 
+		String recordCountPerPage	= request.getParameter("recordCnt") != null ? request.getParameter("recordCnt") : "10"; 
+		
+		String requestSystemType = request.getParameter("systemType") == null ? request.getParameter("systemType") : "SIGNAGE";
+		didInfoVO.setRequestSystemType(requestSystemType);
+		
+		didInfoVO.setFirstIndex(Integer.parseInt(firstIndex));
+		didInfoVO.setLastIndex(Integer.parseInt(lastIndex));
+		didInfoVO.setRecordCountPerPage(Integer.parseInt(recordCountPerPage));
+		
+		didInfoVO.setGroupId(groupId);
+		
+
+		model.addObject("centerList", didInfoManageService.selectIntegrateCenterList(didInfoVO));
+
+		return model;
+	}
 	
+	
+	
+	@RequestMapping(value="/backoffice/sub/conManage/selectIntegrateEquipList.do")
+	@ResponseBody
+	public ModelAndView selectIntegrateEquipList(HttpServletRequest request) throws Exception{
+		
+		DidInfoVO didInfoVO = new DidInfoVO();
+		ModelAndView model = new ModelAndView("jsonView");
+
+		String groupCode			= request.getParameter("groupId") != null ? request.getParameter("groupId") : "";
+		String centerId				= request.getParameter("centerId") != null ? request.getParameter("centerId") : "";
+		String firstIndex 			= request.getParameter("firstIdx") != null ? request.getParameter("firstIdx") : "0";
+		String lastIndex 			= request.getParameter("lastIdx") != null ? request.getParameter("lastIdx") : "0"; 
+		String recordCountPerPage	= request.getParameter("recordCnt") != null ? request.getParameter("recordCnt") : "10"; 
+		
+		didInfoVO.setFirstIndex(Integer.parseInt(firstIndex));
+		didInfoVO.setLastIndex(Integer.parseInt(lastIndex));
+		didInfoVO.setRecordCountPerPage(Integer.parseInt(recordCountPerPage));
+		
+		didInfoVO.setGroupCode(groupCode);
+		didInfoVO.setCenterId(centerId);
+
+		model.addObject("equipList", didInfoManageService.selectIntegrateDeviceList(didInfoVO));
+
+		return model;
+	}
 	
 	
 	

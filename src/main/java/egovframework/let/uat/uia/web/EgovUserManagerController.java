@@ -276,6 +276,10 @@ public class EgovUserManagerController {
 	public String cmsLeft() throws Exception{		
 		return "/backoffice/inc/Cms_Left";
 	}
+	@RequestMapping(value="/backoffice/inc/cms_header.do")
+	public String cmsHeader() throws Exception{		
+		return "/backoffice/inc/cms_header";
+	}
 	
 	@RequestMapping(value="/backoffice/inc/emart_treeMu.do")	
 	public ModelAndView emartTreeMu( HttpServletRequest request 
