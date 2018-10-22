@@ -25,12 +25,7 @@
     <!--datepicker-->
     <link rel="stylesheet" href="/new/css/calendar.css">
 	
-	<style>
-	.equipList:hover{
-		background-color: #e1e2e3;
-		cursor: pointer;
-	}
-	</style>
+
 	<script>
 	var groupLstFirstIdx	= "0";
 	var groupLstLastIdx 	= "0";
@@ -70,66 +65,7 @@
 			loginAuthorType = "MUSIC";
 		}
 
-		function callEquipList(groupId, centerId){
-			// console.log(groupId + "왜 못불러오는지?");
-			$.ajax({
-				url : '/backoffice/sub/conManage/selectIntegrateEquipList.do',
-				type : 'POST',
-				data : {
-					'groupId'	: groupId, 
-					'centerId'	: centerId,
-					'firstIdx'	: euqipLstFirstIdx,
-					'lastIdx'	: euqipLstLastIdx,
-					'recordCnt'	: euqipLstRecordCnt
-				},
-				dataType : 'json',
-				success : function(result) {
-					if (result) {
-						console.log(result.equipList);
-						var equipListAppend = "";
-						for(var i = 0; i < result.equipList.length; i++){
-							
-							var osType = "";
-							var onOffStatus = "";
-							var useStatus = "";
-							switch(result.equipList[i].didOs){
-								case "안드로이드"	: osType = '<span class="androidIcon"></span>'; break;
-								case "윈도우" 	: osType = '<span class="windowsIcon"></span>'; break;
-								case "IOS"		: osType = '<span class="iosIcon"></span>'; break;
-								default 		: osType = '<span class="androidIcon"></span>'; break;
-							}
-							switch(result.equipList[i].didSttus){
-								case "ON"	: onOffStatus = '<span class="onIcon"></span>'; break;
-								case "OFF"	: onOffStatus = '<span class="offIcon"></span>'; break;
-								default 	: onOffStatus = '<span class="offIcon"></span>'; break;
-							}
-							switch(result.equipList[i].didSttus){
-								case "Y"	: useStatus = '<span class="onIcon"></span>'; break;
-								case "N"	: useStatus = '<span class="offIcon"></span>'; break;
-								default 	: useStatus = '<span class="offIcon"></span>'; break;
-							}
-							
-							
-							equipListAppend += '<tr class="equipList" onclick="javascript:equipDetailCall('+result.equipList[i].didId+');">';
-							equipListAppend += '<td><input type="checkbox" id="equipChk_'+i+'" class="equipChkList"><label for="did_chk2"></label></td>';
-							equipListAppend += '<td>'+result.equipList[i].didId+'</td>';
-							equipListAppend += '<td>'+result.equipList[i].didNm+'</td>';
-							equipListAppend += '<td>'+result.equipList[i].schCnt+'개</td>';
-							equipListAppend += '<td>'+onOffStatus+'</td>';
-							equipListAppend += '<td>'+osType+'</td>';
-							equipListAppend += '<td>'+useStatus+'</td>';
-							equipListAppend += '<td>'+result.equipList[i].didWidth+'*'+result.equipList[i].didHeight+'</td>';        
-							equipListAppend += "</tr>";
-						}
-						$(".equipListBody").html(equipListAppend);
-					}
-				},
-				error : function(e) {
-					console.log("fail");
-					console.log(e);
-				}
-			});
-		}
+		
 		
 		callEquipList(selectGroupId, selectCenterId);
 		/* 페이지 최초 호출 간 작업 사항 종료 */
@@ -153,6 +89,10 @@
 	
 	function roleInCenterListCall(groupId){
 		// centerList
+		$(".equipListBody").html("");
+		$(".roleGroupList.select").removeClass("select");
+		$("#roleGroupInfo_"+groupId).addClass("select");
+		
 		$.ajax({
 			url : '/backoffice/sub/conManage/selectIntegrateCetnerList.do',
 			type : 'POST',
@@ -167,7 +107,49 @@
 			success : function(result) {
 				if (result) {
 					console.log(result.centerList);
-					/* var equipListAppend = "";
+					var centerListAppend = "";
+					
+					if(result.centerList.length != 0){
+						
+						var data = result.centerList;
+						
+						for(var i = 0; i < result.centerList.length; i++){
+							centerListAppend = "<li id='centerInfo_"+data[i].centerId+"' class='centerList' onclick='javascript:callEquipList(&#39;"+groupId+"&#39;, &#39;"+data[i].centerId+"&#39;)'>"+data[i].centerNm+"</li>";
+						}
+					} else {
+						centerListAppend = "<div style='text-align:center;'>등록 된 점포가 없습니다.</div>";
+					}
+					$(".centerListBody").html(centerListAppend);
+				}
+			},
+			error : function(e) {
+				console.log("fail");
+				console.log(e);
+			}
+		});
+	}
+	
+	function callEquipList(groupId, centerId){
+		
+		$(".equipListBody").html("");
+		$(".centerList.select").removeClass("select");
+		$("#centerInfo_"+centerId).addClass("select");
+		
+		$.ajax({
+			url : '/backoffice/sub/conManage/selectIntegrateEquipList.do',
+			type : 'POST',
+			data : {
+				'groupId'	: groupId,
+				'centerId'	: centerId,
+				'firstIdx'	: euqipLstFirstIdx,
+				'lastIdx'	: euqipLstLastIdx,
+				'recordCnt'	: euqipLstRecordCnt
+			},
+			dataType : 'json',
+			success : function(result) {
+				if (result) {
+					console.log(result.equipList);
+					var equipListAppend = "";
 					for(var i = 0; i < result.equipList.length; i++){
 						
 						var osType = "";
@@ -191,10 +173,10 @@
 						}
 						
 						
-						equipListAppend += '<tr class="equipList" onclick="javascript:equipDetailCall('+result.equipList[i].didId+');">';
-						equipListAppend += '<td><input type="checkbox" id="equipChk_'+i+'" class="equipChkList"><label for="did_chk2"></label></td>';
+						equipListAppend += '<tr class="equipList">';
+						equipListAppend += '<td><input type="checkbox" id="equipChk_'+i+'" class="equipChkList"><label for="equipChk_'+i+'"></label></td>';
 						equipListAppend += '<td>'+result.equipList[i].didId+'</td>';
-						equipListAppend += '<td>'+result.equipList[i].didNm+'</td>';
+						equipListAppend += '<td onclick="javascript:equipDetailCall('+result.equipList[i].didId+');">'+result.equipList[i].didNm+'</td>';
 						equipListAppend += '<td>'+result.equipList[i].schCnt+'개</td>';
 						equipListAppend += '<td>'+onOffStatus+'</td>';
 						equipListAppend += '<td>'+osType+'</td>';
@@ -202,20 +184,29 @@
 						equipListAppend += '<td>'+result.equipList[i].didWidth+'*'+result.equipList[i].didHeight+'</td>';        
 						equipListAppend += "</tr>";
 					}
-					$(".equipListBody").html(equipListAppend); */
+					$(".equipListBody").html(equipListAppend);
 				}
 			},
 			error : function(e) {
 				console.log("fail");
 				console.log(e);
+				$(".equipListBody").html("<tr><td colspan='8'><div style='text-align:center;'>데이터 호출간 장애가 발생하였습니다.<br>재시도 부탁드립니다.</div></td></tr>");
 			}
 		});
-		
-		
-		
 	}
 	
 	</script>
+	<style>
+	 	.equipList:hover{
+			background-color: #e1e2e3;
+		}
+		.centerList{
+			cursor: pointer;
+		}
+		.roleGroupList{
+			cursor: pointer;
+		}
+	</style>
 </head>
 <body>
 	<noscript>자바스크립트를 지원하지 않는 브라우저에서는 일부 기능을 사용하실 수 없습니다.</noscript>
@@ -240,7 +231,7 @@
                         <ul class="total_list">
                         <!-- <li class="select">스타필드</li> 선택시 addClass select -->
                         <c:forEach items="${roleList }" var="roleinfo" varStatus="status">
-							<li class="<c:if test="${status.first}">select</c:if>" onclick="javascript:roleInCenterListCall('${roleinfo.groupId}')">${roleinfo.roleNm}</li>
+							<li class="roleGroupList <c:if test="${status.first}">select</c:if>" id="roleGroupInfo_${roleinfo.groupId}"onclick="javascript:roleInCenterListCall('${roleinfo.groupId}')">${roleinfo.roleNm}</li>
 						</c:forEach>
                         </ul>
                         <div class="total_num">
@@ -263,10 +254,10 @@
                         <span class="total_btn01"><a href=""></a></span>
                     </div>
                     <div class="total_left border-bottom">
-                        <ul class="total_list centerList">
-						<c:forEach items="${centerList }" var="centerinfo" varStatus="status">
+                        <ul class="total_list centerListBody">
+<%-- 						<c:forEach items="${centerList }" var="centerinfo" varStatus="status">
 							<li onclick="javascript:centerSelect('${centerinfo.centerId}')">${centerinfo.centerNm}</li>
-						</c:forEach>
+						</c:forEach> --%>
                         </ul>
                         <div class="total_num">
                             <span class="page_icon01"></span>

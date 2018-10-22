@@ -15,6 +15,7 @@ import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.service.EgovFileMngUtil;
 import egovframework.com.cmm.service.Globals;
 import egovframework.let.cmm.use.service.GroupManagerService;
+import egovframework.let.cmm.use.service.GroupVo;
 import egovframework.let.sym.did.service.DidInfo;
 import egovframework.let.sym.did.service.DidInfoVO;
 import egovframework.let.sym.did.service.DidInfoManageService;
@@ -71,8 +72,7 @@ public class DidInfoManageController {
 	
 	
 	@Resource(name="GroupManagerService")
-	private GroupManagerService groupManagerService;
-	
+	private GroupManagerService groupManagerService;	
 	
 	@Resource(name="SendMsgInfoManageService")
 	private SendMsgInfoManageService sendMsgInfo;
@@ -550,13 +550,26 @@ public class DidInfoManageController {
 			, HttpServletRequest request
 			, BindingResult result
 			, ModelMap model) throws Exception{
+		
+		
+		
+		GroupVo groupVo = new GroupVo();
+		LoginVO user = (LoginVO) request.getSession().getAttribute("LoginVO");			    
+		if (user != null ){
+			groupVo.setParentGroupId(loginVO.getParentGroupId());	
+			groupVo.setGroupId(loginVO.getGroupId());
+		}else {
+			groupVo.setParentGroupId("EMART_00000000000001");
+			groupVo.setGroupId("EMART_00000000000002");
+		}
+
         CenterInfoVO centerInfoVO = new CenterInfoVO();
         String cenSearchKeyword = request.getParameter("cenSearchKeyword") == null ? "" : request.getParameter("cenSearchKeyword");
         centerInfoVO.setSearchKeyword(cenSearchKeyword);
-		model.addAttribute("selectCenter", centerInfoManageService.selectCenterInfoManageCombo(centerInfoVO));		
-		model.addAttribute("selectRole", groupManagerService.selectGroupManageCombo());
-		
-		model.addAttribute("selectType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT001") );
+        
+        model.addAttribute("selectRole", groupManagerService.selectGroupManageCombo(groupVo));
+        model.addAttribute("selectCenter", centerInfoManageService.selectCenterInfoManageCombo(centerInfoVO));
+        model.addAttribute("selectType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT001") );
 		model.addAttribute("selectResolution", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT002"));
 		model.addAttribute("selectIpType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT003"));
 		model.addAttribute("selectModelType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT004"));

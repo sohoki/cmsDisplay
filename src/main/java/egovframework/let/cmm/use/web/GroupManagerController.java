@@ -134,7 +134,19 @@ public class GroupManagerController {
 			                                             Group vo,
 			                                             ModelMap model
 			                                             )throws Exception{
-		model.addAttribute("selectGroup", groupManagerService.selectGroupManageCombo());
+		
+		
+		GroupVo groupVo = new GroupVo();
+		
+		if(loginVO.getParentGroupId() != null){
+			groupVo.setParentGroupId(loginVO.getParentGroupId());	
+			groupVo.setGroupId(loginVO.getGroupId());
+		} else {
+			groupVo.setParentGroupId("EMART_00000000000001");
+			groupVo.setGroupId("EMART_00000000000002");
+		}
+		
+		model.addAttribute("selectGroup", groupManagerService.selectGroupManageCombo(groupVo));
 		model.addAttribute("regist", vo);
 		if (!vo.getMode().equals("Ins")){			
 		model.addAttribute("regist",  groupManagerService.selectGroupManageDetail(vo.getGroupId())  );		

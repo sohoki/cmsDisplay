@@ -25,7 +25,7 @@
         <div class="header">
             <div class="content">
                 <h1 class="logoB">
-                    <a href="index.html"><img src="/new/img/logo.png" align="이마트CMS"></a>
+                    <a href="integrate.do"><img src="/new/img/logo.png" align="이마트CMS"></a>
                 </h1>
                 <div class="nav">
                     <ul>
@@ -68,7 +68,7 @@
                     <div class="clearfix"></div>
                 </div>
 				<div class="loginInfo">
-                    <span class="loginBar"><c:out value="${loginName}"/> [관리포인트 추가] </span> <a href="<c:url value='/backoffice/actionLogout.do'/>">[ 로그아웃 ]</a>
+                    <span class="loginBar"><c:out value="${loginName}"/> [관리포인트 추가] <a href="<c:url value='/backoffice/actionLogout.do'/>">[ 로그아웃 ]</a></span>
                 </div>
             </div>
             <div class="clearfix"></div>

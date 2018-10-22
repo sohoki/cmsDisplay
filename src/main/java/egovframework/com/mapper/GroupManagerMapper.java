@@ -22,7 +22,7 @@ public interface GroupManagerMapper {
 		
 	public int selectGroupManageListTotCnt_S(GroupVo vo);
 	
-	public List<GroupVo> selectGroupManageCombo();
+	public List<GroupVo> selectGroupManageCombo(GroupVo vo);
 	
 	
 }

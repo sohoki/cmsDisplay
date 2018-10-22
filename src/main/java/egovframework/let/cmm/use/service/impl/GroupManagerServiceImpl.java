@@ -50,8 +50,8 @@ public class GroupManagerServiceImpl   extends EgovAbstractServiceImpl  implemen
 	}
 
 	@Override
-	public List<GroupVo> selectGroupManageCombo() throws Exception {
-		return groupManagerMapper.selectGroupManageCombo();
+	public List<GroupVo> selectGroupManageCombo(GroupVo vo) throws Exception {
+		return groupManagerMapper.selectGroupManageCombo(vo);
 	}
 
 	@Override

@@ -48,11 +48,20 @@
    </select>
    
     <select id="selectGroupManageCombo" resultType="GroupVO">
-      select  GROUP_ID               as "groupId",
-		        GROUP_NM             as "groupNm"
-      from 		LETTNAUTHORGROUPINFO
-      where USEYN = 'Y'  AND  parent_group_id != '0'
-      order by      GROUP_ID asc  
+    
+		select 
+			GROUP_ID as "groupId", GROUP_NM as "groupNm" 
+		from 
+			LETTNAUTHORGROUPINFO
+		where 
+			USEYN = 'Y' AND parent_group_id != '0'
+			<if test="parentGroupId != 'EMART_00000000000001'">
+			AND (parent_group_id = #{groupId} OR GROUP_id = #{groupId})
+			</if>
+		START WITH 
+			parent_group_id = #{parentGroupId}
+		CONNECT BY PRIOR 
+			GROUP_ID = parent_group_id
    </select>
    
    <select id="selectGroupManageDetail" resultType="Group">

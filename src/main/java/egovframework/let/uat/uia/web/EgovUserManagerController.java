@@ -20,6 +20,7 @@ import egovframework.let.sym.mnu.service.TMenuInfoVO;
 import egovframework.let.sym.mnu.service.MenuInfoManageService;
 import egovframework.let.sym.mnu.service.TMenuInfoManageService;
 import egovframework.let.cmm.use.service.GroupManagerService;
+import egovframework.let.cmm.use.service.GroupVo;
 import egovframework.let.utl.fcc.service.EgovStringUtil;
 
 
@@ -27,6 +28,8 @@ import egovframework.let.sym.ccm.cde.service.EgovCcmCmmnDetailCodeManageService;
 import egovframework.let.uat.uia.service.EgovUserManagerService;
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+
+
 
 
 
@@ -140,9 +143,20 @@ public class EgovUserManagerController {
 			, ModelMap model
 			) throws Exception{
 		
+		GroupVo groupVo = new GroupVo();
+		
+		if(loginVO.getParentGroupId() != null){
+			groupVo.setParentGroupId(loginVO.getParentGroupId());	
+			groupVo.setGroupId(loginVO.getGroupId());
+		} else {
+			groupVo.setParentGroupId("EMART_00000000000001");
+			groupVo.setGroupId("EMART_00000000000002");
+		}
+		
+        model.addAttribute("selectGroup", groupManagerService.selectGroupManageCombo(groupVo));
 		model.addAttribute("selectAuthor", authorInfoManageService.selectAuthorIInfoManageCombo());		
 		model.addAttribute("selectState", cmmnDetailCodeManageService.selectCmmnDetailCombo("COM003"));
-		model.addAttribute("selectGroup", groupManagerService.selectGroupManageCombo());
+		
 		
 		
 		model.addAttribute("regist", MberVO);

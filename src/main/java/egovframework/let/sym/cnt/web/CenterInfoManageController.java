@@ -16,6 +16,7 @@ import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.service.EgovFileMngUtil;
 import egovframework.com.cmm.service.Globals;
 import egovframework.let.cmm.use.service.GroupManagerService;
+import egovframework.let.cmm.use.service.GroupVo;
 import egovframework.let.sts.brd.service.BrodAnniversaryManagerService;
 import egovframework.let.sts.brd.service.BrodContentDetailManagerService;
 import egovframework.let.sts.brd.service.BrodContentInfoManageService;
@@ -154,7 +155,17 @@ public class CenterInfoManageController {
 			                                            				, BindingResult bindingResult
 																	  , ModelMap model ) throws Exception{	
 		
-		model.addAttribute("selectRoleGroup", groupManagerService.selectGroupManageCombo());
+        GroupVo groupVo = new GroupVo();
+        
+        if(loginVO.getParentGroupId() != null){
+			groupVo.setParentGroupId(loginVO.getParentGroupId());	
+			groupVo.setGroupId(loginVO.getGroupId());
+		} else {
+			groupVo.setParentGroupId("EMART_00000000000001");
+			groupVo.setGroupId("EMART_00000000000002");
+		}
+		
+		model.addAttribute("selectRoleGroup", groupManagerService.selectGroupManageCombo(groupVo));
 		
 		
 		

@@ -18,7 +18,7 @@ public interface GroupManagerService {
 	
 	int selectGroupManageListTotCnt_S(GroupVo searchVO) throws Exception;
 		
-	List<GroupVo> selectGroupManageCombo() throws Exception;
+	List<GroupVo> selectGroupManageCombo(GroupVo vo) throws Exception;
 
     
 	
