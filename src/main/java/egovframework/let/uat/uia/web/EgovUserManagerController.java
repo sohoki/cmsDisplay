@@ -144,10 +144,10 @@ public class EgovUserManagerController {
 			) throws Exception{
 		
 		GroupVo groupVo = new GroupVo();
-		
-		if(loginVO.getParentGroupId() != null){
-			groupVo.setParentGroupId(loginVO.getParentGroupId());	
-			groupVo.setGroupId(loginVO.getGroupId());
+		LoginVO user = (LoginVO) request.getSession().getAttribute("LoginVO");			    
+		if (user != null ){
+			groupVo.setParentGroupId(user.getParentGroupId());	
+			groupVo.setGroupId(user.getGroupId());
 		} else {
 			groupVo.setParentGroupId("EMART_00000000000001");
 			groupVo.setGroupId("EMART_00000000000002");

@@ -86,7 +86,8 @@
 										<input type="text"  name="searchKeyword" id="searchKeyword" value="${searchVO.searchKeyword}">
 										<a href="javascript:search_form()" class="yellowBtn">검색</a>
 									    <div class="footerBox">
-									    <a href="javascript:open_pop()" class="yellowBtn">파일 등록</a>
+									    <a href="javascript:open_musicPop()" class="blueBtn">음원POP 파일 등록</a>
+									    <a href="javascript:open_pop()" class="yellowBtn">사이니지 파일 등록</a>
 									    </div>
 									<div class="clear"></div>
 								</div>
@@ -224,6 +225,10 @@
       // 등록
       function open_pop(){
     	  var url = "/backoffice/sub/conManage/fileIupload.do"; 
+    	  window.open(url,"파일 업로드", 'width=1036,height=512,top=100,left=650,scrollbars=auto');
+      }
+      function open_musicPop(){
+    	  var url = "/backoffice/sub/conManage/fileMupload.do"; 
     	  window.open(url,"파일 업로드", 'width=1036,height=512,top=100,left=650,scrollbars=auto');
       }
       //파일 보기 

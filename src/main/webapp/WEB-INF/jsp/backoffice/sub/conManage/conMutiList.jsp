@@ -62,7 +62,7 @@
                                      <input type="text"  name="searchKeyword" id="searchKeyword" value="${searchVO.searchKeyword}">
 									<a href="javascript:search_form()" class="yellowBtn">검색</a>
 								<div class="footerBox">
-									<a href="javascript:view_Con('Ins','0')" class="yellowBtn">등록</a></a>			
+									<a href="javascript:view_Con('Ins','0')" class="yellowBtn">편성 등록</a></a>			
 								</div>
 								<div class="clear"></div>
 							</div>
@@ -71,9 +71,9 @@
 								<thead>
 									<tr>							
 										<th>번호</th>
-										<th>화면명</th>
-										<th>화면설명</th>
-										<th>사이즈</th>
+										<th>편성명칭</th>
+										<th>편성형태(화면설명)</th> <!-- 사이니지 / 음원POP -->
+										<th>송출정보(사이즈)</th> <!-- 가로전체(사이즈)/세로전체(사이즈)/가로분할(사이즈)/세로분할(사이즈) /// -->
 										<th>이용스케줄</th>
 										<th>등록일</th>
 									</tr>

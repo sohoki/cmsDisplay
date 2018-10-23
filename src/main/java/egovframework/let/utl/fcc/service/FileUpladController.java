@@ -216,15 +216,30 @@ public class FileUpladController {
                 mpf.transferTo(file_s); //파일저장 실제로는 service에서 처리                
                 
                 
+                
+                
+                ContentFileInfo vo = new ContentFileInfo();
+                
                 String  thumnail = null;
                 // DB 에 저장
                 //동영상 파일시 썸네일 파일 생성 
                 if (fileExt(file_s,".").equals("mp4") || fileExt(file_s,".").equals("avi") || fileExt(file_s,".").equals("webm") ){
                 	thumnail = getImageFromFrame(file_s.toString(),  filedir.toString());
-            	}
-            	
-               
-                ContentFileInfo vo = new ContentFileInfo();
+                } else if(fileExt(file_s,".").equals("mp3") ||fileExt(file_s,".").equals("wav") || fileExt(file_s,".").equals("mid")) {
+                	thumnail = getDurationWithMp3Spi(file_s);
+                	
+                    if (thumnail != null && !thumnail.equals("F")){
+                    	
+                        String[] fileInfos = 	thumnail.split("/");
+                        System.out.println("mp3duration:"+fileInfos[1].toString());
+                        System.out.println("mp3duration:"+fileInfos[0].toString());
+                    	vo.setFileThumnail(fileInfos[1].toString()  );
+                    	vo.setPlayTime(fileInfos[0].toString());                	
+                    	
+                    }
+                	
+                }
+
                 
                 vo.setAtchFileId(atchFileId);
                 if (thumnail != null && !thumnail.equals("")&& !thumnail.equals("Fail") ){
@@ -254,6 +269,9 @@ public class FileUpladController {
                 if(!contentFileInfoVO.getMediaType().equals("MUSIC")){
                 	contentFileInfoVO.setFileGubun("");
                 	contentFileInfoVO.setNotConType("MUSIC");
+                } else {
+                	contentFileInfoVO.setFileGubun("");
+                	contentFileInfoVO.setNotConType("CONTENT");
                 }
                 
                 if(conFileService.selectFilePageListByPaginationTotCnt_S(contentFileInfoVO) < 1) {

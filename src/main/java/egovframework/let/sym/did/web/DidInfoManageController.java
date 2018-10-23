@@ -556,18 +556,22 @@ public class DidInfoManageController {
 		GroupVo groupVo = new GroupVo();
 		LoginVO user = (LoginVO) request.getSession().getAttribute("LoginVO");			    
 		if (user != null ){
-			groupVo.setParentGroupId(loginVO.getParentGroupId());	
-			groupVo.setGroupId(loginVO.getGroupId());
-		}else {
+			groupVo.setParentGroupId(user.getParentGroupId());	
+			groupVo.setGroupId(user.getGroupId());
+		} else {
 			groupVo.setParentGroupId("EMART_00000000000001");
 			groupVo.setGroupId("EMART_00000000000002");
 		}
 
+		
+		model.addAttribute("selectRole", groupManagerService.selectGroupManageCombo(groupVo));
+		
+		
         CenterInfoVO centerInfoVO = new CenterInfoVO();
         String cenSearchKeyword = request.getParameter("cenSearchKeyword") == null ? "" : request.getParameter("cenSearchKeyword");
         centerInfoVO.setSearchKeyword(cenSearchKeyword);
         
-        model.addAttribute("selectRole", groupManagerService.selectGroupManageCombo(groupVo));
+        
         model.addAttribute("selectCenter", centerInfoManageService.selectCenterInfoManageCombo(centerInfoVO));
         model.addAttribute("selectType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT001") );
 		model.addAttribute("selectResolution", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT002"));

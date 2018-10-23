@@ -72,7 +72,12 @@
 							<div class="con_title whiteBox ">
 								<h2>화면 상세 관리.</h2>
 								<div class="searchBox">
-									 <div class="footerBox">
+									<div style="float:left;">
+										<a>사이니지 송출편성</a>
+										<a>음원POP 송출편성</a>
+									</div>
+									<div class="footerBox">
+									 	
 										<a href="javascript:listPage('regist','/backoffice/sub/conManage/conMutiList.do' )" class="yellowBtn">목록</a> 					
 										<a href="javascript:check_form()" class="grayBtn" id="btnUpdate">등록</a>
 										<c:if test = "${regist.mode == 'Edt' }">
@@ -82,7 +87,6 @@
 									</div>
 									<div class="clear"></div>
 								</div>
-								
 								<table>
 									<tbody>
 										<tr>

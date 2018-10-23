@@ -266,6 +266,15 @@ public class ContentMutiManageController {
 		return "/backoffice/sub/conManage/FileUpload";		
 	}
 	
+	//음원POP 파일 업로드 파일 올리기
+	@RequestMapping (value="/backoffice/sub/conManage/fileMupload.do")
+	public String musicPOPfileUplad(@ModelAttribute("loginVO") LoginVO loginVO			
+			, HttpServletRequest request
+			, BindingResult bindingResult			
+			, ModelMap model) throws Exception{		
+		return "/backoffice/sub/conManage/FileMUpload";
+	}
+	
 	@RequestMapping (value="/backoffice/sub/conManage/conPage01.do")
 	public String filePage01(@ModelAttribute("loginVO") LoginVO loginVO
 			, ContentDetailInfo vo

@@ -16,6 +16,7 @@ import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.jcodec.common.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,16 +132,17 @@ public class GroupManagerController {
 	}
 	@RequestMapping (value="/backoffice/sub/basicManage/groupDetail.do")
 	public String getGroupManage(@ModelAttribute("loginVO") LoginVO loginVO,	
+														 HttpServletRequest request,
 			                                             Group vo,
 			                                             ModelMap model
 			                                             )throws Exception{
 		
 		
 		GroupVo groupVo = new GroupVo();
-		
-		if(loginVO.getParentGroupId() != null){
-			groupVo.setParentGroupId(loginVO.getParentGroupId());	
-			groupVo.setGroupId(loginVO.getGroupId());
+		LoginVO user = (LoginVO) request.getSession().getAttribute("LoginVO");			    
+		if (user != null ){
+			groupVo.setParentGroupId(user.getParentGroupId());	
+			groupVo.setGroupId(user.getGroupId());
 		} else {
 			groupVo.setParentGroupId("EMART_00000000000001");
 			groupVo.setGroupId("EMART_00000000000002");
