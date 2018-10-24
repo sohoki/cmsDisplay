@@ -221,28 +221,31 @@ public class FileUpladController {
                 ContentFileInfo vo = new ContentFileInfo();
                 
                 String  thumnail = null;
+                boolean nowConMusicPOP = false;
                 // DB 에 저장
                 //동영상 파일시 썸네일 파일 생성 
                 if (fileExt(file_s,".").equals("mp4") || fileExt(file_s,".").equals("avi") || fileExt(file_s,".").equals("webm") ){
                 	thumnail = getImageFromFrame(file_s.toString(),  filedir.toString());
+                	nowConMusicPOP = false;
                 } else if(fileExt(file_s,".").equals("mp3") ||fileExt(file_s,".").equals("wav") || fileExt(file_s,".").equals("mid")) {
                 	thumnail = getDurationWithMp3Spi(file_s);
                 	
                     if (thumnail != null && !thumnail.equals("F")){
                     	
                         String[] fileInfos = 	thumnail.split("/");
+                        
                         System.out.println("mp3duration:"+fileInfos[1].toString());
                         System.out.println("mp3duration:"+fileInfos[0].toString());
-                    	vo.setFileThumnail(fileInfos[1].toString()  );
+                    	vo.setFileThumnail("no_image.png");
                     	vo.setPlayTime(fileInfos[0].toString());                	
-                    	
+                    	nowConMusicPOP = true;
                     }
                 	
                 }
 
                 
                 vo.setAtchFileId(atchFileId);
-                if (thumnail != null && !thumnail.equals("")&& !thumnail.equals("Fail") ){
+                if (thumnail != null && !thumnail.equals("")&& !thumnail.equals("Fail")  && !nowConMusicPOP){
                 	
                     String[] fileInfos = 	thumnail.split(":");
                 	vo.setFileThumnail(fileInfos[0].toString()  );
@@ -250,7 +253,7 @@ public class FileUpladController {
                 }
                 
                 
-				vo.setFileStreCours(filePath+inDate+"/");
+				vo.setFileStreCours(filePath + "/"+inDate+"/");
         		vo.setStreFileNm(file_s.getName());
         		vo.setOrignlFileNm(originalFilename);
         		vo.setFileExtsn(fileExt(file_s,"."));        		
@@ -463,7 +466,7 @@ public class FileUpladController {
 	        int min = (mili / 1000) / 60;
 	        
 	        mp3duration = Integer.toString(sec)+"/"+ Integer.toString(min)+":"+ Integer.toString(sec_M);
-	        
+
 	    } else {
 	    	mp3duration = "F";
 	        throw new UnsupportedAudioFileException();	        

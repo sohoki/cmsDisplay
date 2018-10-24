@@ -34,7 +34,62 @@
     });
     $( "#conTime" ).val( $( "#slider-vertical" ).slider( "value" ) );
   } );
+  
+  $(document).ready(function(){
+	  
+	  // two-select-tap con_signage con_musicPop conSelect
+	  
+	  function conTypeSelect(type){
+		  if (type == "s"){
+			  $("#con_musicPop").removeClass("conSelect");
+			  $("#con_signage").addClass("conSelect");
+		  } else {
+			  $("#con_signage").removeClass("conSelect");
+			  $("#con_musicPop").addClass("conSelect");
+		  }
+	  }
+	  
+	  
+  });
+  
+  
+  function conTypeSelect(type){
+	  if (type == "s"){
+		  $("#con_musicPop").removeClass("conSelect");
+		  $("#con_signage").addClass("conSelect");
+	  } else {
+		  $("#con_signage").removeClass("conSelect");
+		  $("#con_musicPop").addClass("conSelect");
+	  }
+  }
+  
+  
   </script>
+  
+  <style>
+  	.two-select-tap{
+  		border: 1px solid #d4d4d4;
+  	}
+  	.two-select-tap li{
+  		width:50%;
+  		float:left;
+  	}
+  	.two-select-tap li a{
+	  	display: block;
+	    text-align: center;
+	    color: #8f8f8f;
+	    padding: 10px;
+	    font-size: 14px;
+  	}
+  	.two-select-tap li a.conSelect{
+	  	color: #fff;
+	    background: #dc2c33;
+	    font-weight: bold;
+  	}
+  	
+  	
+  	
+  </style>
 
 
 
@@ -72,9 +127,13 @@
 							<div class="con_title whiteBox ">
 								<h2>화면 상세 관리.</h2>
 								<div class="searchBox">
-									<div style="float:left;">
-										<a>사이니지 송출편성</a>
-										<a>음원POP 송출편성</a>
+									<div style="float:left; width: 256px;">
+										<ul class="two-select-tap">
+											<li><a class="conSelect" id="con_signage" href="javascript:conTypeSelect('s');">사이니지 편성</a></li>
+											<li><a id="con_musicPop" href="javascript:conTypeSelect('m');">음원POP 편성</a></li>
+										</ul>
+										
+										
 									</div>
 									<div class="footerBox">
 									 	

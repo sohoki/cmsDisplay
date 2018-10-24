@@ -258,7 +258,11 @@ public class ContentFileInfoManageController {
 		      /** pageing */       			  
 				// 아래부분에 대해서 getConType을 getMediaType으로 변경해도 되는지는 확인 필요
 			  if (searchVO.getMediaType() == null){ searchVO.setMediaType("");}
-			  if (searchVO.getNotConType() == null){ searchVO.setNotConType("MUSIC");}
+			  if (searchVO.getMediaType().equals("MUSIC")){
+				  searchVO.setNotConType("");
+			  } else {
+				  if (searchVO.getNotConType() == null){ searchVO.setNotConType("MUSIC");}
+			  }
 			  if (searchVO.getFileGubun() == null){ searchVO.setFileGubun("");}
 			  
 		   	  PaginationInfo paginationInfo = new PaginationInfo();
@@ -382,11 +386,20 @@ public class ContentFileInfoManageController {
 		    searchVO.setFirstIndex( Integer.parseInt( strPage));
 		    searchVO.setRecordCountPerPage(Integer.parseInt( pageSize));
 		    
-		    //여기 부분 나중에 확인 
-		    searchVO.setNotConType("MUSIC");
+
+		    
 		    
 		    String searchMediaType = request.getParameter("mediaType") != null ? request.getParameter("mediaType") : "";
 		    searchVO.setMediaType(searchMediaType);
+
+		    //여기 부분 나중에 확인 18-10-24 이전 -----> 18-10-24 : mediaType 형식에 따라 값 지정
+		    // String searchNotConType = request.getParameter("notConType") != null ? request.getParameter("notConType") : "";
+		    
+		    if(searchMediaType.equals("MUSIC")){
+		    	searchVO.setNotConType("");
+		    } else {
+		    	searchVO.setNotConType("MUSIC");
+		    }
 		    
 		    searchVO.setFileGubun("");
 		    

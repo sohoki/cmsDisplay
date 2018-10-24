@@ -128,11 +128,16 @@
 }
 </style>
 <script type="text/javascript">
+
+	// console.log("${groupId}, ${groupCode}");
+
+	var regGroupId = "${groupCode}";
+	
 	function sendFileToServer(formData,status)
 	{
 		var conSeq = $("#conSeq").val();
 		var detailSeq = $("#detailSeq").val()
-	    var uploadURL ="/backoffice/sub/conManage/fileUpload.do?conSeq="+conSeq+"&detailSeq="+detailSeq; //Upload URL
+	    var uploadURL ="/backoffice/sub/conManage/fileUpload.do?conSeq="+conSeq+"&detailSeq="+detailSeq+"&groupId="+regGroupId; //Upload URL
 	    var extraData ={}; //Extra Data.
 	    var jqXHR=$.ajax({
 	            xhr: function() {

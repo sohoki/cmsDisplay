@@ -269,7 +269,7 @@
     
 	<script type="text/javascript">
 
-	
+		var conSeqValue = "${regist.conSeq}";
 	
 		function loadingStart(){
 	    	var loadingimg = "<div style='width:100%;height:100%;z-index:100;background-color:#ffffff;opacity:0.6; position:fixed;text-align:center;vertical-align:middle;'><img src='/images/loading_img.gif'></img></div>";    	
@@ -279,14 +279,22 @@
 			$("#backgroundgif").html("");
 		}
 		function conSchReg(codeId){
+			
+			
+			
 			loadingStart();
 	    	var newOrder=$("#test-list div").length-1;
+	    	
+	    	if(newOrder == "-1"){ newOrder = "0"; }
+	    	
+	    	
+	    	
 	    	var detailSeqCode = $("#comPageInfo").val();
     		apiExecute(
     			"POST", 
     			"/backoffice/sub/conManage/ContentReg.do",
     			{ 
-    				conSeq: $("#conSeq").val(),
+    				conSeq: conSeqValue,
     				detailSeq: detailSeqCode,
     				atchFileId : codeId, 
     				fileOrder : newOrder
@@ -370,6 +378,7 @@
 	    	$("#searchKeyword").val($("#searchConName").val());
 	    	var strPage = 0;
 	    	var conPageSize = 8;
+	    	
 	    	apiExecute(
 	   			"POST", 
 	   			"/backoffice/sub/conManage/jsonDetailContentLst.do",
@@ -525,14 +534,14 @@
     			"POST", 
     			"/backoffice/sub/conManage/preViewCheck.do",
     			{
-    				conSeq : $("#conSeq").val()
+    				conSeq : conSeqValue
     			},
     			null,
     			function(result) {
     				if (result != null) {    					
     					//시간 변경값 가지고 오기    					
     					if (result != "F"){
-    						var url = "/backoffice/sub/conManage/contentPreview.do?conSeq="+$("#conSeq").val();	      	
+    						var url = "/backoffice/sub/conManage/contentPreview.do?conSeq="+conSeqValue;	      	
     				  	    window.open(url,"파일 업로드", "width="+ PageWidth +",height="+PageHeight+",top=50,left=50,scrollbars=auto")	;      						
     					}else {
     						alert("송출시간을 입력하지 않은 콘텐츠가 있습니다.");
@@ -550,7 +559,7 @@
     			"POST", 
     			"/backoffice/sub/conManage/preViewCheck.do",
     			{
-    				conSeq : $("#conSeq").val()
+    				conSeq : conSeqValue
     			},
     			null,
     			function(result) {
@@ -573,7 +582,7 @@
     			"POST", 
     			"/backoffice/sub/conManage/contentScheduleSend.do",
     			{
-    				conSeq : $("#conSeq").val()
+    				conSeq : conSeqValue
     			},
     			null,
     			function(result) {
@@ -689,7 +698,7 @@
 				"/backoffice/sub/conManage/conMutiSelect.do",
 				{
 					code: $("#conScreen").val(),
-					conSeq : $("#conSeq").val()    				
+					conSeq : conSeqValue    				
 				},
 				null,
 				function(result) {
@@ -729,7 +738,7 @@
     			"POST", 
     			"/backoffice/sub/conManage/conDetailInfoTable.do",
     			{
-    				conSeq : $("#conSeq").val(),
+    				conSeq : conSeqValue,
     				detailSeq : code
     			},
     			null,
@@ -992,13 +1001,21 @@
 	   	    $("#content_interval").val("");	
 	    }
     	function contentLst(){    	
+    		
+    		var callConType = "";
+    		if("${regist.codeNm}" == "음원POP"){
+    			callConType = "MUSIC";
+    		}
+    		
 			strPage = parseInt((parseInt($("#strPage").val()) -1) * parseInt($("#conPageSize").val()));
 			apiExecute(
 				"POST", 
 				"/backoffice/sub/conManage/jsonContentLst.do",
 				{
-					strPage : strPage ,					  
-					conPageSize : $("#conPageSize").val()		
+					mediaType 	: callConType,
+					strPage 	: strPage,			  
+					conPageSize : $("#conPageSize").val()
+					
 				},
 				null,				
 				function(result) {							
@@ -1227,7 +1244,7 @@
 				"POST", 
 	   			"/backoffice/sub/conManage/ContentReg.do",
 	   			{ 
-	   				conSeq: $("#conSeq").val(),
+	   				conSeq: conSeqValue,
 	   				detailSeq: $("#comPageInfo").val(),
 	   				atchFileId : itemSeq, 
 	   				fileOrder : "0"

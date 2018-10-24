@@ -40,6 +40,7 @@
               , CASE 
                       WHEN  b.FILE_EXTSN IN ('mp4', 'avi', 'mpeg') THEN 'MEDIA'
                       WHEN  b.FILE_EXTSN IN ('jpg', 'jpeg', 'gif', 'png', 'bmp') THEN 'IMAGE'
+                      WHEN  b.FILE_EXTSN IN ('mp3', 'wav', 'mid') THEN 'MUSIC'
                    END AS mediaType ,
                    b.FILE_EXTSN fileExtsn,
                    a.FILE_ORDER  fileOrder,

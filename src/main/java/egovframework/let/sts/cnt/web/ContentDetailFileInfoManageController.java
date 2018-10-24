@@ -123,6 +123,8 @@ public class ContentDetailFileInfoManageController {
 			String atchFileId = request.getParameter("atchFileId") != null ? request.getParameter("atchFileId") : "";		
 			String fileOrder = request.getParameter("fileOrder") != null ? request.getParameter("fileOrder") : "";
 			
+			System.out.println("conseq ?? " + conSeq);
+			
 			vo.setConSeq(conSeq);
 			vo.setDetailSeq(detailSeq);
 			vo.setAtchFileId(atchFileId);

@@ -181,7 +181,13 @@ public class ContentMutiManageController {
 		//이쪽 구문 정리 하기 
 		cmDetail = cmmnDetailCodeManageService.selectCmmnDetail(code);		
 		//페이지 카운터 
-		String PageCnt = cmDetail.getCodeDc(); 		
+		String PageCnt = "";
+		if(cmDetail.getCodeDc() == null || cmDetail.getCodeDc().equals("")){
+			PageCnt = "1";
+		} else {
+			PageCnt = cmDetail.getCodeDc();
+		}
+		
 		int pageConDetailCnt =  contentDetail.selectConDetailCnt(conSeq);
 		
 		System.out.println("PageCnt:" + PageCnt +"   | pageConDetailCnt:" + pageConDetailCnt);

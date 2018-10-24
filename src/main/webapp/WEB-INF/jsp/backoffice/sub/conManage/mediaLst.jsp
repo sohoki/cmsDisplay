@@ -67,27 +67,26 @@
 											<option value="48" <c:if test="${searchVO.pageUnit == '48' }"> selected="selected" </c:if>>48개</option>
 										</select>	
 										<select name="mediaType" id="mediaType">
-										    <option value="">선택</option>
+										    <option value="">미디어타입</option>
 											<option value="IMAGE" <c:if test="${searchVO.conType == 'IMAGE' }"> selected="selected" </c:if>>이미지</option>
-											<option value="MUSIC" <c:if test="${searchVO.conType == 'MUSIC' }"> selected="selected" </c:if>>음악</option>
 											<option value="MEDIA" <c:if test="${searchVO.conType == 'MEDIA' }"> selected="selected" </c:if>>동영상</option>
+											<option value="MUSIC" <c:if test="${searchVO.conType == 'MUSIC' }"> selected="selected" </c:if>>음원</option>
 										</select>
 										<select name="notConType" id="notConType" style="display:none;">
 										    <option value="">선택</option>
 											<option value="IMAGE" <c:if test="${searchVO.notConType == 'IMAGE' }"> selected="selected" </c:if>>이미지</option>
-											<option value="MUSIC" <c:if test="${searchVO.notConType == 'MUSIC' }"> selected="selected" </c:if>>음악</option>
 											<option value="MEDIA" <c:if test="${searchVO.notConType == 'MEDIA' }"> selected="selected" </c:if>>동영상</option>
+											<option value="MUSIC" <c:if test="${searchVO.notConType == 'MUSIC' }"> selected="selected" </c:if>>음원</option>
 										</select>
 										<select name="searchCondition"  id="searchCondition">
-											<option value="">선택</option>
+											<option value="">검색조건</option>
 											<option value="atchFileId" <c:if test="${searchVO.searchCondition == 'atchFileId' }"> selected="selected" </c:if>>실파일명</option>
 											<option value="ORIGNL_FILE_NM" <c:if test="${searchVO.searchCondition == 'ORIGNL_FILE_NM' }"> selected="selected" </c:if>>업로드파일명</option>
 										</select>																	
 										<input type="text"  name="searchKeyword" id="searchKeyword" value="${searchVO.searchKeyword}">
 										<a href="javascript:search_form()" class="yellowBtn">검색</a>
 									    <div class="footerBox">
-									    <a href="javascript:open_musicPop()" class="blueBtn">음원POP 파일 등록</a>
-									    <a href="javascript:open_pop()" class="yellowBtn">사이니지 파일 등록</a>
+									    <a href="javascript:open_pop()" class="yellowBtn">미디어 파일 등록</a>
 									    </div>
 									<div class="clear"></div>
 								</div>

@@ -210,20 +210,20 @@
    </select>
    
    <insert id="insertFileManage" >
-        insert into LETTNFILEDETAIL(ATCH_FILE_ID, FILE_STRE_COURS, STRE_FILE_NM, ORIGNL_FILE_NM, FILE_EXTSN, FILE_SIZE, FILE_THUMNAIL, PLAY_TIME, FILE_GUBUN, USEYN)
+        insert into LETTNFILEDETAIL(ATCH_FILE_ID, FILE_STRE_COURS, STRE_FILE_NM, ORIGNL_FILE_NM, FILE_EXTSN, FILE_SIZE, FILE_THUMNAIL, PLAY_TIME, FILE_GUBUN, USEYN, GROUP_ID)
         values ( #{atchFileId} , #{fileStreCours}, #{streFileNm}, #{orignlFileNm}, #{fileExtsn}  , #{fileSize},  
-                 #{fileThumnail ,jdbcType=VARCHAR}   , #{playTime,  jdbcType=VARCHAR } , #{fileGubun,  jdbcType=VARCHAR }, 'Y'
+                 #{fileThumnail ,jdbcType=VARCHAR}   , #{playTime,  jdbcType=VARCHAR } , #{fileGubun,  jdbcType=VARCHAR }, 'Y', #{groupId}
                  )
    </insert>
    <update id="updateFileManage">
           update LETTNFILEDETAIL set FILE_STRE_COURS =  #{fileStreCours}, 
-                                                                     STRE_FILE_NM =     #{streFileNm},
-                                                                     ORIGNL_FILE_NM =     #{orignlFileNm},
-                                                                     FILE_EXTSN =     #{fileExtsn},
-                                                                     FILE_SIZE =     #{fileSize},
-                                                                     FILE_THUMNAIL =     #{fileThumnail,jdbcType=VARCHAR},
-                                                                     PLAY_TIME =     #{playTime,jdbcType=VARCHAR},
-                                                                     FILE_GUBUN = #{fileGubun,jdbcType=VARCHAR}
+                                                                     STRE_FILE_NM 	= #{streFileNm},
+                                                                     ORIGNL_FILE_NM = #{orignlFileNm},
+                                                                     FILE_EXTSN 	= #{fileExtsn},
+                                                                     FILE_SIZE 		= #{fileSize},
+                                                                     FILE_THUMNAIL 	= #{fileThumnail,jdbcType=VARCHAR},
+                                                                     PLAY_TIME 		= #{playTime,jdbcType=VARCHAR},
+                                                                     FILE_GUBUN 	= #{fileGubun,jdbcType=VARCHAR}
          where ATCH_FILE_ID = #{atchFileId}
    </update>
    
