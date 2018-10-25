@@ -138,12 +138,12 @@ public class ContentDetailFileInfoManageController {
 			if (result > 0){
 				
 				
-				//동영상 이면 시간 업데이트 이후 시간 정리 하기 				
+				//동영상 및 음원파일이면 시간 업데이트 이후 시간 정리 하기 				
 				int fileSeq = conFileinfo.selectMaxfileSeq(vo);
 				
 				
 				ContentDetailFileInfoVO fileInfo =  conFileinfo.selectContentDetailFileInfoFileSeq( Integer.toString( fileSeq));				
-				if (fileInfo.getMediaType().toString().equals("MEDIA")){
+				if (!fileInfo.getMediaType().toString().equals("IMAGE")){
 					System.out.println(fileInfo.getPlayTime().toString());
 					if (fileInfo.getPlayTime().toString().length() > 10) {
 						fileInfo.setPlayTime(fileInfo.getPlayTime().toString().substring(0, 8));

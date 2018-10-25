@@ -331,15 +331,20 @@
 										var timeIntervalInfo = "";
 										
 										if(obj.timeInterval == null){
-											
 											timeIntervalInfo = "<input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='' placeholder='미등록'> 초 <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a>";
 			    						}else{
-			    							timeIntervalInfo = "<input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='"+obj.timeInterval+"' placeholder='미등록'> 초 <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a>";
+			    							if(obj.mediaType == "IMAGE"){
+			    								timeIntervalInfo = "<input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='"+obj.timeInterval+"' placeholder='미등록'> 초 <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a>";	
+			    							}else{
+			    								timeIntervalInfo = "<input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='"+obj.timeInterval+"' placeholder='미등록' readonly> 초 <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")' readonly>적용</a>";
+			    							}
 			    						}
 										if (obj.mediaType == "IMAGE"){
 											condivLst += "<div id='listItem_"+obj.fileOrder+"' class='listDiv'><table border='0'><tr><td><a class='dragHandle'></a></td><td class='orderSeq'></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'><img class='listImg' src='"+obj.fileStreCours + obj.streFileNm +"' style='width:"+newConWidth+"; height:"+newConHeight+";' id='file_"+obj.fileSeq+"' ></a></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'>"+obj.orignlFileNm+"<br>("+obj.streFileNm+")</a></td><td class='mediaTime"+obj.fileSeq+"'>"+timeIntervalInfo+"</td><td><a class='delkey boxH grayBtn' href='javascript:del_Content(&#39;"+obj.fileSeq+"&#39;, &#39;"+detailSeqCode+"&#39; )'>제외</a></td><td>"+obj.fileWidth+"x"+obj.fileHeight+"</td></tr></table></div>";
- 			    				    	} else {
+ 			    				    	} else if (obj.mediaType == "MEDIA"){
  			    				    		condivLst += "<div id='listItem_"+obj.fileOrder+"' class='listDiv'><table border='0'><tr><td><a class='dragHandle'></a></td><td class='orderSeq'></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'><img class='listImg' src='"+obj.fileStreCours + obj.fileThumnail +"' style='width:"+newConWidth+"; height:"+newConHeight+";' id='file_"+obj.fileSeq+"'></a></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'>"+obj.orignlFileNm+"<br>("+obj.streFileNm+")</a></td><td class='mediaTime"+obj.fileSeq+"'>"+timeIntervalInfo+"</td><td><a class='delkey boxH grayBtn' href='javascript:del_Content(&#39;"+obj.fileSeq+"&#39;, &#39;"+detailSeqCode+"&#39;)'>제외</a></td><td>"+obj.fileWidth+"x"+obj.fileHeight+"</td></tr></table></div>";
+ 			    				    	} else {
+ 			    				    		condivLst += "<div id='listItem_"+obj.fileOrder+"' class='listDiv'><table border='0'><tr><td><a class='dragHandle'></a></td><td class='orderSeq'></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'><img class='listImg' src='/img/music-icon.png' style='width:100px; height:auto;' id='file_"+obj.fileSeq+"'></a></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'>"+obj.orignlFileNm+"<br>("+obj.streFileNm+")</a></td><td class='mediaTime"+obj.fileSeq+"'>"+timeIntervalInfo+"</td><td><a class='delkey boxH grayBtn' href='javascript:del_Content(&#39;"+obj.fileSeq+"&#39;, &#39;"+detailSeqCode+"&#39;)'>제외</a></td><td>"+obj.fileWidth+"x"+obj.fileHeight+"</td></tr></table></div>";
  			    				    	}
 										
 										
@@ -405,8 +410,10 @@
 	    							onclickValue = "view_Con(&#39;"+obj.atchFileId+"&#39;)";
 	    							if (obj.mediaType == "IMAGE"){
 										imgCreate = "<img data-u='thumb' src='"+obj.fileStreCours + obj.streFileNm +"' style='width:120px; height:120px;'/><br><span style='color:#FF4b4b'>미디어 로딩이 필요합니다.</span>";  
-									} else {
+									} else if ( obj.mediaType == "MEDIA" ) {
 										imgCreate = "<img data-u='thumb' src='"+obj.fileStreCours + obj.fileThumnail +"' style='width:120px; height:120px;'/><br><span style='color:#FF4b4b'>미디어 로딩이 필요합니다.</span>";
+									} else if ( obj.mediaType == "MUSIC" ) {
+										imgCreate = "<img data-u='thumb' src='/img/music-icon.png' style='width:100px; height:auto;'/><br><span style='color:#FF4b4b'>미디어 로딩이 필요합니다.</span>";
 									}
 	    						}else{
 	    							onclickValue = "conSchReg(&#39;"+obj.atchFileId+"&#39;)";
@@ -421,20 +428,23 @@
 									}
 		    						if (obj.mediaType == "IMAGE"){
 										imgCreate = "<img data-u='thumb' src='"+obj.fileStreCours + obj.streFileNm +"'  style='width:"+thumW+"; height:"+thumH+";' />";   
-									}else{
+		    						} else if ( obj.mediaType == "MEDIA" ) {
 	    								imgCreate = "<img data-u='thumb' src='"+obj.fileStreCours + obj.fileThumnail +"'  style='width:"+thumW+"; height:"+thumH+";' />";
+									} else if ( obj.mediaType == "MUSIC" ) {
+	    								imgCreate = "<img data-u='thumb' src='/img/music-icon.png'  style='width:100px; height:auto;' />";
 									}
 	    						}
-								if (obj.mediaType == "IMAGE"){
+/* 								if (obj.mediaType == "IMAGE"){
 									imgSlider  += "<tr><td colspan='3' style='border-bottom:0;'><div id='" + obj.atchFileId +"' style='width:150px; margin-right: 10px; display: inline-block; white-space: normal; word-break:normal;' onclick='"+onclickValue+"'>"+imgCreate+"<br>"+obj.orignlFileNm+"</div></td></tr>";   
-								} else {
+								} else { */
 									imgSlider  += "<tr><td colspan='3' style='border-bottom:0;'><div id='" + obj.atchFileId +"' style='width:150px; margin-right: 10px; display: inline-block; white-space: normal; word-break:normal;' onclick='"+onclickValue+"'>"+imgCreate+"<br>"+obj.orignlFileNm+"</div></td></tr>";
-								}			
+								//}			
 								thumW = null;
 								thumH = null;
 							}
 							imgSlider += "";
 							$("#con_img_lst").html(imgSlider); 
+							
 	    					//드레그 관련 내용 
 	    					/* $(".items div").draggable({			
 	    					    helper: function(e) {
@@ -751,6 +761,7 @@
 							
 							for (var i=0; i<result.detailContentInfo.length; i++) {
 	    						var obj = result.detailContentInfo[i];
+	    						
 	    						if((obj.fileWidth-obj.fileHeight)>0){
 									// 가로
 									setConWidth = "180px";
@@ -767,17 +778,23 @@
 									// $("#conTimeInterval").text("0");
 									timeIntervalInfo = "<span style='color:#FF4b4b; font-weight:bold;'><input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='' placeholder='미등록'> 초 <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a></span>";
 	    						}else{
-	    							// $("#conTimeInterval").text();
-	    							timeIntervalInfo = "<span><input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value="+obj.timeInterval+"> 초 <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a></span>";
+	    							if(obj.mediaType == "IMAGE"){
+	    								timeIntervalInfo = "<input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value='"+obj.timeInterval+"' placeholder='미등록'> 초 <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a>";	
+	    							} else {
+	    								timeIntervalInfo = "<span><input class='contentPlaytimeInput' type='text' id='conInterval_"+obj.fileSeq+"' size='2' value="+obj.timeInterval+"  readonly> 초 <a class='time_"+obj.fileSeq+" timeIntervalBtn' href='javascript:saveInterval("+obj.fileSeq+")'>적용</a></span>";
+	    							}
 	    						}
 	    						
 	    						if (obj.mediaType == "IMAGE"){
 									condivLst += "<div id='listItem_"+i+"' class='listDiv'><table border='0'><tr><td><a class='dragHandle'></a></td><td class='orderSeq'></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'><img class='listImg' src='"+obj.fileStreCours + obj.streFileNm +"' onError='this.src=&#39;/img/no_image.png&#39;;' style='width:"+setConWidth+"; height:"+setConHeight+";' id='file_"+obj.fileSeq+"' ></a></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'>"+obj.orignlFileNm+"<br>("+obj.streFileNm+")</a></td><td class='mediaTime"+obj.fileSeq+"'>"+timeIntervalInfo+"</td><td><a class='delkey boxH grayBtn' href='javascript:del_Content(&#39;"+obj.fileSeq+"&#39;, &#39;"+code+"&#39; )'>제외</a></td><td>"+obj.fileWidth+"x"+obj.fileHeight+"</td></tr></table></div>";   
-								} else {
+								} else if (obj.mediaType == "MEDIA"){
 									condivLst += "<div id='listItem_"+i+"' class='listDiv'><table border='0'><tr><td><a class='dragHandle'></a></td><td class='orderSeq'></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'><img class='listImg' src='"+obj.fileStreCours + obj.fileThumnail +"' onError='this.src=&#39;/img/no_image.png&#39;;' style='width:"+setConWidth+"; height:"+setConHeight+";' id='file_"+obj.fileSeq+"'></a></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'>"+obj.orignlFileNm+"<br>("+obj.streFileNm+")</a></td><td class='mediaTime"+obj.fileSeq+"'>"+timeIntervalInfo+"</td><td><a class='delkey boxH grayBtn' href='javascript:del_Content(&#39;"+obj.fileSeq+"&#39;, &#39;"+code+"&#39;)'>제외</a></td><td>"+obj.fileWidth+"x"+obj.fileHeight+"</td></tr></table></div>";
+								} else {
+									condivLst += "<div id='listItem_"+i+"' class='listDiv'><table border='0'><tr><td><a class='dragHandle'></a></td><td class='orderSeq'></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'><img class='listImg' src='/img/music-icon.png' onError='this.src=&#39;/img/no_image.png&#39;;' style='width:100px; height:auto;' id='file_"+obj.fileSeq+"'></a></td><td><a href='javascript:view_info(&#39;"+obj.fileSeq+"&#39;)'>"+obj.orignlFileNm+"<br>("+obj.streFileNm+")</a></td><td class='mediaTime"+obj.fileSeq+"'>"+timeIntervalInfo+"</td><td><a class='delkey boxH grayBtn' href='javascript:del_Content(&#39;"+obj.fileSeq+"&#39;, &#39;"+code+"&#39;)'>제외</a></td><td>"+obj.fileWidth+"x"+obj.fileHeight+"</td></tr></table></div>";
 								}
 	    						
-	    					 }		    					 
+	    					 }		
+							
 	    					$("#test-list").html(condivLst);
 	    					// conDetailOrderSeqSetting('uOrign_'+i, 'dOrign_'+i);
 	    					item_order();
@@ -1026,6 +1043,7 @@
 							var thumH = "";
  		    				for (var i=0; i<result.jsonCon.length; i++) {
 	    						var obj = result.jsonCon[i];
+	    						
 	    						var onclickValue = "";
 	    						var imgCreate = "";
 	    						if(obj.fileWidth == null){
@@ -1033,8 +1051,10 @@
 	    							onclickValue = "view_Con(&#39;"+obj.atchFileId+"&#39;)";
 									if (obj.mediaType == "IMAGE"){
 										imgCreate = "<img data-u='thumb' src='"+obj.fileStreCours + obj.streFileNm +"' onError='this.src=&#39;/img/no_image.png&#39;;' style='width:120px; height:120px;'/><br><span style='color:#FF4b4b'>미디어 로딩이 필요합니다.</span>";  
-									} else {
+									} else if (obj.mediaType == "MEDIA"){
 										imgCreate = "<img data-u='thumb' src='"+obj.fileStreCours + obj.fileThumnail +"' onError='this.src=&#39;/img/no_image.png&#39;;' style='width:120px; height:120px;'/><br><span style='color:#FF4b4b'>미디어 로딩이 필요합니다.</span>";
+									} else {
+										imgCreate = "<img data-u='thumb' src='/img/music-icon.png' onError='this.src=&#39;/img/no_image.png&#39;;' style='width:100px; height:auto;'/><br><span style='color:#FF4b4b'>미디어 로딩이 필요합니다.</span>";
 									}
 	    						}else{
 	    							onclickValue = "conSchReg(&#39;"+obj.atchFileId+"&#39;)";
@@ -1049,15 +1069,17 @@
 									}
 		    						if (obj.mediaType == "IMAGE"){
 										imgCreate = "<img data-u='thumb' src='"+obj.fileStreCours + obj.streFileNm +"'  style='width:"+thumW+"; height:"+thumH+";' />";   
-									}else{
+		    						} else if (obj.mediaType == "MEDIA"){
 	    								imgCreate = "<img data-u='thumb' src='"+obj.fileStreCours + obj.fileThumnail +"'  style='width:"+thumW+"; height:"+thumH+";' />";
+									} else if ("MUSIC"){
+	    								imgCreate = "<img data-u='thumb' src='/img/music-icon.png'  style='width:100px; height:auto;' />";
 									}
 	    						}
-								if (obj.mediaType == "IMAGE"){
+/* 								if (obj.mediaType == "IMAGE"){
 									imgSlider  += "<tr><td colspan='3' style='border-bottom:0;'><div id='" + obj.atchFileId +"' style='width:150px; margin-right: 10px; display: inline-block; white-space: normal; word-break:normal;' onclick='"+onclickValue+"'>"+imgCreate+"<br>"+obj.orignlFileNm+"</div></td></tr>";   
-								} else {
+								} else { */
 									imgSlider  += "<tr><td colspan='3' style='border-bottom:0;'><div id='" + obj.atchFileId +"' style='width:150px; margin-right: 10px; display: inline-block; white-space: normal; word-break:normal;' onclick='"+onclickValue+"'>"+imgCreate+"<br>"+obj.orignlFileNm+"</div></td></tr>";
-								}
+								//}
 								
 								
 								/* if (obj.mediaType == "IMAGE"){
@@ -1070,6 +1092,7 @@
 							}
 	    					imgSlider += "";
 	    					$("#con_img_lst").html(imgSlider); 
+	    					
 	    				}else{
 	    					alert("없음");
 	    				}
@@ -1107,8 +1130,10 @@
 	    							onclickValue = "view_Con(&#39;"+obj.atchFileId+"&#39;)";
 	    							if (obj.mediaType == "IMAGE"){
 										imgCreate = "<img data-u='thumb' src='"+obj.fileStreCours + obj.streFileNm +"' style='width:120px; height:120px;'/><br><span style='color:#FF4b4b'>미디어 로딩이 필요합니다.</span>";  
-									} else {
+									} else if (obj.mediaType == "MEDIA"){
 										imgCreate = "<img data-u='thumb' src='"+obj.fileStreCours + obj.fileThumnail +"' style='width:120px; height:120px;'/><br><span style='color:#FF4b4b'>미디어 로딩이 필요합니다.</span>";
+									} else if (obj.mediaType == "MUSIC"){
+										imgCreate = "<img data-u='thumb' src='/img/music-icon.png' style='width:100px; height:auto;'/><br><span style='color:#FF4b4b'>미디어 로딩이 필요합니다.</span>";
 									}
 	    						}else{
 	    							onclickValue = "conSchReg(&#39;"+obj.atchFileId+"&#39;)";
@@ -1123,20 +1148,23 @@
 									}
 		    						if (obj.mediaType == "IMAGE"){
 										imgCreate = "<img data-u='thumb' src='"+obj.fileStreCours + obj.streFileNm +"'  style='width:"+thumW+"; height:"+thumH+";' />";   
-									}else{
+		    						} else if (obj.mediaType == "MEDIA"){
 	    								imgCreate = "<img data-u='thumb' src='"+obj.fileStreCours + obj.fileThumnail +"'  style='width:"+thumW+"; height:"+thumH+";' />";
+									} else if (obj.mediaType == "MUSIC"){
+	    								imgCreate = "<img data-u='thumb' src='/img/music-icon.png'  style='width:100px; height:auto;' />";
 									}
 	    						}
-								if (obj.mediaType == "IMAGE"){
+								/* if (obj.mediaType == "IMAGE"){
 									imgSlider  += "<tr><td colspan='3' style='border-bottom:0;'><div id='" + obj.atchFileId +"' style='width:150px; margin-right: 10px; display: inline-block; white-space: normal; word-break:normal;' onclick='"+onclickValue+"'>"+imgCreate+"<br>"+obj.orignlFileNm+"</div></td></tr>";   
-								} else {
+								} else { */
 									imgSlider  += "<tr><td colspan='3' style='border-bottom:0;'><div id='" + obj.atchFileId +"' style='width:150px; margin-right: 10px; display: inline-block; white-space: normal; word-break:normal;' onclick='"+onclickValue+"'>"+imgCreate+"<br>"+obj.orignlFileNm+"</div></td></tr>";
-								}			
+								// }					
 								thumW = null;
 								thumH = null;
 	    					}
 							imgSlider += "";
-							$("#con_img_lst").html(imgSlider); 
+							$("#con_img_lst").html(imgSlider);
+							
 	    				}else{
 	    					alert("없음");
 	    				}

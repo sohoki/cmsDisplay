@@ -80,11 +80,31 @@
 								</thead>
 								<tbody>
 									<c:forEach items="${resultList }" var="conMutiinfo" varStatus="status">
-									<tr>
+									<tr onclick="javascript:view_Con('Edt', '${conMutiinfo.conSeq }')" style="cursor: pointer;">
 										<td>${conMutiinfo.conSeq}</td>
-										<td><a href="javascript:view_Con('Edt', '${conMutiinfo.conSeq }')"> ${conMutiinfo.conNm }</a></td>
-										<td>${conMutiinfo.conScreen }</td>
-										<td>${conMutiinfo.conWidth } * ${conMutiinfo.conHeight }</td>
+										<td>${conMutiinfo.conNm }</td>
+										<td>
+										<c:choose>
+											<c:when test="${conMutiinfo.codeNm eq '음원POP'}">
+											음원POP
+											</c:when>
+											<c:otherwise>
+											사이니지
+											</c:otherwise>
+										</c:choose>
+										</td> <%--  ${conMutiinfo.codeNm} --%>
+										<td>
+										${conMutiinfo.conScreen }
+										<c:choose>
+											<c:when test="${conMutiinfo.codeNm ne '음원POP'}">
+											<br>(${conMutiinfo.conWidth } * ${conMutiinfo.conHeight })
+											</c:when>
+											<c:otherwise>
+											<br>(${conMutiinfo.conWidth } * ${conMutiinfo.conHeight })
+											</c:otherwise>
+										</c:choose>
+										
+										</td>
 										<td>${conMutiinfo.schCnt } 개</td>
 										<td>${conMutiinfo.frstRegistPnttm }</td>
 									</tr>			

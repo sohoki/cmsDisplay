@@ -134,7 +134,7 @@
 															</c:choose>
 										                </c:when>
 										                <c:when test="${ fileInfo.mediaType eq 'MUSIC'}">
-										                  <img id="atchFileId" name="atchFileId" src="/img/no_image.png"  style="width:160px; height:160px;"/>
+										                  <img id="atchFileId" name="atchFileId" src="/img/music-icon.png"  style="width:160px; height:auto;"/>
 										                </c:when>
 										        		<c:otherwise>
 															<c:choose>
@@ -226,10 +226,7 @@
     	  var url = "/backoffice/sub/conManage/fileIupload.do"; 
     	  window.open(url,"파일 업로드", 'width=1036,height=512,top=100,left=650,scrollbars=auto');
       }
-      function open_musicPop(){
-    	  var url = "/backoffice/sub/conManage/fileMupload.do"; 
-    	  window.open(url,"파일 업로드", 'width=1036,height=512,top=100,left=650,scrollbars=auto');
-      }
+
       //파일 보기 
       function view_Con(atchId, w, h){
     	  var url = "/backoffice/sub/conManage/fileView.do?atchFileId="+atchId;

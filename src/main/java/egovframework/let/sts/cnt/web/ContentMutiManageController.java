@@ -272,15 +272,6 @@ public class ContentMutiManageController {
 		return "/backoffice/sub/conManage/FileUpload";		
 	}
 	
-	//음원POP 파일 업로드 파일 올리기
-	@RequestMapping (value="/backoffice/sub/conManage/fileMupload.do")
-	public String musicPOPfileUplad(@ModelAttribute("loginVO") LoginVO loginVO			
-			, HttpServletRequest request
-			, BindingResult bindingResult			
-			, ModelMap model) throws Exception{		
-		return "/backoffice/sub/conManage/FileMUpload";
-	}
-	
 	@RequestMapping (value="/backoffice/sub/conManage/conPage01.do")
 	public String filePage01(@ModelAttribute("loginVO") LoginVO loginVO
 			, ContentDetailInfo vo
@@ -901,20 +892,57 @@ public class ContentMutiManageController {
 			List<ContentDetailInfo> detailInfo =  contentDetail.selectContentDetailLst(conSeq);
 			
 			htmlPage.append("<script type='text/javascript'> \r\n");
-						
+			boolean musicPOPChk = false;
+			String mediaType = "";
 			for (int i = 0 ; i < detailInfo.size() ; i++ ){
 				
 				ContentDetailFileInfoVO searchVO = new ContentDetailFileInfoVO();
 				searchVO.setConSeq(conSeq);
 				searchVO.setDetailSeq(detailInfo.get(i).getDetailSeq());				
-				List<ContentDetailFileInfoVO>  detailFileContent = conFileinfo.selectContentDetailFileLst(searchVO);			
-				JSONArray jsonA = JSONArray.fromObject(detailFileContent);				
+				List<ContentDetailFileInfoVO>  detailFileContent = conFileinfo.selectContentDetailFileLst(searchVO);
+				JSONArray jsonA = JSONArray.fromObject(detailFileContent);			
+				
+				if(i == 0){
+					System.out.println(detailFileContent.get(0).getAtchFileId());
+					System.out.println(detailFileContent.get(0).getMediaType());
+					
+					mediaType= detailFileContent.get(0).getMediaType();
+					// mediaType= (String) jsonA.getJSONArray(0).getJSONObject(0).get("mediaType");
+					if(mediaType == null){
+						musicPOPChk = true;
+					} else {
+						if(!mediaType.equals("IMAGE") && !mediaType.equals("MEDIA")){
+							musicPOPChk = true;
+						}else{
+							musicPOPChk = false;
+						}
+					}
+				}
+				
+				
 				htmlPage.append("var albumLst"+i+"= '"+ jsonA  +"';\r\n");				
 				htmlPage.append("var timeId"+i+"= '';\r\n");
 			}
 			// onRead 
 			htmlPage.append(" $(document).ready(function(){    \r\n");
 			htmlPage.append("   console.log('contents play start');    \r\n"); // 신규 추가 2017.11.30 // 박성민, 안드로이드 확인 필요사항
+			
+			/*if(musicPOPChk){
+				// setAudio
+				htmlPage.append("       $(\"setAudio\").on('loadstart', function(){   \r\n"); 
+			    htmlPage.append("			$(\"#setAudio\").on('ended', function(){ \r\n");
+			    htmlPage.append("       		startContentSch();   \r\n");
+			    htmlPage.append("       	});   \r\n");
+				htmlPage.append("        });   \r\n"); 
+				htmlPage.append("       $(\"#setAudio\").on(\"error\", function(err){  \r\n"); 
+				htmlPage.append("       	alert('ERROR !!!'); 			\r\n");
+				htmlPage.append("       }); \r\n");		
+				
+				
+				
+			}*/
+			
+			htmlPage.append("   function startContentSch(){    \r\n"); // 신규 추가 2018.10.25, autoplay set
 			for (int i = 0 ; i < detailInfo.size() ; i++ ){
 				htmlPage.append("  var jsonData"+i+" = JSON.parse(albumLst"+i+");             \r\n");
 				htmlPage.append("  if (jsonData"+i+".length > 0){    \r\n ");
@@ -922,6 +950,8 @@ public class ContentMutiManageController {
 				htmlPage.append("       myHandler"+i+"(jsonData"+i+"[0].streFileNm, jsonData"+i+"[0].mediaType, jsonData"+i+"[0].timeInterval, jsonData"+i+"[0].fileStreCours);    \r\n ");
 				htmlPage.append("  }  \r\n ");
 			}
+			htmlPage.append("   }    \r\n"); // 신규 추가 2018.10.25, autoplay set
+			htmlPage.append("   startContentSch();    \r\n"); // 신규 추가 2018.10.25, autoplay set
 			htmlPage.append(" });   \r\n ");
 			
 			for (int i = 0 ; i < detailInfo.size() ; i++ ){
@@ -946,7 +976,7 @@ public class ContentMutiManageController {
 					htmlPage.append("       $(\"#Image"+i+"\").on(\"error\", function(err){  \r\n"); 
 					htmlPage.append("            videoPlay"+i+"(); 			\r\n");
 					htmlPage.append("       }); \r\n");					
-				    htmlPage.append("   } else { \r\n");
+				    htmlPage.append("   } else if (fileType == 'MEDIA'){ \r\n");
 				    htmlPage.append("   var vod"+i+" = '<video id=\"Video"+i+"\" autoplay><source src=\"\" type=\"video/mp4\" /></video>'; \r\n");				    
 				    htmlPage.append("        $(\"#content_show"+i+"\").html(vod"+i+");   \r\n");
 				    htmlPage.append("        $(\"#Video"+i+"\").attr('src','./'+fileNm);   \r\n");
@@ -961,11 +991,26 @@ public class ContentMutiManageController {
 				    htmlPage.append("        $(\"#Video"+i+"\").on(\"error\", function(err){   \r\n"); 
 				    htmlPage.append("           videoPlay"+i+"(); 		  \r\n");
 				    htmlPage.append("      });   \r\n");				    
-				    htmlPage.append(" };  \r\n");
+				    htmlPage.append("   } else { \r\n");
+				    htmlPage.append("   var mPop"+i+" = '<audio id=\"audio"+i+"\" controls autoplay><source src=\"\" type=\"audio/mpeg\" /></audio>'; \r\n");				    
+				    htmlPage.append("        $(\"#content_show"+i+"\").html(mPop"+i+");   \r\n");
+				    htmlPage.append("        $(\"#audio"+i+"\").attr('src','./'+fileNm);   \r\n");
+				    htmlPage.append("             clearTimeout(contentLoad"+i+");     \r\n");
+				    htmlPage.append("        $(\"#audio"+i+"\").on('loadstart', function(){   \r\n"); 
+				    htmlPage.append("           $(\"#content_show"+i+"\").animate({opacity:1}, 500, function(){  \r\n"); 
+				    htmlPage.append("		       $(\"#audio"+i+"\").on('ended', function(){ \r\n"); // Video0+i 로 된 부분 Video+i 로 변경, 수정 완료
+				    htmlPage.append("                 videoPlay"+i+"();   \r\n");
+				    htmlPage.append("               });   \r\n");
+				    htmlPage.append("           });    \r\n");
+				    htmlPage.append("        });    \r\n");
+				    htmlPage.append("        $(\"#Video"+i+"\").on(\"error\", function(err){   \r\n"); 
+				    htmlPage.append("           videoPlay"+i+"(); 		  \r\n");
+				    htmlPage.append("      });   \r\n");				    
+				    htmlPage.append(" 	};  \r\n");
 				    htmlPage.append(" };  \r\n"); // 누락 부분 추가 체크
 				}else {
 					// 화면생성, 미리보기 myHandler 생성부
-					htmlPage.append("      if (fileType == 'IMAGE'){       \r\n");
+					htmlPage.append("      if (fileType == 'IMAGE'){       \r\n"); // 이미지 부분
 					if (i==0){
 						htmlPage.append("       var img"+i+" = '<img id=\"Image0\" src=\"'+fileStreCours + fileNm+'\" width=\"" +width0+"\" height=\"" +height0+ "\" />';    \r\n");
 					}else {
@@ -993,7 +1038,7 @@ public class ContentMutiManageController {
 					htmlPage.append("       $(\"#Image"+i+"\").on(\"error\", function(err){  \r\n");					
 					htmlPage.append("            videoPlay"+i+"(); 			\r\n");
 					htmlPage.append("       }); \r\n");					
-				    htmlPage.append("   } else { \r\n");				    
+				    htmlPage.append("   } else if (fileType == 'MEDIA'){ \r\n");	 // 영상 부분			    
 				    htmlPage.append("   var vod"+i+" = '<video id=\"Video"+i+"\" autoplay><source src=\"\" type=\"video/mp4\" /></video>'; \r\n");				    
 				    htmlPage.append("        $(\"#content_show"+i+"\").html(vod"+i+");   \r\n");
 				    htmlPage.append("        $(\"#Video"+i+"\").attr('src',''+fileStreCours + fileNm +'');   \r\n");
@@ -1002,10 +1047,27 @@ public class ContentMutiManageController {
 				    htmlPage.append("           $(\"#content_show"+i+"\").animate({opacity:1}, 500, function(){  \r\n"); 
 				    htmlPage.append("		       $(\"#Video"+i+"\").on('ended', function(){ \r\n");
 				    htmlPage.append("                 videoPlay"+i+"();   \r\n");
+				    htmlPage.append("                 $(\"#Video"+i+"\").play();   \r\n");
 				    htmlPage.append("                 });   \r\n");
 				    htmlPage.append("              });    \r\n");
 				    htmlPage.append("        });    \r\n");
 				    htmlPage.append("        $(\"#Video"+i+"\").on(\"error\", function(err){   \r\n"); 
+				    htmlPage.append("           videoPlay"+i+"(); 		  \r\n");
+				    htmlPage.append("        });   \r\n");
+				    htmlPage.append("   } else { \r\n"); // 음원 부분				    
+				    htmlPage.append("   var mPop"+i+" = '<audio id=\"audio"+i+"\" controls autoplay><source src=\"\" type=\"audio/mpeg\" /></audio>'; \r\n");				    
+				    htmlPage.append("        $(\"#content_show"+i+"\").html(mPop"+i+");   \r\n");
+				    htmlPage.append("        $(\"#audio"+i+"\").attr('src',''+fileStreCours + fileNm +'');   \r\n");
+				    htmlPage.append("             clearTimeout(contentLoad"+i+");     \r\n");
+				    htmlPage.append("        $(\"#audio"+i+"\").on('loadstart', function(){   \r\n"); 
+				    htmlPage.append("           $(\"#content_show"+i+"\").animate({opacity:1}, 500, function(){  \r\n"); 
+				    htmlPage.append("		       $(\"#audio"+i+"\").on('ended', function(){ \r\n");
+				    htmlPage.append("                 videoPlay"+i+"();   \r\n");
+				    htmlPage.append("                 $(\"#audio"+i+"\").play();   \r\n");
+				    htmlPage.append("                 });   \r\n");
+				    htmlPage.append("              });    \r\n");
+				    htmlPage.append("        });    \r\n");
+				    htmlPage.append("        $(\"#audio"+i+"\").on(\"error\", function(err){   \r\n"); 
 				    htmlPage.append("           videoPlay"+i+"(); 		  \r\n");
 				    htmlPage.append("        });   \r\n");
 				    htmlPage.append("     }  \r\n");
@@ -1029,6 +1091,9 @@ public class ContentMutiManageController {
 				htmlPage.append("       };  \r\n");
 				htmlPage.append("       myHandler"+i+"(jsonData[num].streFileNm, jsonData[num].mediaType, jsonData[num].timeInterval);    \r\n ");
 				htmlPage.append(" };  \r\n");*/
+				
+				// setAudio
+				
 				htmlPage.append(" function videoPlay"+i+"(){    \r\n");
 				htmlPage.append(" $(\"#content_show"+i+"\").animate({opacity:0}, 500, function(){  \r\n"); 
 				htmlPage.append(" 	var jsonData = JSON.parse(albumLst"+i+");     \r\n");
@@ -1101,11 +1166,12 @@ public class ContentMutiManageController {
 			htmlPage.append("</style>	\r\n");
 			htmlPage.append("</head>	\r\n");
 			htmlPage.append("<body style='margin:0;background:#000'>	\r\n");
-			
+			htmlPage.append("   <iframe src='/upload/silence.mp3' allow='autoplay' id='setAudio' style='display:none'></iframe>  \r\n");	
 		    for (int i = 0 ; i < detailInfo.size() ; i++ ){
-//		    	    
+		    		// <iframe src="silence.mp3" allow="autoplay" id="audio" style="display:none"></iframe>
+		    		
 		    		htmlPage.append("   <input type='hidden' name='nowFileCnt"+i+"' id='nowFileCnt"+i+"'>	\r\n");
-		    		htmlPage.append("   <div id='content_show"+i+"' style='opacity:0;'></div>  \r\n");				    
+		    		htmlPage.append("   <div id='content_show"+i+"' style='opacity:0;'></div>  \r\n");	
 				    htmlPage.append(" ");
 		    }			
 		    
@@ -1115,6 +1181,7 @@ public class ContentMutiManageController {
 			
 		}catch(Exception e){
 			htmlPage.append(" 페이지 애러:"+ e.toString());
+			e.printStackTrace();
 		}		
 		
 		//System.out.println(htmlPage.toString());

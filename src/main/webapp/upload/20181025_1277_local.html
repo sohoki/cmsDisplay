@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>   
+ <html>   
+<head>  
+ <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>  
+ <title>단일화면차이점</title>   
+<script type='text/javascript' src='./jquery-2.2.4.min.js'></script>   
+<script type='text/javascript'> 
+var albumLst0= '[{"atchFileId":"FILE_000000000000058","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"1080","fileOrder":"0","fileSeq":"3437","fileStreCours":"/upload/201810/","fileThumnail":"FILE_000000000000058_thumnail.png","fileWidth":"610","firstIndex":1,"lastIndex":1,"mediaType":"MEDIA","orignlFileNm":"PK피코크인터뷰_세로형원본.mp4","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"19","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000000058.mp4","timeInterval":"19"},{"atchFileId":"FILE_000000000000057","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"1089","fileOrder":"1","fileSeq":"3438","fileStreCours":"/upload/201810/","fileThumnail":"","fileWidth":"612","firstIndex":1,"lastIndex":1,"mediaType":"IMAGE","orignlFileNm":"고양추석의무휴점.jpg","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000000057.jpg","timeInterval":"3"},{"atchFileId":"FILE_000000000000021","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"1920","fileOrder":"2","fileSeq":"3439","fileStreCours":"/upload/201810/","fileThumnail":"","fileWidth":"1080","firstIndex":1,"lastIndex":1,"mediaType":"IMAGE","orignlFileNm":"feel good sale_1080X1920-02.png","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000000021.png","timeInterval":"30"},{"atchFileId":"FILE_000000000000020","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"1920","fileOrder":"3","fileSeq":"3440","fileStreCours":"/upload/201810/","fileThumnail":"","fileWidth":"1080","firstIndex":1,"lastIndex":1,"mediaType":"IMAGE","orignlFileNm":"feel good sale_1080X1920-01.png","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000000020.png","timeInterval":"30"}]';
+var timeId0= '';
+ $(document).ready(function(){    
+   console.log('contents play start');    
+   function startContentSch(){    
+   	console.log('789');   
+  var jsonData0 = JSON.parse(albumLst0);             
+  if (jsonData0.length > 0){    
+      $('#nowFileCnt0').val('0');  
+        myHandler0(jsonData0[0].streFileNm, jsonData0[0].mediaType, jsonData0[0].timeInterval, jsonData0[0].fileStreCours);    
+   }  
+    }    
+   startContentSch();    
+ });   
+   function myHandler0(fileNm, fileType, file_Interval, fileStreCours) {              
+           var contentLoad0 = setTimeout(videoPlay0, 3*1000);  
+      if (fileType == 'IMAGE'){       
+       var img0 = '<img id="Image0" src="./'+fileNm+'" width="1080" height="1920" />';    
+       $("#content_show0").html(img0);     
+       $("#Image0").on("load", function(){    
+  	          clearTimeout(contentLoad0);   
+	          $("#content_show0").animate({opacity:1}, 500, function(){  
+		      setTimeout(videoPlay0, file_Interval*1000);   
+	         });  
+        }); 
+       $("#Image0").on("error", function(err){  
+            videoPlay0(); 			
+       }); 
+   } else if (fileType == 'MEDIA'){ 
+   var vod0 = '<video id="Video0" autoplay><source src="" type="video/mp4" /></video>'; 
+        $("#content_show0").html(vod0);   
+        $("#Video0").attr('src','./'+fileNm);   
+             clearTimeout(contentLoad0);     
+        $("#Video0").on('loadstart', function(){   
+           $("#content_show0").animate({opacity:1}, 500, function(){  
+		       $("#Video0").on('ended', function(){ 
+                 videoPlay0();   
+               });   
+           });    
+        });    
+        $("#Video0").on("error", function(err){   
+           videoPlay0(); 		  
+      });   
+   } else { 
+   var mPop0 = '<audio id="audio0" controls autoplay><source src="" type="audio/mpeg" /></audio>'; 
+        $("#content_show0").html(mPop0);   
+        $("#audio0").attr('src','./'+fileNm);   
+             clearTimeout(contentLoad0);     
+        $("#audio0").on('loadstart', function(){   
+           $("#content_show0").animate({opacity:1}, 500, function(){  
+		       $("#audio0").on('ended', function(){ 
+                 videoPlay0();   
+               });   
+           });    
+        });    
+        $("#Video0").on("error", function(err){   
+           videoPlay0(); 		  
+      });   
+ 	};  
+ };  
+ function videoPlay0(){    
+ $("#content_show0").animate({opacity:0}, 500, function(){  
+ 	var jsonData = JSON.parse(albumLst0);     
+ 	   if ($("#nowFileCnt0").val() == parseInt(jsonData.length-1)){  
+ 		   var link=document.location.href;    
+ 		   location.href=link;    
+ 		   $('#nowFileCnt0').val('0');    
+ 		   var num = 0;    
+ 	   } else {    
+ 		   var num = +$("#nowFileCnt0").val() + 1;  
+ 		   $("#nowFileCnt0").val(num);        
+ 	   }   
+ 	   $("#content_show0").html('');  
+ 	   myHandler0(jsonData[num].streFileNm, jsonData[num].mediaType, jsonData[num].timeInterval, jsonData[num].fileStreCours);  
+   });  
+ }  
+</script>	
+<style>	
+ .container { position: relative; width: 100%; }	
+ .container video { float: left; }	
+    #Video0 {	
+    width: 1080px; height: auto ; 
+    }	
+    #content_show0 {	
+    position: relative; top: 0;	
+    width: 1080px; height: auto ; z-index: 102;	
+    float:left;               	
+    }               	
+.clear { clear: both; }  
+</style>	
+</head>	
+<body style='margin:0;background:#000'>	
+   <iframe src='/upload/silence.mp3' allow='autoplay' id='setAudio' style='display:none'></iframe>  
+   <input type='hidden' name='nowFileCnt0' id='nowFileCnt0'>	
+   <div id='content_show0' style='opacity:0;'></div>  
+   </body>	
+</html>	
