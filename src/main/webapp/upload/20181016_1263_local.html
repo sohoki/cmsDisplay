@@ -5,16 +5,19 @@
  <title>테스트구성</title>   
 <script type='text/javascript' src='./jquery-2.2.4.min.js'></script>   
 <script type='text/javascript'> 
-var albumLst0= '[{"atchFileId":"FILE_000000000000024","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"988","fileOrder":"0","fileSeq":"3363","fileStreCours":"/upload/201810/","fileThumnail":"","fileWidth":"1600","firstIndex":1,"lastIndex":1,"mediaType":"IMAGE","orignlFileNm":"27우석스태킹바스켓_1.png","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000000024.png","timeInterval":"5"},{"atchFileId":"FILE_000000000000025","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"988","fileOrder":"1","fileSeq":"3364","fileStreCours":"/upload/201810/","fileThumnail":"","fileWidth":"1600","firstIndex":1,"lastIndex":1,"mediaType":"IMAGE","orignlFileNm":"27우석슬림스태킹바스켓_2.png","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000000025.png","timeInterval":"5"},{"atchFileId":"FILE_000000000000026","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"988","fileOrder":"2","fileSeq":"3365","fileStreCours":"/upload/201810/","fileThumnail":"","fileWidth":"1600","firstIndex":1,"lastIndex":1,"mediaType":"IMAGE","orignlFileNm":"27우석유로빈_3.png","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000000026.png","timeInterval":"5"},{"atchFileId":"FILE_000000000000027","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"1080","fileOrder":"3","fileSeq":"3366","fileStreCours":"/upload/201810/","fileThumnail":"FILE_000000000000027_thumnail.png","fileWidth":"1920","firstIndex":1,"lastIndex":1,"mediaType":"MEDIA","orignlFileNm":"25_왕자행거.mp4","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"30","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000000027.mp4","timeInterval":"30"}]';
+var albumLst0= '[{"atchFileId":"FILE_000000000000059","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"1080","fileOrder":"0","fileSeq":"3441","fileStreCours":"/upload/201810/","fileThumnail":"FILE_000000000000059_thumnail.png","fileWidth":"1920","firstIndex":1,"lastIndex":1,"mediaType":"MEDIA","orignlFileNm":"PK 피코크 오픈 기념인터뷰_가로형 (최종).mp4","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"19","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000000059.mp4","timeInterval":"19"},{"atchFileId":"FILE_000000000000024","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"988","fileOrder":"1","fileSeq":"3363","fileStreCours":"/upload/201810/","fileThumnail":"","fileWidth":"1600","firstIndex":1,"lastIndex":1,"mediaType":"IMAGE","orignlFileNm":"27우석스태킹바스켓_1.png","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000000024.png","timeInterval":"5"},{"atchFileId":"FILE_000000000000025","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"988","fileOrder":"2","fileSeq":"3364","fileStreCours":"/upload/201810/","fileThumnail":"","fileWidth":"1600","firstIndex":1,"lastIndex":1,"mediaType":"IMAGE","orignlFileNm":"27우석슬림스태킹바스켓_2.png","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000000025.png","timeInterval":"5"},{"atchFileId":"FILE_000000000000026","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"988","fileOrder":"3","fileSeq":"3365","fileStreCours":"/upload/201810/","fileThumnail":"","fileWidth":"1600","firstIndex":1,"lastIndex":1,"mediaType":"IMAGE","orignlFileNm":"27우석유로빈_3.png","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000000026.png","timeInterval":"5"},{"atchFileId":"FILE_000000000000027","conSeq":"","detailSeq":"","fileExtsn":"","fileHeight":"1080","fileOrder":"4","fileSeq":"3366","fileStreCours":"/upload/201810/","fileThumnail":"FILE_000000000000027_thumnail.png","fileWidth":"1920","firstIndex":1,"lastIndex":1,"mediaType":"MEDIA","orignlFileNm":"25_왕자행거.mp4","pageIndex":1,"pageSize":10,"pageUnit":10,"playTime":"30","recordCountPerPage":10,"regDate":"","searchCondition":"","searchKeyword":"","searchUseYn":"","streFileNm":"FILE_000000000000027.mp4","timeInterval":"30"}]';
 var timeId0= '';
  $(document).ready(function(){    
    console.log('contents play start');    
-  var jsonData = JSON.parse(albumLst0);             
-  if (jsonData.length > 0){    
+   function startContentSch(){    
+  var jsonData0 = JSON.parse(albumLst0);             
+  if (jsonData0.length > 0){    
       $('#nowFileCnt0').val('0');  
-        myHandler0(jsonData[0].streFileNm, jsonData[0].mediaType, jsonData[0].timeInterval, jsonData[0].fileStreCours);    
+        myHandler0(jsonData0[0].streFileNm, jsonData0[0].mediaType, jsonData0[0].timeInterval, jsonData0[0].fileStreCours);    
    }  
-  });   
+    }    
+   startContentSch();    
+ });   
    function myHandler0(fileNm, fileType, file_Interval, fileStreCours) {              
            var contentLoad0 = setTimeout(videoPlay0, 3*1000);  
       if (fileType == 'IMAGE'){       
@@ -29,7 +32,7 @@ var timeId0= '';
        $("#Image0").on("error", function(err){  
             videoPlay0(); 			
        }); 
-   } else { 
+   } else if (fileType == 'MEDIA'){ 
    var vod0 = '<video id="Video0" autoplay><source src="" type="video/mp4" /></video>'; 
         $("#content_show0").html(vod0);   
         $("#Video0").attr('src','./'+fileNm);   
@@ -44,7 +47,22 @@ var timeId0= '';
         $("#Video0").on("error", function(err){   
            videoPlay0(); 		  
       });   
- };  
+   } else { 
+   var mPop0 = '<audio id="audio0" controls autoplay><source src="" type="audio/mpeg" /></audio>'; 
+        $("#content_show0").html(mPop0);   
+        $("#audio0").attr('src','./'+fileNm);   
+             clearTimeout(contentLoad0);     
+        $("#audio0").on('loadstart', function(){   
+           $("#content_show0").animate({opacity:1}, 500, function(){  
+		       $("#audio0").on('ended', function(){ 
+                 videoPlay0();   
+               });   
+           });    
+        });    
+        $("#Video0").on("error", function(err){   
+           videoPlay0(); 		  
+      });   
+ 	};  
  };  
  function videoPlay0(){    
  $("#content_show0").animate({opacity:0}, 500, function(){  
@@ -78,6 +96,7 @@ var timeId0= '';
 </style>	
 </head>	
 <body style='margin:0;background:#000'>	
+   <iframe src='/upload/silence.mp3' allow='autoplay' id='setAudio' style='display:none'></iframe>  
    <input type='hidden' name='nowFileCnt0' id='nowFileCnt0'>	
    <div id='content_show0' style='opacity:0;'></div>  
    </body>	

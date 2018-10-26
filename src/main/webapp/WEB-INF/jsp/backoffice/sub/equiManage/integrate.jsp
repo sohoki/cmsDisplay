@@ -166,7 +166,7 @@
 							case "OFF"	: onOffStatus = '<span class="offIcon"></span>'; break;
 							default 	: onOffStatus = '<span class="offIcon"></span>'; break;
 						}
-						switch(result.equipList[i].didSttus){
+						switch(result.equipList[i].didUseYn){
 							case "Y"	: useStatus = '<span class="onIcon"></span>'; break;
 							case "N"	: useStatus = '<span class="offIcon"></span>'; break;
 							default 	: useStatus = '<span class="offIcon"></span>'; break;

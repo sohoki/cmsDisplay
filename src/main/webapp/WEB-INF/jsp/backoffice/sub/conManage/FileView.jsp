@@ -246,8 +246,25 @@ padding-left:4px;
 				);	
     }
     function pageClose(){
-    	opener.document.location.reload();
+    	
+    	
+    	
+    	
+    	var href = opener.document.location.href;
+    	
+    	var l_i = Number(href.lastIndexOf("/"))+1;
+    	var path = href.substring(l_i);
+    	
+    	if(path == "conMutiView_back.do"){
+    		window.opener.contentLst();
+    	} else {
+        	opener.document.location.reload();
+    	}
     	self.close();
+    	
+    	
+    	
+    	
     }
 	function loadingStart(){
 	   	var loadingimg = "<div style='width:100%;height:100%;z-index:100;background-color:#ffffff;opacity:0.6; position:fixed;text-align:center;vertical-align:middle;'><img src='/images/loading_img.gif'></img></div>";    	
