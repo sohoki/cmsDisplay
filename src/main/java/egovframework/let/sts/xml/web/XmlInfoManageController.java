@@ -18,6 +18,8 @@ import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.service.EgovFileMngUtil;
 import egovframework.com.cmm.service.Globals;
+import egovframework.let.cmm.use.service.GroupManagerService;
+import egovframework.let.cmm.use.service.GroupVo;
 import egovframework.let.sts.xml.service.XmlInfo;
 import egovframework.let.sts.xml.service.XmlInfoVO;
 import egovframework.let.sts.xml.service.XmlInfoManageService;
@@ -56,6 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -66,6 +69,9 @@ import org.springmodules.validation.commons.DefaultBeanValidator;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+
+
+
 
 
 
@@ -105,6 +111,9 @@ import javax.xml.xpath.XPathFactory;
 
 
 
+
+
+
 import egovframework.let.sts.brd.service.BasciBrodFileInfoManageService;
 import egovframework.let.sts.brd.service.BasciBrodFileInfoVO;
 import egovframework.let.sts.brd.service.BasicBrodScheduleInfoManageService;
@@ -114,6 +123,9 @@ import egovframework.let.sts.brd.service.BrodContentDetailManagerService;
 import egovframework.let.sts.brd.service.BrodOrganization;
 import egovframework.let.sts.brd.service.BrodOrganizationManagerService;
 import egovframework.let.sts.brd.service.BrodScheduleInfo;
+
+
+
 
 
 
@@ -185,6 +197,16 @@ public class XmlInfoManageController {
     
     @Resource(name="BasciBrodFileInfoManageService")
     private BasciBrodFileInfoManageService basicFileService;
+    
+    
+    
+    /**
+     * JSON DATA 통신 관련
+     * */
+    @Resource(name = "GroupManagerService")
+    private GroupManagerService groupManagerService;
+    
+    
     
     /** EgovPropertyService */
     @Resource(name = "propertiesService")
@@ -1732,47 +1754,95 @@ public class XmlInfoManageController {
     * Json 페이지 작업 간 통신 부분
     * FIRST : 2018-10-30, psm
     * MODIFY : 
-    * */
-   
-   @RequestMapping(value="/backoffice/sub/operManage/json/webData.do")
-	public ModelAndView jsonTypeWebDataSelect(HttpServletRequest request ) throws Exception {
-		
-		String searchReq = request.getParameter("searchReq") != null ? request.getParameter("searchReq") : "null";
-		
-		
-		ModelAndView model = new ModelAndView();
+    **/
+
+   	
+    @RequestMapping(value="/backoffice/sub/operManage/jsonRequest.do")
+	@ResponseBody 
+	public String jsonTypeWebDataSelect(HttpServletRequest request ) throws Exception {
 		
 		
+    	String result = "";
+    	String reqeustData = request.getParameter("requestData") != null ? request.getParameter("requestData") : "null";
 		
-		if(searchReq.equals("null")){
-			/*HashMap<String, String> returnNull = new HashMap<String, String>();
-			returnNull.put("result", "-9999");
-			return model.addObject(returnNull);*/
-		} else {
-			
+		
+		try{
+			if(reqeustData.equals("null")){
+				/*HashMap<String, String> returnNull = new HashMap<String, String>();
+				returnNull.put("result", "-9999");
+				return model.addObject(returnNull);*/
+			} else {
+				
+				result = webUseDataSearchResult(reqeustData);
+
+			}
+		}catch(Exception e){
+			result = "{'result':{'req_type':'SYSTEM_ERROR','length':0},'data':[]}";
+			e.printStackTrace();
 		}
 		
-		return model;
+		return result;
 	}
    
-   public ModelAndView webUseDataSearchResult(String reqType, String reqData){
+   public String webUseDataSearchResult(String reqData){
 	   
-	   ModelAndView result = new ModelAndView();
+	   // reqData를 JSON형태로 만들어줄 것
+	   String result = "";
+	   
 	   
 	   try{
+		   /* REQUEST VARIABLE */
+		   reqData = reqData.replace("'", "\"");
+		   System.out.println(reqData);
+		   JSONParser jsonParser = new JSONParser();
+		   JSONObject jsonObject = (JSONObject) jsonParser.parse(reqData);	
+		   
+		   String request_type = jsonObject.get("request_type").toString();
 		   
 		   JSONObject resultObj = new JSONObject();
+		   resultObj =  (JSONObject) jsonObject.get("request_data");
 		   
-		   if(reqType.equals("join-groupData")){
-			   // 부서정보 호출
-//			   didInfoManageService
-		   } else if (reqType.equals("join-centerData")){
+		   /* RESPONSE VARIABLE */
+		   JSONObject jsonRes = new JSONObject();
+		   JSONObject returnResult = new JSONObject();
+		   JSONArray jsonData = new JSONArray();
+		   JSONObject nowData = new JSONObject();
+		   
+
+		   if(request_type.equals("join-groupData")){ /* 01. 부서정보 호출, 요청 데이터 없음 */	
+			   String joinGroupId 		= resultObj.get("groupId").toString() != null 		? resultObj.get("groupId").toString() 		: "";
+			   String joinParentGroupId = resultObj.get("parentGroupId").toString() != null ? resultObj.get("parentGroupId").toString() : "";
+			   System.out.println(joinGroupId + ", " + joinParentGroupId);
+			   GroupVo groupVo = new GroupVo();
+			   groupVo.setSearchKeyword("");
+			   groupVo.setSearchCondition("");
+			   groupVo.setGroupId(joinGroupId);
+			   groupVo.setParentGroupId(joinParentGroupId);
+			   List<GroupVo> returnData = groupManagerService.selectGroupManageCombo(groupVo);
+			   
+			   int returnLength = returnData.size();
+			   for(int i = 0; i < returnLength; i++){
+				   nowData = new JSONObject();
+				   nowData.put("GROUP_ID", returnData.get(i).getGroupId());
+				   nowData.put("PARENT_GROUP_ID", returnData.get(i).getParentGroupId());
+				   nowData.put("GROUP_NM", returnData.get(i).getGroupNm());
+				   jsonData.add(nowData);
+			   }
+			   
+			   nowData = new JSONObject();
+			   nowData.put("req_type", request_type);
+			   nowData.put("length", returnLength);
+			   jsonRes.put("result", nowData);
+			   jsonRes.put("data", jsonData);
+			   
+			   
+		   } else if (request_type.equals("join-centerData")){
 			   // 점포정보 호출 (부서 수준에 따른) 
 			   
-		   } else if (reqType.equals("pwSearch-groupData")){
+		   } else if (request_type.equals("pwSearch-groupData")){
 			   // 부서정보 호출
 			   
-		   } else if (reqType.equals("pwSearch-centerData")){
+		   } else if (request_type.equals("pwSearch-centerData")){
 			   // 점포정보 호출 (부서 수준에 따른)
 			   
 			   
@@ -1780,9 +1850,17 @@ public class XmlInfoManageController {
 			   
 		   }
 		   
+		   result = jsonRes.toJSONString();
+		   jsonRes.clear();
 		   
 	   } catch (Exception e) {
-		   
+/*		   JSONObject returnErr = new JSONObject();
+		   JSONObject returnResult = new JSONObject();
+		   returnErr.put("req_type", e.toString());
+		   returnErr.put("length", 0);
+		   returnResult.put("result", returnErr);
+		   result = new ModelAndView("jsonRes", returnResult);*/
+		   e.printStackTrace();
 	   }
 	   
 	   return result;

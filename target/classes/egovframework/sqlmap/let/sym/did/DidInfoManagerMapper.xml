@@ -401,8 +401,6 @@
 			) TB 
 		) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}  
 	</select>
-    
-     
      
      
 </mapper>

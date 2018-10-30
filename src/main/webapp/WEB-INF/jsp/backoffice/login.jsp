@@ -236,13 +236,7 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">부서</p>
-                    <select id="popSel" class="user_reg_group">
-                        <option value>부서선택</option>
-                        <option value="">CMS총괄</option>
-                        <option value="">사이니지</option>
-                        <option value="">데이즈</option>
-                        <option value="">부츠</option>
-                        <option value="">음원방송</option>
+                    <select id="popSel" class="user_reg_group" onchange='centerInfoSetting();'>
                     </select>               
                 </div>                
             </div>
@@ -311,8 +305,56 @@
 	    			  alert("아이디 또는 패스워드가 잘못 입력 하였습니다.");
 		    		  $("#mberId").focus() ;	    			  
 	    		  }				
-	    	}    	           	    	
-       });       
+	    	}
+	    	
+	    	
+	    	// /backoffice/sub/operManage/json/webData.do
+	    		
+	    	groupInfoSetting();
+
+	    	
+       });   
+       
+   	function centerInfoSetting(){
+		console.log($(".user_reg_group option:selected").val());
+	}
+   	
+		function groupInfoSetting (){
+			var callData = "{'request_type':'join-groupData', 'request_data':{'groupId':'', 'parentGroupId':'EMART_00000000000001'}}";
+    	   	$.ajax({
+   				url : '/backoffice/sub/operManage/jsonRequest.do',
+   				type : 'POST',
+   				data : {
+   					requestData : callData
+   				},
+   				dataType : 'json',
+   				success : function(result) {
+   					if(result.result.length > 0){
+   						console.log(result);	
+   						//                         <option value="">CMS총괄</option>
+   						
+   						var resultData = result.data;
+   						
+   						var appendOption;
+   						appendOption += "<option value=''>부서선택</option>";
+   						
+   						for(var i = 0; i < result.result.length; i ++){
+   							appendOption += "<option id='P_"+resultData[i].PARENT_GROUP_ID+"' value='"+resultData[i].GROUP_ID+"'>"+resultData[i].GROUP_NM+"</option>";	
+   						}
+   						
+   						$(".user_reg_group").html(appendOption);
+   					}
+   				},
+   				error : function(e) {
+   					console.log("에러임");
+   					console.log(e);
+   				}
+   			});
+		}
+       
+       
+       
+       
     </script>
 </body>
 </html>		
