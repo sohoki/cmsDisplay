@@ -7,7 +7,9 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import egovframework.let.sts.xml.service.XmlInfoManageService;
 import egovframework.let.sym.ccm.cde.service.CmmnDetailCodeVO;
 import egovframework.let.sym.ccm.cde.service.EgovCcmCmmnDetailCodeManageService;
 import egovframework.let.sts.brd.service.BrodScheduleManagerService;
+import egovframework.let.sts.cnt.service.ContentDetailFileInfoVO;
 import egovframework.let.sts.cnt.service.ContentMessageInfo;
 import egovframework.let.sts.cnt.service.ContentMessageInfoManageService;
 import egovframework.let.sts.cnt.service.ContentMutiInfoVO;
@@ -72,6 +75,9 @@ import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 
 
+
+
+
 import org.w3c.dom.DOMException;
 //xml 관련 구문 
 import org.w3c.dom.Document;
@@ -96,6 +102,9 @@ import javax.xml.xpath.XPathFactory;
 
 
 
+
+
+
 import egovframework.let.sts.brd.service.BasciBrodFileInfoManageService;
 import egovframework.let.sts.brd.service.BasciBrodFileInfoVO;
 import egovframework.let.sts.brd.service.BasicBrodScheduleInfoManageService;
@@ -105,6 +114,9 @@ import egovframework.let.sts.brd.service.BrodContentDetailManagerService;
 import egovframework.let.sts.brd.service.BrodOrganization;
 import egovframework.let.sts.brd.service.BrodOrganizationManagerService;
 import egovframework.let.sts.brd.service.BrodScheduleInfo;
+
+
+
 
 
 
@@ -1714,6 +1726,70 @@ public class XmlInfoManageController {
    public String xmlQuitReplace(String xmlResult){	   
 	   return xmlResult.replaceAll("'", "^").replaceAll("<", "@").replaceAll(">", "~");
    }
+   
+   
+   /**
+    * Json 페이지 작업 간 통신 부분
+    * FIRST : 2018-10-30, psm
+    * MODIFY : 
+    * */
+   
+   @RequestMapping(value="/backoffice/sub/operManage/json/webData.do")
+	public ModelAndView jsonTypeWebDataSelect(HttpServletRequest request ) throws Exception {
+		
+		String searchReq = request.getParameter("searchReq") != null ? request.getParameter("searchReq") : "null";
+		
+		
+		ModelAndView model = new ModelAndView();
+		
+		
+		
+		if(searchReq.equals("null")){
+			/*HashMap<String, String> returnNull = new HashMap<String, String>();
+			returnNull.put("result", "-9999");
+			return model.addObject(returnNull);*/
+		} else {
+			
+		}
+		
+		return model;
+	}
+   
+   public ModelAndView webUseDataSearchResult(String reqType, String reqData){
+	   
+	   ModelAndView result = new ModelAndView();
+	   
+	   try{
+		   
+		   JSONObject resultObj = new JSONObject();
+		   
+		   if(reqType.equals("join-groupData")){
+			   // 부서정보 호출
+//			   didInfoManageService
+		   } else if (reqType.equals("join-centerData")){
+			   // 점포정보 호출 (부서 수준에 따른) 
+			   
+		   } else if (reqType.equals("pwSearch-groupData")){
+			   // 부서정보 호출
+			   
+		   } else if (reqType.equals("pwSearch-centerData")){
+			   // 점포정보 호출 (부서 수준에 따른)
+			   
+			   
+		   } else {
+			   
+		   }
+		   
+		   
+	   } catch (Exception e) {
+		   
+	   }
+	   
+	   return result;
+	   
+   }
+   
+   
    
 
 	

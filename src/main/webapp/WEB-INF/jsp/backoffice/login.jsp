@@ -11,11 +11,19 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="Content-Language" content="ko" >
 <title>이마트DID운영관리</title>
+<link rel="stylesheet" href="/new/css/reset.css">
+<link rel="stylesheet" href="/new/css/layout.css">    
+<link rel="stylesheet" href="/new/css/paragraph.css"> 
 <link href="<c:url value='/'/>css/layout.css" rel="stylesheet" type="text/css" >
 <link href="<c:url value='/'/>css/paragraph.css" rel="stylesheet" type="text/css" >
 <link href="<c:url value='/'/>css/jquery.treemenu.css" rel="stylesheet" type="text/css" >
 <script type="text/javascript" src="/js/jquery-1.12.3.min.js"></script>
 <script type="text/javascript" src="/js/common.js"></script>
+<!--[if lte IE 8]>
+<script src="js/poly-checked.min.js"></script> 
+<![endif]-->
+<!--popup-->
+<link rel="stylesheet" href="/new/css/needpopup.css">
 </head>
 <body>
 	<div id="header">
@@ -58,8 +66,8 @@
 						</div>
 						<div class="btnBox">
 							<input type="submit" value="로그인" class="loginBtn loginPageBtn"/>
-							<a class="idSearchBtn loginPageBtn">비밀번호 찾기</a>
-							<a class="joinBtn loginPageBtn">이용신청</a>
+							<a data-needpopup-show="#pw_search_pop" class="idSearchBtn loginPageBtn">비밀번호 찾기</a>
+							<a data-needpopup-show="#join_pop" class="joinBtn loginPageBtn">이용신청</a>
 						</div>
 					</div>
 				</div>
@@ -105,6 +113,176 @@
 		</form>
 		<!--내용끝-->
 	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div id='pw_search_pop' class="needpopup">  
+        <!-- popheader-->                        
+        <div class="popHead">
+            <h2>이마트CMS 비밀번호 찾기</h2>
+        </div>
+        <!-- pop contents-->   
+        <div class="popCon">
+            <!--// 팝업 필드박스-->
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">*아이디</p>
+                    <input type="text" id="user_reg_id" class="input_noti" value="" placeholder="사번 또는 아이디" />
+                </div>                
+            </div>
+            <!--팝업 필드박스 //-->
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">*사용자명</p>
+                    <input type="text" id="user_reg_name" class="input_noti" value="" placeholder="표출 될 이름" />
+                </div>                
+            </div>
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">부서</p>
+                    <select id="popSel" class="user_reg_group">
+                        <option value>부서선택</option>
+                        <option value="">CMS총괄</option>
+                        <option value="">사이니지</option>
+                        <option value="">데이즈</option>
+                        <option value="">부츠</option>
+                        <option value="">음원방송</option>
+                    </select>               
+                </div>                
+            </div>
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">점포</p>
+                    <select id="popSel" class="user_reg_center">
+                        <option value>점포선택</option>
+                        <option value="">이마트 자양점</option>
+                        <option value="">이마트 용산점</option>
+                        <option value="">노브랜드 동대문</option>
+                    </select>               
+                </div>                
+            </div>          
+<!--             <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">긴급유무</p>
+                    <input type="radio" name="pop_radio3" id="pop_radio3y">
+                    <label for="pop_radio3y">사용</label>
+                    <input type="radio" name="pop_radio3" id="pop_radio3n">
+                    <label for="pop_radio3n">사용안함</label>
+                </div>                
+            </div>
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">사용유무</p>
+                    <input type="radio" name="pop_radio4" id="pop_radio4y">
+                    <label for="pop_radio4y">사용</label>
+                    <input type="radio" name="pop_radio4" id="pop_radio4n">
+                    <label for="pop_radio4n">사용안함 </label>
+                </div>                
+            </div> -->
+            <div class="clearfix"></div>
+        </div>
+        <div class="pop_footer">
+            <a href="" class="top_btn">비밀번호 찾기</a>
+        </div>
+    </div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div id='join_pop' class="needpopup">  
+        <!-- popheader-->                        
+        <div class="popHead">
+            <h2>이마트CMS 이용신청</h2>
+        </div>
+        <!-- pop contents-->   
+        <div class="popCon">
+            <!--// 팝업 필드박스-->
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">*아이디</p>
+                    <input type="text" id="user_reg_id" class="input_noti" value="" placeholder="사번 또는 아이디" />
+                </div>                
+            </div>
+            <!--팝업 필드박스 //-->
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">*사용자명</p>
+                    <input type="text" id="user_reg_name" class="input_noti" value="" placeholder="표출 될 이름" />
+                </div>                
+            </div>
+            <!--// 팝업 필드박스-->
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">*비밀번호</p>
+                    <input type="password" id="user_reg_pw" class="input_noti" value="" placeholder="영문+숫자+특수문자 10자이상">
+                </div>                
+            </div>
+            <!--팝업 필드박스 //-->
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">*비밀번호 확인</p>
+                    <input type="password" id="user_reg_pwChk" class="input_noti" value="" placeholder="영문+숫자+특수문자 10자이상">
+                </div>                
+            </div>
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">부서</p>
+                    <select id="popSel" class="user_reg_group">
+                        <option value>부서선택</option>
+                        <option value="">CMS총괄</option>
+                        <option value="">사이니지</option>
+                        <option value="">데이즈</option>
+                        <option value="">부츠</option>
+                        <option value="">음원방송</option>
+                    </select>               
+                </div>                
+            </div>
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">점포</p>
+                    <select id="popSel" class="user_reg_center">
+                        <option value>점포선택</option>
+                        <option value="">이마트 자양점</option>
+                        <option value="">이마트 용산점</option>
+                        <option value="">노브랜드 동대문</option>
+                    </select>               
+                </div>                
+            </div>          
+<!--             <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">긴급유무</p>
+                    <input type="radio" name="pop_radio3" id="pop_radio3y">
+                    <label for="pop_radio3y">사용</label>
+                    <input type="radio" name="pop_radio3" id="pop_radio3n">
+                    <label for="pop_radio3n">사용안함</label>
+                </div>                
+            </div>
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">사용유무</p>
+                    <input type="radio" name="pop_radio4" id="pop_radio4y">
+                    <label for="pop_radio4y">사용</label>
+                    <input type="radio" name="pop_radio4" id="pop_radio4n">
+                    <label for="pop_radio4n">사용안함 </label>
+                </div>                
+            </div> -->
+            <div class="clearfix"></div>
+        </div>
+        <div class="pop_footer">
+            <a href="" class="top_btn">신청하기</a>
+        </div>
+    </div>
+	
+	
 	<div class="clear"></div>
 	<div id="footer">
 		<div class="conIn ">
@@ -112,6 +290,12 @@
 			<address><span>서울특별시 성동구 뚝섬로 377(성수동2가)</span></address>
 		</div>
 	</div>
+	
+	<script src="/new/js/needpopup.js"></script> 
+    <!--data-->
+    <script src="/new/js/jquery-ui.js"></script>
+    <script src="/new/js/datepipck.js"></script>
+	
     <script type="text/javascript">
        function form_check(){
     	   if (any_empt_line_id("mberId", "아이디를 입력 하지 않았습니다.") == false) return;
