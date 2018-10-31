@@ -131,4 +131,21 @@
        DELETE FROM TB_CENTERINFO
        WHERE CENTER_ID = #{centerId}
      </delete>
+     
+     
+     
+     <select id="selectGroupInCenterInfo"  resultType="CenterInfoVO">
+	     SELECT 
+	     	center_id, center_nm
+	     FROM 
+	     	TB_CENTERINFO 
+	     WHERE 
+	     	role_code = #{roleCode}
+	     order by CENTER_ID ASC
+     </select>
+     
+     
+     
+     
+     
 </mapper>

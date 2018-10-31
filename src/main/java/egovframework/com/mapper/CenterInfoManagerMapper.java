@@ -32,5 +32,7 @@ public interface CenterInfoManagerMapper {
 	
 	public int deleteCenterInfoManage (String centerId);
 	
+	public List<CenterInfoVO> selectGroupInCenterInfo(CenterInfoVO vo);
+	
 
 }

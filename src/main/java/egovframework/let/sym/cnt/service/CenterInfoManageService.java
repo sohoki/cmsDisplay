@@ -24,6 +24,8 @@ public interface  CenterInfoManageService {
 	int updateCenterInfoManage(CenterInfo vo);
 	
 	int deleteCenterInfoManage(String centerId);
+
+	List<CenterInfoVO> selectGroupInCenterInfo(CenterInfoVO searchVo);
 	
 	
 }

@@ -50,7 +50,7 @@
     <select id="selectGroupManageCombo" resultType="GroupVO">
     
 		select 
-			GROUP_ID as "groupId", LPAD(' ', 2*(LEVEL-1)) || LEVEL || ' ' || GROUP_NM as "groupNm", PARENT_GROUP_ID as parentGroupId
+			GROUP_ID as "groupId", '[' || LEVEL || '] ' || GROUP_NM as "groupNm", PARENT_GROUP_ID as parentGroupId
 		from 
 			LETTNAUTHORGROUPINFO
 		where 

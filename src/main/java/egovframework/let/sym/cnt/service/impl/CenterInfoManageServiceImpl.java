@@ -81,4 +81,10 @@ public class CenterInfoManageServiceImpl  extends EgovAbstractServiceImpl implem
 	}
 
 	
+	@Override
+	public List<CenterInfoVO> selectGroupInCenterInfo(
+			CenterInfoVO searchVo) {
+		return centerInfoManagerMapper.selectGroupInCenterInfo(searchVo);
+	}
+	
 }

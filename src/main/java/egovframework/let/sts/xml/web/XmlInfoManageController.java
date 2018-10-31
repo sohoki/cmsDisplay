@@ -25,6 +25,8 @@ import egovframework.let.sts.xml.service.XmlInfoVO;
 import egovframework.let.sts.xml.service.XmlInfoManageService;
 import egovframework.let.sym.ccm.cde.service.CmmnDetailCodeVO;
 import egovframework.let.sym.ccm.cde.service.EgovCcmCmmnDetailCodeManageService;
+import egovframework.let.sym.cnt.service.CenterInfoManageService;
+import egovframework.let.sym.cnt.service.CenterInfoVO;
 import egovframework.let.sts.brd.service.BrodScheduleManagerService;
 import egovframework.let.sts.cnt.service.ContentDetailFileInfoVO;
 import egovframework.let.sts.cnt.service.ContentMessageInfo;
@@ -84,6 +86,9 @@ import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 
 
+
+
+
 import org.w3c.dom.DOMException;
 //xml 관련 구문 
 import org.w3c.dom.Document;
@@ -96,6 +101,9 @@ import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
+
+
+
 
 
 
@@ -136,6 +144,10 @@ import egovframework.let.sts.brd.service.BrodScheduleInfo;
 
 
 
+
+
+
+import egovframework.let.uat.uia.service.EgovUserManagerService;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -203,9 +215,19 @@ public class XmlInfoManageController {
     /**
      * JSON DATA 통신 관련
      * */
+    
+    // 부서관련
     @Resource(name = "GroupManagerService")
     private GroupManagerService groupManagerService;
-    
+
+    // 점포관련
+	@Resource(name="CenterInfoManageService")
+	private CenterInfoManageService centerInfoManageService;
+	
+	// 계정관련
+	@Resource(name="UserManagerService")
+	private EgovUserManagerService userManagerService;
+	
     
     
     /** EgovPropertyService */
@@ -1760,21 +1782,14 @@ public class XmlInfoManageController {
     @RequestMapping(value="/backoffice/sub/operManage/jsonRequest.do")
 	@ResponseBody 
 	public String jsonTypeWebDataSelect(HttpServletRequest request ) throws Exception {
-		
-		
     	String result = "";
     	String reqeustData = request.getParameter("requestData") != null ? request.getParameter("requestData") : "null";
 		
-		
 		try{
 			if(reqeustData.equals("null")){
-				/*HashMap<String, String> returnNull = new HashMap<String, String>();
-				returnNull.put("result", "-9999");
-				return model.addObject(returnNull);*/
+				result = "{'result':{'req_type':'REQUEST_DATA_ERR','length':0},'data':[]}";
 			} else {
-				
-				result = webUseDataSearchResult(reqeustData);
-
+				result = webUseDataProcessResult(reqeustData);
 			}
 		}catch(Exception e){
 			result = "{'result':{'req_type':'SYSTEM_ERROR','length':0},'data':[]}";
@@ -1784,7 +1799,7 @@ public class XmlInfoManageController {
 		return result;
 	}
    
-   public String webUseDataSearchResult(String reqData){
+   public String webUseDataProcessResult(String reqData){
 	   
 	   // reqData를 JSON형태로 만들어줄 것
 	   String result = "";
@@ -1836,15 +1851,58 @@ public class XmlInfoManageController {
 			   jsonRes.put("data", jsonData);
 			   
 			   
-		   } else if (request_type.equals("join-centerData")){
-			   // 점포정보 호출 (부서 수준에 따른) 
+		   } else if (request_type.equals("join-centerData")){ /* 02. 점포정보 호출 (부서 수준에 따른) */ 
+			   String centerSearchGroupId = resultObj.get("roleCode").toString() != null ? resultObj.get("roleCode").toString() : "";
+			   
+			   
+			   CenterInfoVO centerInfoVO = new CenterInfoVO();
+			   centerInfoVO.setRoleCode(centerSearchGroupId);
+			   
+			   List<CenterInfoVO> returnData = centerInfoManageService.selectGroupInCenterInfo(centerInfoVO);
+			   
+			   
+			   int returnLength = returnData.size();
+			   
+			   for(int i = 0; i < returnLength; i++){
+				   nowData = new JSONObject();
+				   nowData.put("CENTER_ID", returnData.get(i).getCenterId());
+				   nowData.put("CENTER_NM", returnData.get(i).getCenterNm());
+				   jsonData.add(nowData);
+			   }
+			   nowData = new JSONObject();
+			   nowData.put("req_type", request_type);
+			   nowData.put("length", returnLength);
+			   jsonRes.put("result", nowData);
+			   jsonRes.put("data", jsonData);
+
+			   
+		   } else if (request_type.equals("join-confirm")){
+			   // 부서정보 호출
+			   String mberId = resultObj.get("mberId").toString() != null ? resultObj.get("mberId").toString() : "";
+			   String password = resultObj.get("password").toString() != null ? resultObj.get("password").toString() : "";
+			   String mberNm = resultObj.get("mberNm").toString() != null ? resultObj.get("mberNm").toString() : "";
+			   String groupId = resultObj.get("groupId").toString() != null ? resultObj.get("groupId").toString() : "";
+			   String centerId = resultObj.get("centerId").toString() != null ? resultObj.get("centerId").toString() : null;
+			   
+			   
+			   String mberSttus = "STATE_01";
+			   String authorCod = "ROLE_USER_MEMBER";
+
+			   if(password != null && !password.equals("")){
+				   // 비밀번호는 문제 없음
+				   
+				   // 이쪽 작업 시작해야함, 받아온 값을 기준으로 insert 보내는 작업 시작
+				   
+			   } else {
+				   //비밀번호가 잘못 들어옴
+				   
+			   }
 			   
 		   } else if (request_type.equals("pwSearch-groupData")){
 			   // 부서정보 호출
 			   
 		   } else if (request_type.equals("pwSearch-centerData")){
 			   // 점포정보 호출 (부서 수준에 따른)
-			   
 			   
 		   } else {
 			   
@@ -1854,12 +1912,6 @@ public class XmlInfoManageController {
 		   jsonRes.clear();
 		   
 	   } catch (Exception e) {
-/*		   JSONObject returnErr = new JSONObject();
-		   JSONObject returnResult = new JSONObject();
-		   returnErr.put("req_type", e.toString());
-		   returnErr.put("length", 0);
-		   returnResult.put("result", returnErr);
-		   result = new ModelAndView("jsonRes", returnResult);*/
 		   e.printStackTrace();
 	   }
 	   

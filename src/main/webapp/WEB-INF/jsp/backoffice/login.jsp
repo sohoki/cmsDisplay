@@ -131,20 +131,20 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">*아이디</p>
-                    <input type="text" id="user_reg_id" class="input_noti" value="" placeholder="사번 또는 아이디" />
+                    <input type="text" id="pw_search_id" class="input_noti" value="" placeholder="사번 또는 아이디" />
                 </div>                
             </div>
             <!--팝업 필드박스 //-->
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">*사용자명</p>
-                    <input type="text" id="user_reg_name" class="input_noti" value="" placeholder="표출 될 이름" />
+                    <input type="text" id="pw_search_name" class="input_noti" value="" placeholder="표출 될 이름" />
                 </div>                
             </div>
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">부서</p>
-                    <select id="popSel" class="user_reg_group">
+                    <select id="popSel" class="pw_search_group">
                         <option value>부서선택</option>
                         <option value="">CMS총괄</option>
                         <option value="">사이니지</option>
@@ -208,7 +208,7 @@
             <!--// 팝업 필드박스-->
             <div class="pop_box50">
                 <div class="padding15">
-                    <p class="pop_tit">*아이디</p>
+                    <p class="pop_tit">*아이디 <span class="join_id_comment joinSubTxt">이용가능 한 아이디 입니다.</span></p>
                     <input type="text" id="user_reg_id" class="input_noti" value="" placeholder="사번 또는 아이디" />
                 </div>                
             </div>
@@ -222,7 +222,7 @@
             <!--// 팝업 필드박스-->
             <div class="pop_box50">
                 <div class="padding15">
-                    <p class="pop_tit">*비밀번호</p>
+                    <p class="pop_tit">*비밀번호 <span class="join_pw_comment joinSubTxt"></span></p>
                     <input type="password" id="user_reg_pw" class="input_noti" value="" placeholder="영문+숫자+특수문자 10자이상">
                 </div>                
             </div>
@@ -236,18 +236,14 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">부서</p>
-                    <select id="popSel" class="user_reg_group" onchange='centerInfoSetting();'>
-                    </select>               
+                    <select id="popSel" class="user_reg_group" onchange='centerInfoSetting(this);'></select>               
                 </div>                
             </div>
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">점포</p>
-                    <select id="popSel" class="user_reg_center">
-                        <option value>점포선택</option>
-                        <option value="">이마트 자양점</option>
-                        <option value="">이마트 용산점</option>
-                        <option value="">노브랜드 동대문</option>
+                    <select id="popSel" class="user_reg_center" disabled>
+                    	<option value>부서를 선택해주세요</option>
                     </select>               
                 </div>                
             </div>          
@@ -315,46 +311,72 @@
 	    	
        });   
        
-   	function centerInfoSetting(){
-		console.log($(".user_reg_group option:selected").val());
-	}
-   	
+	   	function centerInfoSetting(el){
+			// $(el).val()
+			$(".user_reg_center").html(null);
+			$(".user_reg_center").attr("disabled", false);
+			var callData = "{'request_type':'join-centerData', 'request_data':{'roleCode':'"+$(el).val()+"'}}";
+	   	   	$.ajax({
+  				url : '/backoffice/sub/operManage/jsonRequest.do',
+  				type : 'POST',
+  				data : {
+  					requestData : callData
+  				},
+  				dataType : 'json',
+  				success : function(result) {
+  					console.log(result);
+  					var appendOption;
+  					if(result.result.length > 0){
+  							
+  						var resultData = result.data;
+  						
+  						appendOption += "<option value>점포전체</option>";
+  						for(var i = 0; i < result.result.length; i ++){
+  							appendOption += "<option value='"+resultData[i].CENTER_ID+"'>"+resultData[i].CENTER_NM+"</option>";	
+  						}
+  					} else {
+  						appendOption += "<option value>점포전체</option>";
+  					}
+  					$(".user_reg_center").html(appendOption);
+  				},
+  				error : function(e) {
+  					console.log(e);
+  				}
+  			});
+			
+		}
+	   	
 		function groupInfoSetting (){
 			var callData = "{'request_type':'join-groupData', 'request_data':{'groupId':'', 'parentGroupId':'EMART_00000000000001'}}";
-    	   	$.ajax({
-   				url : '/backoffice/sub/operManage/jsonRequest.do',
-   				type : 'POST',
-   				data : {
-   					requestData : callData
-   				},
-   				dataType : 'json',
-   				success : function(result) {
-   					if(result.result.length > 0){
-   						console.log(result);	
-   						//                         <option value="">CMS총괄</option>
-   						
-   						var resultData = result.data;
-   						
-   						var appendOption;
-   						appendOption += "<option value=''>부서선택</option>";
-   						
-   						for(var i = 0; i < result.result.length; i ++){
-   							appendOption += "<option id='P_"+resultData[i].PARENT_GROUP_ID+"' value='"+resultData[i].GROUP_ID+"'>"+resultData[i].GROUP_NM+"</option>";	
-   						}
-   						
-   						$(".user_reg_group").html(appendOption);
-   					}
-   				},
-   				error : function(e) {
-   					console.log("에러임");
-   					console.log(e);
-   				}
-   			});
+	   	   	$.ajax({
+  				url : '/backoffice/sub/operManage/jsonRequest.do',
+  				type : 'POST',
+  				data : {
+  					requestData : callData
+  				},
+  				dataType : 'json',
+  				success : function(result) {
+  					if(result.result.length > 0){
+  						// console.log(result);	
+  						var resultData = result.data;
+  						var appendOption;
+  						appendOption += "<option value=''>부서선택</option>";
+  						for(var i = 0; i < result.result.length; i ++){
+  							appendOption += "<option id='P_"+resultData[i].PARENT_GROUP_ID+"' value='"+resultData[i].GROUP_ID+"'>"+resultData[i].GROUP_NM+"</option>";	
+  						}
+  						
+  						$(".user_reg_group").html(appendOption);
+  					}
+  				},
+  				error : function(e) {
+  					console.log(e);
+  				}
+  			});
 		}
-       
-       
-       
-       
+		
+		// <option value>점포선택</option>
+		
+		
     </script>
 </body>
 </html>		
