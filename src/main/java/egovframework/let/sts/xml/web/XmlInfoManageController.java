@@ -89,6 +89,8 @@ import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 
 
+
+
 import org.w3c.dom.DOMException;
 //xml 관련 구문 
 import org.w3c.dom.Document;
@@ -101,6 +103,8 @@ import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
+
+
 
 
 
@@ -148,6 +152,7 @@ import egovframework.let.sts.brd.service.BrodScheduleInfo;
 
 
 import egovframework.let.uat.uia.service.EgovUserManagerService;
+import egovframework.let.uat.uia.service.GnrMberVO;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -1824,7 +1829,7 @@ public class XmlInfoManageController {
 		   JSONObject nowData = new JSONObject();
 		   
 
-		   if(request_type.equals("join-groupData")){ /* 01. 부서정보 호출, 요청 데이터 없음 */	
+		   if(request_type.equals("join-groupData") || request_type.equals("pwSearch-groupData")){ /* 01. 부서정보 호출, 요청 데이터 없음 */	
 			   String joinGroupId 		= resultObj.get("groupId").toString() != null 		? resultObj.get("groupId").toString() 		: "";
 			   String joinParentGroupId = resultObj.get("parentGroupId").toString() != null ? resultObj.get("parentGroupId").toString() : "";
 			   System.out.println(joinGroupId + ", " + joinParentGroupId);
@@ -1851,7 +1856,7 @@ public class XmlInfoManageController {
 			   jsonRes.put("data", jsonData);
 			   
 			   
-		   } else if (request_type.equals("join-centerData")){ /* 02. 점포정보 호출 (부서 수준에 따른) */ 
+		   } else if (request_type.equals("join-centerData") || request_type.equals("pwSearch-centerData")){ /* 02. 점포정보 호출 (부서 수준에 따른) */ 
 			   String centerSearchGroupId = resultObj.get("roleCode").toString() != null ? resultObj.get("roleCode").toString() : "";
 			   
 			   
@@ -1876,8 +1881,7 @@ public class XmlInfoManageController {
 			   jsonRes.put("data", jsonData);
 
 			   
-		   } else if (request_type.equals("join-confirm")){
-			   // 부서정보 호출
+		   } else if (request_type.equals("join-confirm")){ // 이용신청 정보 입력
 			   String mberId = resultObj.get("mberId").toString() != null ? resultObj.get("mberId").toString() : "";
 			   String password = resultObj.get("password").toString() != null ? resultObj.get("password").toString() : "";
 			   String mberNm = resultObj.get("mberNm").toString() != null ? resultObj.get("mberNm").toString() : "";
@@ -1885,28 +1889,110 @@ public class XmlInfoManageController {
 			   String centerId = resultObj.get("centerId").toString() != null ? resultObj.get("centerId").toString() : null;
 			   
 			   
-			   String mberSttus = "STATE_01";
-			   String authorCod = "ROLE_USER_MEMBER";
-
+			   String mberSttus = "STATE_02";
+			   String authorCode = "ROLE_USER_MEMBER";
+			   int resultVal = 0;
 			   if(password != null && !password.equals("")){
 				   // 비밀번호는 문제 없음
 				   
 				   // 이쪽 작업 시작해야함, 받아온 값을 기준으로 insert 보내는 작업 시작
+				   
+				   GnrMberVO gnrMberVO = new GnrMberVO();
+				   gnrMberVO.setMberId(mberId);
+				   gnrMberVO.setPassword(password);
+				   gnrMberVO.setMberNm(mberNm);
+				   gnrMberVO.setGroupId(groupId);
+				   gnrMberVO.setMberSttus(mberSttus);
+				   gnrMberVO.setAuthorCode(authorCode);
+				   if(centerId != null && centerId.equals("")){
+					   gnrMberVO.setCenterId(centerId);
+				   }
+				   
+				   resultVal = userManagerService.insertUserManage(gnrMberVO);
+				   
+				   if(resultVal > 0){
+					   nowData = new JSONObject();
+					   nowData.put("mberId", mberId);
+					   nowData.put("mberNm", mberNm);
+					   nowData.put("groupId", groupId);
+					   jsonData.add(nowData);
+				   }
 				   
 			   } else {
 				   //비밀번호가 잘못 들어옴
 				   
 			   }
 			   
-		   } else if (request_type.equals("pwSearch-groupData")){
-			   // 부서정보 호출
+			   nowData = new JSONObject();
+			   nowData.put("req_type", request_type);
+			   nowData.put("length", resultVal);
+			   jsonRes.put("result", nowData);
+			   jsonRes.put("data", jsonData);
 			   
-		   } else if (request_type.equals("pwSearch-centerData")){
-			   // 점포정보 호출 (부서 수준에 따른)
+		   } else if (request_type.equals("join-idCheck")){
+			   // 회원가입간 아이디 중복체크
+			   String mberId = resultObj.get("mberId").toString() != null ? resultObj.get("mberId").toString() : "";
+			   int ret = 0;
+			   if(mberId != null && !mberId.equals("")){
+				   int IDCheck = userManagerService.selectUserMangerIDCheck(mberId);
+				   
+				   nowData = new JSONObject();
+				   nowData.put("mberId", mberId);
+				   if(IDCheck == 0){
+					   nowData.put("exist", "N");
+				   } else {
+					   nowData.put("exist", "Y");
+				   }
+				   jsonData.add(nowData);
+				   ret = 1;
+			   }
 			   
+			   nowData = new JSONObject();
+			   nowData.put("req_type", request_type);
+			   nowData.put("length", ret);
+			   jsonRes.put("result", nowData);
+			   jsonRes.put("data", jsonData);
+			
+				
+		   } else if (request_type.equals("pwSearch-userInfo")){
+			   // 유저정보 존재 확인
+			   String mberId = resultObj.get("mberId").toString() != null ? resultObj.get("mberId").toString() : "";
+			   String mberNm = resultObj.get("mberNm").toString() != null ? resultObj.get("mberNm").toString() : "";
+			   String groupId = resultObj.get("groupId").toString() != null ? resultObj.get("groupId").toString() : "";
+			   String centerId = resultObj.get("centerId").toString() != null ? resultObj.get("centerId").toString() : null;
+			   
+			   GnrMberVO gnrMberVO = new GnrMberVO();
+			   gnrMberVO.setMberId(mberId);
+			   gnrMberVO.setMberNm(mberNm);
+			   gnrMberVO.setGroupId(groupId);
+			   if(centerId != null && centerId.equals("")){
+				   gnrMberVO.setCenterId(centerId);
+			   }
+			   
+			   
+			   int exist = 0;
+			   if(mberId != null && mberNm != null && groupId != null && !mberId.equals("") && !mberNm.equals("") && !groupId.equals("")){
+				   exist = userManagerService.selectPwSearchUserInfo(gnrMberVO);
+				   System.out.println("비밀번호 찾기 전 정보 확인 : " + exist);
+				   nowData = new JSONObject();
+				   nowData.put("mberId", mberId);
+				   if(exist == 0){
+					   nowData.put("exist", "N");
+				   } else {
+					   nowData.put("exist", "Y");
+				   }
+				   jsonData.add(nowData);
+			   }
+			   
+			   nowData = new JSONObject();
+			   nowData.put("req_type", request_type);
+			   nowData.put("length", exist);
+			   jsonRes.put("result", nowData);
+			   jsonRes.put("data", jsonData);
 		   } else {
 			   
 		   }
+		   
 		   
 		   result = jsonRes.toJSONString();
 		   jsonRes.clear();

@@ -86,4 +86,18 @@
       where MBER_ID = #{mberId}   
    </delete>
 
+
+
+
+
+   <select id="selectPwSearchUserInfo" resultType="java.lang.Integer">
+     select NVL(count(*),0)
+     from LETTNGNRLMBER
+     where 
+     	MBER_ID = #{mberId}
+     	and MBER_NM = #{mberNm}
+     	and GROUP_ID = #{groupId , jdbcType=VARCHAR}
+     	and CENTER_ID = #{centerId , jdbcType=VARCHAR}
+   </select>
+
 </mapper>

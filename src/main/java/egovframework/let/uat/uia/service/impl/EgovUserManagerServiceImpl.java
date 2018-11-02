@@ -6,6 +6,7 @@ import java.util.List;
 
 
 
+
 import egovframework.let.uat.uia.service.GnrMber;
 import egovframework.let.uat.uia.service.GnrMberVO;
 import egovframework.let.uat.uia.service.EgovUserManagerService;
@@ -61,6 +62,11 @@ public class EgovUserManagerServiceImpl extends EgovAbstractServiceImpl implemen
 	@Override
 	public int selectUserMangerIDCheck(String code) throws Exception {
 		return  userManagerMapper.selectUserMangerIDCheck(code)  ;
+	}
+	
+	@Override
+	public int selectPwSearchUserInfo(GnrMberVO searchVO) throws Exception {
+		return  userManagerMapper.selectPwSearchUserInfo(searchVO)  ;
 	}
 
 

@@ -23,4 +23,8 @@ public interface EgovUserManagerMapper {
 	
 	public int selectUserMangerIDCheck(String code);
 	
+	
+	public int selectPwSearchUserInfo(GnrMberVO vo);
+	
+	
 }

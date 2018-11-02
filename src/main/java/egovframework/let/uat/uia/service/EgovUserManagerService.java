@@ -21,4 +21,6 @@ public interface EgovUserManagerService {
     int selectUserManageListTotCnt_S(GnrMberVO searchVO) throws Exception;
 
     int selectUserMangerIDCheck(String code) throws Exception;
+    
+    int selectPwSearchUserInfo(GnrMberVO vo) throws Exception;
 }
