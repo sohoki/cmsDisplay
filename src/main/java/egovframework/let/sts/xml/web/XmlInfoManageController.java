@@ -1957,23 +1957,22 @@ public class XmlInfoManageController {
 		   } else if (request_type.equals("pwSearch-userInfo")){
 			   // 유저정보 존재 확인
 			   String mberId = resultObj.get("mberId").toString() != null ? resultObj.get("mberId").toString() : "";
-			   String mberNm = resultObj.get("mberNm").toString() != null ? resultObj.get("mberNm").toString() : "";
+			   /*String mberNm = resultObj.get("mberNm").toString() != null ? resultObj.get("mberNm").toString() : "";*/
 			   String groupId = resultObj.get("groupId").toString() != null ? resultObj.get("groupId").toString() : "";
-			   String centerId = resultObj.get("centerId").toString() != null ? resultObj.get("centerId").toString() : null;
+			   /*String centerId = resultObj.get("centerId").toString() != null ? resultObj.get("centerId").toString() : null;*/
 			   
 			   GnrMberVO gnrMberVO = new GnrMberVO();
 			   gnrMberVO.setMberId(mberId);
-			   gnrMberVO.setMberNm(mberNm);
+			   /*gnrMberVO.setMberNm(mberNm);*/
 			   gnrMberVO.setGroupId(groupId);
-			   if(centerId != null && centerId.equals("")){
+			   /*if(centerId != null && centerId.equals("")){
 				   gnrMberVO.setCenterId(centerId);
 			   }
-			   
+			   */
 			   
 			   int exist = 0;
-			   if(mberId != null && mberNm != null && groupId != null && !mberId.equals("") && !mberNm.equals("") && !groupId.equals("")){
+			   if(mberId != null && groupId != null && !mberId.equals("") && !groupId.equals("")){
 				   exist = userManagerService.selectPwSearchUserInfo(gnrMberVO);
-				   System.out.println("비밀번호 찾기 전 정보 확인 : " + exist);
 				   nowData = new JSONObject();
 				   nowData.put("mberId", mberId);
 				   if(exist == 0){
@@ -1989,6 +1988,36 @@ public class XmlInfoManageController {
 			   nowData.put("length", exist);
 			   jsonRes.put("result", nowData);
 			   jsonRes.put("data", jsonData);
+		   } else if (request_type.equals("pwSearch-change")){ /* 비밀번호 초기화 & 변경 */ 
+			   String mberId = resultObj.get("mberId").toString() != null ? resultObj.get("mberId").toString() : "";
+			   String groupId = resultObj.get("groupId").toString() != null ? resultObj.get("groupId").toString() : "";
+			   String mPassword = resultObj.get("mPassword").toString() != null ? resultObj.get("mPassword").toString() : "";
+
+			   GnrMberVO gnrMberVO = new GnrMberVO();
+			   gnrMberVO.setMberId(mberId);
+			   gnrMberVO.setGroupId(groupId);
+			   gnrMberVO.setPassword(mPassword);
+			   
+			   int ret = 0;
+			   if(mPassword != null && !mPassword.equals("")){
+				   ret = userManagerService.updateUserPassword(gnrMberVO);
+				   nowData = new JSONObject();
+				   nowData.put("mberId", mberId);
+				   if(ret == 0){
+					   nowData.put("success", "N");
+				   } else {
+					   nowData.put("success", "Y");
+				   }
+				   jsonData.add(nowData);
+			   }
+
+			   nowData = new JSONObject();
+			   nowData.put("req_type", request_type);
+			   nowData.put("length", ret);
+			   jsonRes.put("result", nowData);
+			   jsonRes.put("data", jsonData);
+
+			   
 		   } else {
 			   
 		   }

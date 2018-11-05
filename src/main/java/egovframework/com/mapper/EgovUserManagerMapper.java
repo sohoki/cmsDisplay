@@ -26,5 +26,8 @@ public interface EgovUserManagerMapper {
 	
 	public int selectPwSearchUserInfo(GnrMberVO vo);
 	
+	public int updateUserPassword(GnrMber vo);
+	
+	
 	
 }

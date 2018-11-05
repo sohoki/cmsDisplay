@@ -7,6 +7,7 @@ import java.util.List;
 
 
 
+
 import egovframework.let.uat.uia.service.GnrMber;
 import egovframework.let.uat.uia.service.GnrMberVO;
 import egovframework.let.uat.uia.service.EgovUserManagerService;
@@ -69,7 +70,9 @@ public class EgovUserManagerServiceImpl extends EgovAbstractServiceImpl implemen
 		return  userManagerMapper.selectPwSearchUserInfo(searchVO)  ;
 	}
 
-
-	
+	@Override
+	public int updateUserPassword(GnrMber gnrmber) throws Exception {
+		return userManagerMapper.updateUserPassword(gnrmber);
+	}
 	
 }

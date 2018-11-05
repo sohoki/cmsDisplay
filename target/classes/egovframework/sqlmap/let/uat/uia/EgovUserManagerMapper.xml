@@ -95,9 +95,12 @@
      from LETTNGNRLMBER
      where 
      	MBER_ID = #{mberId}
-     	and MBER_NM = #{mberNm}
      	and GROUP_ID = #{groupId , jdbcType=VARCHAR}
-     	and CENTER_ID = #{centerId , jdbcType=VARCHAR}
    </select>
+   
+   <update id="updateUserPassword">
+      update LETTNGNRLMBER set PASSWORD = #{password}
+      where MBER_ID = #{mberId} and GROUP_ID = #{groupId}
+   </update>
 
 </mapper>
