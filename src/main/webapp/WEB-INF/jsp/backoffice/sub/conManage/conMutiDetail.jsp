@@ -98,7 +98,9 @@
 <noscript>자바스크립트를 지원하지 않는 브라우저에서는 일부 기능을 사용하실 수 없습니다.</noscript>
 
       <div id="wrap">
-		<c:import url="/backoffice/inc/emart_header.do" />
+		<!--//HEADER-->
+		<c:import url="/backoffice/inc/cms_header.do" />
+		<!--HEADER//-->
 		<div class="left-contain">
 			<c:import url="/backoffice/inc/cms_left.do" />
 			<div class="swipe-area"><a href="#" data-toggle=".left-contain" id="sidebar-toggle"> <span class="bar"></span> <span class="bar"></span> <span class="bar"></span> </a></div>

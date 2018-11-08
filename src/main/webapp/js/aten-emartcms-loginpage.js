@@ -306,8 +306,8 @@
 		 var btnValue = $(el).attr("value");
 		 
 		 switch(btnValue){
-			 case "0" : $(el).attr("value","1"); pw_formCheck(); 	break;
-			 case "1" : $(el).attr("value","0"); pw_changeConfirm(); break;
+			 case "0" : pw_formCheck(); 	break;
+			 case "1" : pw_changeConfirm(); break;
 		 }
 	}
 	function pw_formCheck(){ // 먼저 입력정보를 넘겨서 변경을 할지 결정
@@ -330,6 +330,7 @@
 							$(".pw_search_checkInfo").attr("disabled", true);
 							$("#pw_confirm_comment").removeClass("id-pw-warning");
 							$("#pw_confirm_comment").text("변경하실 비밀번호를 입력해주세요.");
+							$("#pw_search_btn").attr("value","1");
 						} else {
 							
 						}
@@ -352,10 +353,8 @@
 	function pw_changeConfirm(){
 		$(".pw_search_checkInfo").attr("disabled", false);
 		
-		// user_modify_pw Chk
-		
 		if($("#user_modify_pw").val() == $("#user_modify_pwChk").val()){
-			var callData = "{'request_type':'pwSearch-change', 'request_data':{'mberId':'"+$("#pw_search_id").val()+"', 'groupId':'"+$(".pw_search_group").val()+"', 'password':'"+$(".user_modify_pw").val()+"'}}";
+			var callData = "{'request_type':'pwSearch-change', 'request_data':{'mberId':'"+$("#pw_search_id").val()+"', 'groupId':'"+$(".pw_search_group").val()+"', 'password':'"+$("#user_modify_pw").val()+"'}}";
 			$.ajax({
   				url : '/backoffice/sub/operManage/jsonRequest.do',
   				type : 'POST',
@@ -367,8 +366,11 @@
   					console.log(result);
   					if(result.result.length > 0){
   						if(result.data[0].success == "Y"){
-  							// 비밀번호 변경창 노출 및 타 입력사항 수정 불가변경
-
+  							// 변경 성공
+  							$("#pw_search_btn").attr("value","0");
+  	  						event.preventDefault();
+  	  						needPopup.hide();
+  	  						alert(result.data[0].mberId+"의 비밀번호 변경이 완료되었습니다.");
   						} else {
   							$(".pw_search_checkInfo").attr("disabled", true);	
   						}
@@ -382,6 +384,8 @@
   					$(".pw_search_checkInfo").attr("disabled", true);
   				}
 			});
+		} else {
+			$("#pw_confirm_comment").text("비밀번호를 다시 한번 확인해주세요.");
 		}
 		
 		

@@ -1991,7 +1991,7 @@ public class XmlInfoManageController {
 		   } else if (request_type.equals("pwSearch-change")){ /* 비밀번호 초기화 & 변경 */ 
 			   String mberId = resultObj.get("mberId").toString() != null ? resultObj.get("mberId").toString() : "";
 			   String groupId = resultObj.get("groupId").toString() != null ? resultObj.get("groupId").toString() : "";
-			   String mPassword = resultObj.get("mPassword").toString() != null ? resultObj.get("mPassword").toString() : "";
+			   String mPassword = resultObj.get("password").toString() != null ? resultObj.get("password").toString() : "";
 
 			   GnrMberVO gnrMberVO = new GnrMberVO();
 			   gnrMberVO.setMberId(mberId);

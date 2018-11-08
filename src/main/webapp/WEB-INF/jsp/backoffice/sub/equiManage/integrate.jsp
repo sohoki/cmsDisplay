@@ -50,7 +50,7 @@
 		selectGroupId	= "${groupId}";
 		selectCenterId	= "${centerId}";
 		loginAuthorCode	= "${authorCode}";
-					
+				
 		if(loginAuthorCode == "ROLE_ADMIN" || loginAuthorCode == "ROLE_ANONYMOUS" || loginAuthorCode == "ROLE_USER_MEMBER" ){
 			// 통합
 			nowViewSystemType = "SIGNAGE";
@@ -65,9 +65,14 @@
 			loginAuthorType = "MUSIC";
 		}
 
-		
-		
 		callEquipList(selectGroupId, selectCenterId);
+		
+		// select_device_orderBtn  select_device_info   device_select_before
+		
+		$(".select_device_orderBtn").attr("style", "opacity:0;");
+		
+		$("#selectEquipNm").text("단말기를 선택해주세요.");
+		
 		/* 페이지 최초 호출 간 작업 사항 종료 */
 
 		
@@ -327,7 +332,7 @@
                 
                 <!--// 통합관리 우측 정보list-->
                 <div class="box03-3">
-                    <div class="list_box01">
+                    <div class="list_box01 select_device_orderBtn">
                         <a href="" class="top_btn">수정</a>
                         <a data-needpopup-show="#did_pop01" class="top_btn">장비통신 이력</a>
                         <a href="" class="top_btn">재부팅</a>
@@ -336,70 +341,76 @@
                         <!-- <a href="" class="top_btn">메세지 전송</a> -->
                     </div>
                     <!--// 해당 단말기 정보-->
-                    <table class="list02">
+                    <table class="list02 select_device_info">
                         <tbody>
                             <tr>
                                 <th>단말기ID</th>
-                                <td id="selectEquipId">C17022106001</td>
+                                <td id="selectEquipId"></td>
                             </tr>
                             <tr>
                                 <th>단말기명</th>
-                                <td id="selectEquipNm">C17022106001</td>
+                                <td id="selectEquipNm"></td>
                             </tr>
                             <tr>
                                 <th>그룹명</th>
-                                <td id="selectEquipGroupNm">에이텐</td>
+                                <td id="selectEquipGroupNm"></td>
                             </tr>
                             <tr>
                                 <th>단말 IP</th>
-                                <td id="selectEquipIp">192.168.1.1.100</td>
+                                <td id="selectEquipIp"></td>
                             </tr>
                             <tr>
                                 <th>단말 MAC</th>
-                                <td id="selectEquipMac">00:11:22:33:44:55</td>
+                                <td id="selectEquipMac"></td>
                             </tr>
                             <tr>
                                 <th>DID형태</th>
-                                <td id="selectEquipType">가로</td>
+                                <td id="selectEquipType"></td>
                             </tr>
                             <tr>
                                 <th>단말해상도</th>
-                                <td>가로 <span id="selectEquipW">1920</span> 세로 <span id="selectEquipH">1080</span></td>
+                                <td>
+                                	가로 <span id="selectEquipW"></span>
+                                	 세로 <span id="selectEquipH"></span>
+                                </td>
                             </tr>
                             <tr>
                                 <th>고정IP여부</th>
-                                <td id="selectEquipIpType">고정</td>
+                                <td id="selectEquipIpType"></td>
                             </tr>
                             <tr>
                                 <th>기기타입</th>
-                                <td id="selectEquipModelType">일반</td>
+                                <td id="selectEquipModelType"></td>
                             </tr>
                             <tr>
                                 <th>사용유무</th>
-                                <td id="selectEquipUseStatus">사용</td>
+                                <td id="selectEquipUseStatus"></td>
                             </tr>
                             <tr>
                                 <th>운영시간</th>
-                                <td id="selectEquipRuntime">08:00~17:00</td>
+                                <td id="selectEquipRuntime"></td>
                             </tr>
                             <tr>
                                 <th>마지막 접속일자</th>
-                                <td id="selectEquipLastconn">2018.05.16~2018.05.28</td>
+                                <td id="selectEquipLastconn"></td>
                             </tr>
-                            <tr>
+                            <tr style="display:none;">
                                 <th>메세지명</th>
-                                <td id="selectEquipMsg">원격지원예정</td>
+                                <td id="selectEquipMsg">시스템 준비 중</td>
                             </tr>
                             <tr>
-                            	<td colspan="2" style="text-align: center;">송출 콘텐츠 현황</td>
+                            	<td colspan="2" style="text-align: center;">연동 콘텐츠</td>
                             </tr>
                             <tr>
                             	<th>스케줄명<br>(콘텐츠명)</th>
-                            	<td>[부츠]코엑스윈도우181001-181031<br>(181001-181031부츠#3)</td>
+                            	<td id="selectEquipSchInfo" title="날짜삽입">
+                            		<span id="selectSchName"></span><br>
+                            		<span id="selectConName"></span>
+                            	</td>
                             </tr>
                             <tr>
                             	<th>예정 스케줄</th>
-                            	<td></td>
+                            	<td id="selectEquipSchExpect"></td>
                             </tr>
                         </tbody>                        
                     </table>

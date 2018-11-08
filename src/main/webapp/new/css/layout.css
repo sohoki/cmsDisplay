@@ -97,5 +97,21 @@ font-size: 14px
     width: 20%;
     padding-top: 20px;
 }
-.header_log { background: #e1e2e3 }
-.loginBar { color: #000; display: inline-block; padding: 8px 30px }
+.header_log { 
+	background: #e1e2e3 
+}
+.loginBar { 
+	color: #000; 
+	display: inline-block; 
+	padding: 8px 4px; 
+}
+.header_logout{
+	padding: 9px 25px 6px 16px;
+    background: url(../img/logout.png) center right no-repeat;
+    float: right;
+    color: #666666;
+    text-align: left;
+}
+.header_logout:hover{
+	font-weight: bold;
+}		

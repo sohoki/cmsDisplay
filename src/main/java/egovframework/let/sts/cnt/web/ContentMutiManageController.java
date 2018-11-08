@@ -703,10 +703,7 @@ public class ContentMutiManageController {
 			}
 			htmlPageFile.append("</body>     \r\n");
 			htmlPageFile.append("</html>      \r\n");
-			
-			
-			
-			
+
 			boolean fileCheck = ContentFileCreate(htmlPageFile.toString(), conSeq);
 			
 			

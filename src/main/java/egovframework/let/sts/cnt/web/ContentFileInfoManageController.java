@@ -367,7 +367,6 @@ public class ContentFileInfoManageController {
 		searchVO.setMediaType("");
 		searchVO.setFileGubun(""); // 180514
 		
-		
 		return  String.valueOf(conFileService.selectFilePageListByPaginationTotCnt_S(searchVO));
 	}
 	//이미지 리스트 
@@ -411,7 +410,6 @@ public class ContentFileInfoManageController {
 			System.out.println("error:" + e.toString());			
 		}
 	    
-		
 		return jsonModel;
 	}
 	

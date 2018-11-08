@@ -29,46 +29,45 @@
                 </h1>
                 <div class="nav">
                     <ul>
-                        <li><a href="">통합관리</a>
-
-                        </li>
-                        <li><a href="">모니터링</a></li>
-                        <li><a href="">그룹관리</a></li>
-                        <li><a href="">사이니지
+                        <li><a href="/backoffice/sub/equiManage/integrate.do">통합관리</a></li>
+                        <li><a href="/backoffice/sub/equiManage/dashboardState.do">모니터링</a></li>
+                        <li><a href="/backoffice/sub/equiManage/did_groupList.do">그룹관리</a></li>
+                        <li><a href="/backoffice/sub/conManage/conMutiList.do">사이니지
                             <span class="dropIcon"></span></a>
                             <ul>
-                                <li><a href="">스케줄관리</a></li>
-                                <li><a href="">화면구성관리</a></li>
-                                <li><a href="">미디어파일관리</a></li>
+                                <li><a href="/backoffice/sub/equiManage/schList.do">스케줄관리</a></li>
+                                <li><a href="/backoffice/sub/conManage/conMutiList.do">화면구성관리</a></li>
+                                <li><a href="/backoffice/sub/conManage/mediaLst.do">미디어파일관리</a></li>
                             </ul>
                         </li>
-                        <li><a href="">음원방송
+                        <li><a href="/backoffice/sub/brodManage/playSheduleStatus.do">음원방송
                             <span class="dropIcon"></span></a>
                             <ul>
-                                <li><a href="">음원파일관리</a></li>
-                                <li><a href="">기본음원관리</a></li>
-                                <li><a href="">음원콘텐츠관리</a></li>
-                                <li><a href="">스케줄음원관리</a></li>
-                                <li><a href="">음원콘텐츠배포</a></li>
-                                <li><a href="">콘텐츠배포현황</a></li>
+                                <li><a href="/backoffice/sub/brodManage/playContentList.do">음원파일관리</a></li>
+                                <li><a href="/backoffice/sub/brodManage/brodBasic.do">기본음원관리</a></li>
+                                <li><a href="/backoffice/sub/brodManage/brodContentList.do">음원콘텐츠관리</a></li>
+                                <li><a href="/backoffice/sub/brodManage/brodContentPlayList.do">스케줄음원관리</a></li>
+                                <li><a href="/backoffice/sub/brodManage/playShedule.do">음원콘텐츠배포</a></li>
+                                <li><a href="/backoffice/sub/brodManage/playSheduleStatus.do">콘텐츠배포현황</a></li>
                             </ul>
                         </li>
-                        <li><a href="">기초관리
+                        <li><a href="/backoffice/sub/basicManage/manageList.do">시스템
                             <span class="dropIcon"></span></a>
                             <ul>
-                                <li><a href="">음원파일관리</a></li>
-                                <li><a href="">기본음원관리</a></li>
-                                <li><a href="">음원콘텐츠관리</a></li>
-                                <li><a href="">스케줄음원관리</a></li>
-                                <li><a href="">음원콘텐츠배포</a></li>
-                                <li><a href="">콘텐츠배포현황</a></li>
+                                <li><a href="/backoffice/sub/basicManage/manageList.do">계정관리</a></li>
+                                <li><a href="/backoffice/sub/basicManage/codeList.do">코드관리</a></li>
+                                <li><a href="/backoffice/sub/basicManage/selectGroupLst.do">부서관리</a></li>
+                                <li><a href="/backoffice/sub/basicManage/centerList.do">점포관리</a></li>
+                                <li style="display:none;"><a href="/backoffice/sub/basicManage/menuList.do">메뉴관리(점포)</a></li>
+                                <li style="display:none;"><a href="/backoffice/sub/basicManage/tmenuList.do">메뉴관리(타입)</a></li>
                             </ul>
                         </li>
                     </ul>
                     <div class="clearfix"></div>
                 </div>
 				<div class="loginInfo">
-                    <span class="loginBar"><c:out value="${loginName}"/> [관리포인트 추가] <a href="<c:url value='/backoffice/actionLogout.do'/>">[ 로그아웃 ]</a></span>
+                    <span class="loginBar"><c:out value="${loginName}"/>[관리포인트 추가] </span>
+                    <a href="<c:url value='/backoffice/actionLogout.do'/>" class="header_logout">로그아웃</a>
                 </div>
             </div>
             <div class="clearfix"></div>

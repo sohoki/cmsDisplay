@@ -26,12 +26,9 @@
 			
 			$("#join_pop .joinSubTxt").text("");
 		});
-		
-		
+
 		$(".pwSearch_input").attr("style", "display:none");
-		
-		
-	   
+
 		if ("${message}" != "${message}" && "${message}" != "") {
 			if ("${message}" == "login_ok"){
 				location.href="/backoffice/sub/equiManage/didList.do";  
@@ -40,13 +37,7 @@
 				$("#mberId").focus() ;	    			  
 			}				
 		}
-    	
-    	
-    	// /backoffice/sub/operManage/json/webData.do
-    		
-    	
-    	
-    	
+
     	$("#user_reg_id").focusout(function (){
     		// 아이디 중복확인 진행
     		var callData = "{'request_type':'join-idCheck', 'request_data':{'mberId':'"+$(this).val()+"'}}";
@@ -85,9 +76,6 @@
   				}
   			});
     	});
-    	
-    	 
-    	
     	  
     	$("#user_reg_pw").focusout(function(){
     		if(pwCheck($(this), $(".join_pw_comment"))){
@@ -122,11 +110,6 @@
     		}
     	});
 		
-		
-		
-		  
-		
-		
 		$("#user_modify_pw").focusout(function(){
     		if(pwCheck($(this), $(".search_pw_comment"))){
     			$(".search_pw_comment").text("확인");
@@ -159,10 +142,6 @@
     			modify_pw_chk = false;
     		}
     	});
-		
-		
-		
-
 	});
    
 	function pwCheck(el, commentEl){
@@ -226,36 +205,32 @@
 	}
    	
 	function groupInfoSetting (){
-		
-		
-		
 		var callData = "{'request_type':'join-groupData', 'request_data':{'groupId':'', 'parentGroupId':'EMART_00000000000001'}}";
    	   	$.ajax({
-				url : '/backoffice/sub/operManage/jsonRequest.do',
-				type : 'POST',
-				data : {
-					requestData : callData
-				},
-				dataType : 'json',
-				success : function(result) {
-					if(result.result.length > 0){
-						// console.log(result);	
-						var resultData = result.data;
-						var appendOption;
-						appendOption += "<option value=''>부서선택</option>";
-						for(var i = 0; i < result.result.length; i ++){
-							appendOption += "<option id='P_"+resultData[i].PARENT_GROUP_ID+"' value='"+resultData[i].GROUP_ID+"'>"+resultData[i].GROUP_NM+"</option>";	
-						}
-						
-						$(".user_reg_group").html(appendOption);
-						$(".pw_search_group").html(appendOption);
-						
+			url : '/backoffice/sub/operManage/jsonRequest.do',
+			type : 'POST',
+			data : {
+				requestData : callData
+			},
+			dataType : 'json',
+			success : function(result) {
+				if(result.result.length > 0){
+					// console.log(result);	
+					var resultData = result.data;
+					var appendOption;
+					appendOption += "<option value=''>부서선택</option>";
+					for(var i = 0; i < result.result.length; i ++){
+						appendOption += "<option id='P_"+resultData[i].PARENT_GROUP_ID+"' value='"+resultData[i].GROUP_ID+"'>"+resultData[i].GROUP_NM+"</option>";	
 					}
-				},
-				error : function(e) {
-					console.log(e);
+					$(".user_reg_group").html(appendOption);
+					$(".pw_search_group").html(appendOption);
+					
 				}
-			});
+			},
+			error : function(e) {
+				console.log(e);
+			}
+		});
 	}
 	
 	function joinConfirm(){
@@ -381,10 +356,7 @@
   				}
 			});
 		}
-		
-		
-		
-		
+
 		// 데이터 전달 간 장애시 
 	}		
     

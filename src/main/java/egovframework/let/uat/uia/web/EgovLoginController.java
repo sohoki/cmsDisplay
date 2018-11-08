@@ -184,7 +184,7 @@ public class EgovLoginController {
         	return "/backoffice/login";
     	}
     	LOGGER.info("login OK:");
-    	return "forward:/backoffice/sub/equiManage/didList.do";
+    	return "forward:/backoffice/sub/equiManage/integrate.do"; // didList에서 변경
 	}
 
     /**

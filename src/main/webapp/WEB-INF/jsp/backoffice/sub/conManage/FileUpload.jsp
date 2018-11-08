@@ -128,9 +128,7 @@
 }
 </style>
 <script type="text/javascript">
-
 	// console.log("${groupId}, ${groupCode}");
-
 	var regGroupId = "${groupCode}";
 	
 	function sendFileToServer(formData,status)
@@ -212,7 +210,6 @@
 	    }
 	    this.setProgress = function(progress)
 	    {       
-	        
 	        // this.progressBar.find('div').animate({ width: progressBarWidth }, 10).html(progress + "% ");
 	        if(parseInt(progress) < 100){
 	        	var progressBarWidth =progress*this.progressBar.width()/ 100;  

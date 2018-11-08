@@ -95,54 +95,13 @@
 					</div>
 				</div>
 			</div>
-			   
-				<!-- <table class="loginTable">
-					<tbody>
-						<tr>
-							<td style="text-align:left"><input type="text" name="mberId" id="mberId" size="30" tabindex="1"></td>
-						</tr>
-						<tr>
-							<td style="text-align:left"><input type="password" name=password id="password" size="30" tabindex="2"></td>
-						</tr>
-						<tr>
-							<td style="text-align:left">
-								<input type="submit" value="LOGIN"  class="loginB yellowBtn" />
-								<a class="blueBtn" style="padding: 8px 24px;">이용신청</a>
-							</td>							
-						</tr>
-					</tbody>
-					<div class="btnLogin">
-						
-					</div>
-				
-					
-					<tbody>
-						<th>Username</th>
-						<td style="text-align:left"><input type="text" name="mberId" id="mberId" size="15"></td>
-						<tr></tr>
-						<th>Password</th>
-						<td style="text-align:left"><input type="password" name=password id="password" size="15"></td>
-
-						
-					</tbody>
-					
-				</table> -->
-				
-<!-- 				<div class="btnLogin">
-					<input type="submit" value="LOGIN"  class="loginB"  >
-				</div> -->
 			<div class="clearfix"></div>
 		</div>
 		</form>
 		<!--내용끝-->
 	</div>
 	
-	
-	
-	
-	
-	
-	
+	<!-- 팝업 구현 부 -->
 	<div id='pw_search_pop' class="needpopup">  
         <!-- popheader-->                        
         <div class="popHead">

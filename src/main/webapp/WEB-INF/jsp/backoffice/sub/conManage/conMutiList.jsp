@@ -10,9 +10,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>운영관리</title>
-	<link href="<c:url value='/'/>css/layout.css" rel="stylesheet" type="text/css" >
+	<%-- <link href="<c:url value='/'/>css/layout.css" rel="stylesheet" type="text/css" > --%>
 	<link rel="stylesheet" href="/css/reset.css">
 	<link rel="stylesheet" href="/css/paragraph.css">
+	<link rel="stylesheet" href="/new/css/reset.css">
+    <link rel="stylesheet" href="/new/css/layout.css">    
+    <link rel="stylesheet" href="/new/css/paragraph.css"> 
 	<script type="text/javascript" src="/js/jquery-1.11.0.min.js"></script>
 	<!--subPop -->
 	<script src="/js/popup.js"></script>
@@ -24,7 +27,9 @@
 <noscript>자바스크립트를 지원하지 않는 브라우저에서는 일부 기능을 사용하실 수 없습니다.</noscript>
 
       <div id="wrap">
-		<c:import url="/backoffice/inc/emart_header.do" />
+		<!--//HEADER-->
+		<c:import url="/backoffice/inc/cms_header.do" />
+		<!--HEADER//-->
 		<div class="left-contain">
 			<c:import url="/backoffice/inc/cms_left.do" />
 			<div class="swipe-area"><a href="#" data-toggle=".left-contain" id="sidebar-toggle"> <span class="bar"></span> <span class="bar"></span> <span class="bar"></span> </a></div>

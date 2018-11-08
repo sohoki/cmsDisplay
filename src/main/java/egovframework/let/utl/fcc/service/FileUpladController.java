@@ -125,13 +125,13 @@ public class FileUpladController {
             try {
             	//디렉톨 생성 여부 확인 
             	String inDate   = new java.text.SimpleDateFormat("yyyyMM").format(new java.util.Date());            	
-            	File filedir = new File(filePath+"/"+inDate);
+            	File filedir = new File(filePath+inDate);
             	
             	if (!filedir.isDirectory()){
             		filedir.mkdir();
             	}
                 //파일 저장
-            	fileFullPath = filePath + "/"+inDate+"/" + originalFilename;            	
+            	fileFullPath = filePath + inDate+"/" + originalFilename;            	
             	File file_s =  new File(fileFullPath );
             	Ext = fileExt(file_s,".");            	            	
             	String atchFileId = egovFileIdGnrService.getNextStringId();
@@ -202,21 +202,18 @@ public class FileUpladController {
             	//디렉톨 생성 여부 확인 
             	String inDate   = new java.text.SimpleDateFormat("yyyyMM").format(new java.util.Date());
             	String regDate   = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
-            	File filedir = new File(filePath+"/"+inDate);
+            	File filedir = new File(filePath+inDate);
             	
             	if (!filedir.isDirectory()){
             		filedir.mkdir();
             	}
                 //파일 저장
-            	fileFullPath = filePath + "/"+inDate+"/" + originalFilename;
+            	fileFullPath = filePath+inDate+"/" + originalFilename;
             	File file_s =  new File(fileFullPath );            	
             	Ext = fileExt(file_s,".");            	            	
             	String atchFileId = egovFileIdGnrService.getNextStringId();
             	file_s = rename(file_s, atchFileId+"."+Ext);            	
                 mpf.transferTo(file_s); //파일저장 실제로는 service에서 처리                
-                
-                
-                
                 
                 ContentFileInfo vo = new ContentFileInfo();
                 
@@ -233,8 +230,8 @@ public class FileUpladController {
                     if (thumnail != null && !thumnail.equals("F")){
                     	
                         String[] fileInfos = 	thumnail.split("/");
-                        
                         System.out.println("mp3duration:"+fileInfos[1].toString());
+                        
                         System.out.println("mp3duration:"+fileInfos[0].toString());
                     	vo.setFileThumnail("no_image.png");
                     	vo.setPlayTime(fileInfos[0].toString());                	
@@ -242,7 +239,6 @@ public class FileUpladController {
                     }
                 	
                 }
-
                 
                 vo.setAtchFileId(atchFileId);
                 if (thumnail != null && !thumnail.equals("")&& !thumnail.equals("Fail")  && !nowConMusicPOP){
@@ -251,7 +247,6 @@ public class FileUpladController {
                 	vo.setFileThumnail(fileInfos[0].toString()  );
                 	vo.setPlayTime(fileInfos[1].toString());        
                 }
-                
                 
 				vo.setFileStreCours(filePath + "/"+inDate+"/");
         		vo.setStreFileNm(file_s.getName());
@@ -265,7 +260,6 @@ public class FileUpladController {
                 contentFileInfoVO.setSearchKeyword(file_s.getName());
                 contentFileInfoVO.setSearchCondition("atchFileId");
                 contentFileInfoVO.setMediaType(modifyExtension(originalFilename));
-                
                  
                 vo.setGroupId(regGroupId);
 
@@ -414,7 +408,7 @@ public class FileUpladController {
         		
         		
 	            String originalFilename = mFile.getOriginalFilename(); //파일명	     	            
-	            String fileFullPath = filePath + "/" + originalFilename;
+	            String fileFullPath = filePath + originalFilename;
 	        	File file_s =  new File(fileFullPath);	        	
 	        	 
 	     	    int dot = originalFilename.lastIndexOf(".");

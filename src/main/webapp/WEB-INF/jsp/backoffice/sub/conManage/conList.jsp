@@ -31,7 +31,9 @@
         
         
 <div id="wrap">
-<c:import url="/backoffice/inc/emart_header.do" />	
+<!--//HEADER-->
+<c:import url="/backoffice/inc/cms_header.do" />
+<!--HEADER//-->
 <div class="left-contain">
 	<c:import url="/backoffice/inc/cms_left.do" />
 	<div class="swipe-area"><a href="#" data-toggle=".left-contain" id="sidebar-toggle"> <span class="bar"></span> <span class="bar"></span> <span class="bar"></span> </a></div>
