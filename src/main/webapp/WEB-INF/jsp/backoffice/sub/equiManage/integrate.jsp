@@ -65,7 +65,11 @@
 			loginAuthorType = "MUSIC";
 		}
 
-		callEquipList(selectGroupId, selectCenterId);
+		
+		// 부서 내 점포 리스트 호출
+		
+		roleInCenterListCall(selectGroupId);
+		callEquipList(selectGroupId, selectCenterId); // 단말 리스트 호출
 		
 		// select_device_orderBtn  select_device_info   device_select_before
 		
@@ -76,21 +80,23 @@
 		/* 페이지 최초 호출 간 작업 사항 종료 */
 
 		
-		function systemType(type){
-			
-			if(type == "SIGNAGE"){
-				if(loginAuthorType == "MUSIC"){alert("열람권한이 없습니다.");return false;}
-				
-			} else if(type == "MUSIC"){
-				if(loginAuthorType == "SIGNAGE"){alert("열람권한이 없습니다.");return false;}
-				
-				
-			}
-			
-			
-		}
+
 		
 	});
+	
+	
+	function systemType(type){
+		
+		if(type == "SIGNAGE"){
+			if(loginAuthorType == "MUSIC"){alert("열람권한이 없습니다.");return false;}
+			
+		} else if(type == "MUSIC"){
+			if(loginAuthorType == "SIGNAGE"){alert("열람권한이 없습니다.");return false;}
+
+		}
+	}
+	
+	
 	
 	function roleInCenterListCall(groupId){
 		// centerList
@@ -152,45 +158,54 @@
 			},
 			dataType : 'json',
 			success : function(result) {
-				if (result) {
+				//if (result.) {
 					console.log(result.equipList);
-					var equipListAppend = "";
-					for(var i = 0; i < result.equipList.length; i++){
+					
+					if(result.equipList.length > 0){
 						
-						var osType = "";
-						var onOffStatus = "";
-						var useStatus = "";
-						switch(result.equipList[i].didOs){
-							case "안드로이드"	: osType = '<span class="androidIcon"></span>'; break;
-							case "윈도우" 	: osType = '<span class="windowsIcon"></span>'; break;
-							case "IOS"		: osType = '<span class="iosIcon"></span>'; break;
-							default 		: osType = '<span class="androidIcon"></span>'; break;
-						}
-						switch(result.equipList[i].didSttus){
-							case "ON"	: onOffStatus = '<span class="onIcon"></span>'; break;
-							case "OFF"	: onOffStatus = '<span class="offIcon"></span>'; break;
-							default 	: onOffStatus = '<span class="offIcon"></span>'; break;
-						}
-						switch(result.equipList[i].didUseYn){
-							case "Y"	: useStatus = '<span class="onIcon"></span>'; break;
-							case "N"	: useStatus = '<span class="offIcon"></span>'; break;
-							default 	: useStatus = '<span class="offIcon"></span>'; break;
-						}
+						$(".roleGroupList.select").removeClass("select");
+						$("#roleGroupInfo_"+groupId).addClass("select");
 						
 						
-						equipListAppend += '<tr class="equipList">';
-						equipListAppend += '<td><input type="checkbox" id="equipChk_'+i+'" class="equipChkList"><label for="equipChk_'+i+'"></label></td>';
-						equipListAppend += '<td>'+result.equipList[i].didId+'</td>';
-						equipListAppend += '<td onclick="javascript:equipDetailCall('+result.equipList[i].didId+');">'+result.equipList[i].didNm+'</td>';
-						equipListAppend += '<td>'+result.equipList[i].schCnt+'개</td>';
-						equipListAppend += '<td>'+onOffStatus+'</td>';
-						equipListAppend += '<td>'+osType+'</td>';
-						equipListAppend += '<td>'+useStatus+'</td>';
-						equipListAppend += '<td>'+result.equipList[i].didWidth+'*'+result.equipList[i].didHeight+'</td>';        
-						equipListAppend += "</tr>";
+						var equipListAppend = "";
+						for(var i = 0; i < result.equipList.length; i++){
+							
+							var osType = "";
+							var onOffStatus = "";
+							var useStatus = "";
+							switch(result.equipList[i].didOs){
+								case "안드로이드"	: osType = '<span class="androidIcon"></span>'; break;
+								case "윈도우" 	: osType = '<span class="windowsIcon"></span>'; break;
+								case "IOS"		: osType = '<span class="iosIcon"></span>'; break;
+								default 		: osType = '<span class="androidIcon"></span>'; break;
+							}
+							switch(result.equipList[i].didSttus){
+								case "ON"	: onOffStatus = '<span class="onIcon"></span>'; break;
+								case "OFF"	: onOffStatus = '<span class="offIcon"></span>'; break;
+								default 	: onOffStatus = '<span class="offIcon"></span>'; break;
+							}
+							switch(result.equipList[i].didUseYn){
+								case "Y"	: useStatus = '<span class="onIcon"></span>'; break;
+								case "N"	: useStatus = '<span class="offIcon"></span>'; break;
+								default 	: useStatus = '<span class="offIcon"></span>'; break;
+							}
+							
+							
+							equipListAppend += '<tr class="equipList list_'+result.equipList[i].didId+'">';
+							equipListAppend += '<td><input type="checkbox" id="equipChk_'+i+'" class="equipChkList"><label for="equipChk_'+i+'"></label></td>';
+							equipListAppend += '<td>'+result.equipList[i].didId+'</td>';
+							equipListAppend += '<td onclick="javascript:equipDetailCall(&#39;'+result.equipList[i].didId+'&#39;);">'+result.equipList[i].didNm+'</td>';
+							equipListAppend += '<td>'+result.equipList[i].schCnt+'개</td>';
+							equipListAppend += '<td>'+onOffStatus+'</td>';
+							equipListAppend += '<td>'+osType+'</td>';
+							equipListAppend += '<td>'+useStatus+'</td>';
+							equipListAppend += '<td>'+result.equipList[i].didWidth+'*'+result.equipList[i].didHeight+'</td>';        
+							equipListAppend += "</tr>";
+						}
+						$(".equipListBody").html(equipListAppend);
 					}
-					$(".equipListBody").html(equipListAppend);
-				}
+
+				//}
 			},
 			error : function(e) {
 				console.log("fail");
@@ -198,6 +213,113 @@
 				$(".equipListBody").html("<tr><td colspan='8'><div style='text-align:center;'>데이터 호출간 장애가 발생하였습니다.<br>재시도 부탁드립니다.</div></td></tr>");
 			}
 		});
+	}
+	
+	
+	function equipDetailCall(id){
+		
+		/* $(".equipListBody").html("");
+		$(".centerList.select").removeClass("select");
+		$("#centerInfo_"+centerId).addClass("select"); */
+		
+		$(".equipListSelect").removeClass("equipListSelect");
+		
+		$.ajax({
+			url : '/backoffice/sub/conManage/selectIntegrateEquipInfo.do',
+			type : 'POST',
+			data : {
+				'didId'	: id
+			},
+			dataType : 'json',
+			success : function(result) {
+				
+				$(".list_"+id).addClass("equipListSelect");
+				
+				console.log(result);	
+				
+				if(result.equipInfo.didId != ""){
+					$("#selectEquipId").text(result.equipInfo.didId);
+					$("#selectEquipNm").text(result.equipInfo.didNm);
+					$("#selectEquipGroupNm").text(result.equipInfo.groupNm);
+					$("#selectEquipIp").text(result.equipInfo.didIpaddr);
+					$("#selectEquipMac").text(result.equipInfo.didMac);
+					$("#selectEquipIpType").text(result.equipInfo.didIptype);
+					$("#selectEquipType").text(result.equipInfo.didType);
+					$("#selectEquipW").text(result.equipInfo.didWidth);
+					$("#selectEquipH").text(result.equipInfo.didHeight);
+					$("#selectEquipModelType").text(result.equipInfo.didModelType);
+					$("#selectEquipRuntime").text(result.equipInfo.didStartTime+"~"+result.equipInfo.didEndTime);
+					$("#selectEquipLastconn").text(result.equipInfo.didEndContime);
+					
+					var remarkTxt = "";
+					if(!result.equipInfo.didRemark){
+						remarkTxt = "기록 된 내용이 없습니다.";
+					} else {
+						remarkTxt = result.equipInfo.didRemark;
+					}
+					
+					$("#selectEquipMsg").html("<span onclick='euqipRemarkWrite(&#39;"+result.equipInfo.didId+"&#39;);'>"+remarkTxt+"</span>");	
+					
+					
+				}
+				
+				if(result.equipSchList.length > 0){
+					
+					//$("#selectEquipSchInfo") // 날짜삽입
+					/* $("#selectSchName").text();
+					$("#selectConName").text();
+					$("#selectSch").text(); */
+					
+				}
+				
+				
+			},
+			error : function(e) {
+				console.log("fail");
+				console.log(e);
+				$(".equipListBody").html("<tr><td colspan='8'><div style='text-align:center;'>데이터 호출간 장애가 발생하였습니다.<br>재시도 부탁드립니다.</div></td></tr>");
+			}
+		});
+		
+	}
+	
+	function euqipRemarkWrite(id){
+		// 단말 내 비고 작성
+		
+		
+		
+	}
+	
+	function remarkBtnAction(el){
+		var val = $(el).attr("value");
+		switch(val){
+			case "0" : $(el).text("등록하기"); remarkModifyMode(el); break;
+			case "1" : $(el).text("수정하기"); remarkSubmitMode(el); break;
+		}
+	}
+	function remarkModifyMode(el){
+		$(el).attr("value", "1");
+	}
+	function remarkSubmitMode(el){
+		
+		
+		$(el).attr("value", "0");
+		/* $.ajax({
+			url : '/backoffice/sub/conManage/selectIntegrateEquipInfo.do',
+			type : 'POST',
+			data : {
+				'didId'	: id
+			},
+			dataType : 'json',
+			success : function(result) {				
+				console.log(result);
+				
+			},
+			error : function(e) {
+				console.log("fail");
+				console.log(e);
+			}
+		}); */
 	}
 	
 	</script>
@@ -209,6 +331,16 @@
 			cursor: pointer;
 		}
 		.roleGroupList{
+			cursor: pointer;
+		}
+		.equipListSelect{
+			color:#FF0000;
+			background-color: #fafbfc;
+		}
+		.equipList {
+			cursor: pointer;
+		}
+		#selectEquipMsg{
 			cursor: pointer;
 		}
 	</style>
@@ -364,6 +496,10 @@
                                 <td id="selectEquipMac"></td>
                             </tr>
                             <tr>
+                                <th>IP형태</th>
+                                <td id="selectEquipIpType"></td>
+                            </tr>
+                            <tr>
                                 <th>DID형태</th>
                                 <td id="selectEquipType"></td>
                             </tr>
@@ -375,16 +511,8 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>고정IP여부</th>
-                                <td id="selectEquipIpType"></td>
-                            </tr>
-                            <tr>
                                 <th>기기타입</th>
                                 <td id="selectEquipModelType"></td>
-                            </tr>
-                            <tr>
-                                <th>사용유무</th>
-                                <td id="selectEquipUseStatus"></td>
                             </tr>
                             <tr>
                                 <th>운영시간</th>
@@ -394,9 +522,9 @@
                                 <th>마지막 접속일자</th>
                                 <td id="selectEquipLastconn"></td>
                             </tr>
-                            <tr style="display:none;">
-                                <th>메세지명</th>
-                                <td id="selectEquipMsg">시스템 준비 중</td>
+                            <tr>
+                                <th>비고</th>
+                                <td data-needpopup-show="#equip_remark_modify" id="selectEquipMsg"></td>
                             </tr>
                             <tr>
                             	<td colspan="2" style="text-align: center;">연동 콘텐츠</td>
@@ -857,6 +985,45 @@
         </div>
     </div>
     <!-- 메세지등록pop //-->
+    
+    
+    
+    
+    <!-- 비고 등록 POP ::  START -->
+	<div id='equip_remark_modify' class="needpopup">  
+        <!-- popheader-->                        
+        <div class="popHead">
+            <h2>단말기 비고</h2>
+        </div>
+        <!-- pop contents-->   
+        <div class="popCon">
+            <!--// 팝업 필드박스-->
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">단말 ID</p>
+                    <input type="text" id="equip_remark_id" class="input_noti" disabled/>
+                </div>                
+            </div>
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">단말명</p>
+                    <input type="text" id="equip_remark_name" class="input_noti" disabled/>               
+                </div>                
+            </div>
+            <!--// 팝업 필드박스-->
+            <div class="pop_box100 pwSearch_input">
+                <div class="padding15">
+                    <p class="pop_tit">단말 비고 <span class=""></span></p>
+                    <input type="text" id="equip_remark_content" class="input_noti" value="" placeholder="200자 이내">
+                </div>                
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="pop_footer">
+            <a onclick="remarkBtnAction(this);" id="equip_remark_btn" class="top_btn" value="0">수정하기</a>
+        </div>
+    </div>
+    <!-- 비고 등록 POP :: FINISH -->
 
     <!--popup js-->
     <script src="/new/js/needpopup.js"></script> 

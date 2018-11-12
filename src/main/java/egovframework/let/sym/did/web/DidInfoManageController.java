@@ -884,5 +884,27 @@ public class DidInfoManageController {
 	}
 	
 	
-	
+	@RequestMapping(value="/backoffice/sub/conManage/selectIntegrateEquipInfo.do")
+	@ResponseBody
+	public ModelAndView selectIntegrateEquipInfo(HttpServletRequest request) throws Exception{
+		
+		DidInfoVO didInfoVO = new DidInfoVO();
+		ModelAndView model = new ModelAndView("jsonView");
+
+		String didId = request.getParameter("didId") != null ? request.getParameter("didId") : "";
+
+		
+		if(didId != null && !didId.equals("")){
+			didInfoVO.setDidId(didId);
+			model.addObject("equipInfo", didInfoManageService.selectDidrInfoManageDetailView(didInfoVO.getDidId()));
+			model.addObject("equipSchList", didInfoManageService.selectDidDetailContentInfo(didId));
+		} else {
+			
+			// 데이터를 점검 해달라는 내용을 삽입해야함
+			
+		}
+		
+
+		return model;
+	}
 }
