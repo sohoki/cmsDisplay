@@ -10,12 +10,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>운영관리</title>
-	<%-- <link href="<c:url value='/'/>css/layout.css" rel="stylesheet" type="text/css" > --%>
+	<link href="<c:url value='/'/>css/layout.css" rel="stylesheet" type="text/css" >
 	<link rel="stylesheet" href="/css/reset.css">
 	<link rel="stylesheet" href="/css/paragraph.css">
-	<link rel="stylesheet" href="/new/css/reset.css">
+	<!-- <link rel="stylesheet" href="/new/css/reset.css">
     <link rel="stylesheet" href="/new/css/layout.css">    
-    <link rel="stylesheet" href="/new/css/paragraph.css"> 
+    <link rel="stylesheet" href="/new/css/paragraph.css"> --> 
 	<script type="text/javascript" src="/js/jquery-1.11.0.min.js"></script>
 	<!--subPop -->
 	<script src="/js/popup.js"></script>
@@ -28,7 +28,8 @@
 
       <div id="wrap">
 		<!--//HEADER-->
-		<c:import url="/backoffice/inc/cms_header.do" />
+		<%-- <c:import url="/backoffice/inc/cms_header.do" /> --%>
+		<c:import url="/backoffice/inc/emart_header.do" />
 		<!--HEADER//-->
 		<div class="left-contain">
 			<c:import url="/backoffice/inc/cms_left.do" />

@@ -425,11 +425,9 @@ public class ContentFileInfoManageController {
 			String strPage = request.getParameter("strPage") != null ? request.getParameter("strPage") : "";
 		    String pageSize = request.getParameter("conPageSize") != null ? request.getParameter("conPageSize") : "";
 		    
+		    
 		    searchVO.setFirstIndex( Integer.parseInt( strPage));
 		    searchVO.setRecordCountPerPage(Integer.parseInt( pageSize));
-		    
-		    // 조회하지 않을 MediaType
-		    searchVO.setNotConType("MUSIC");
 		    
 		    // 파일 이름 검색
 		    String orgFileNm =  request.getParameter("originFileNm") != null ? request.getParameter("originFileNm") : "";
@@ -439,6 +437,15 @@ public class ContentFileInfoManageController {
 		    // 조회를 원하는 특정 MediaType
 		    String searchMediaType = request.getParameter("mediaType") != null ? request.getParameter("mediaType") : "";
 		    searchVO.setMediaType(searchMediaType);
+		    
+		    // 조회하지 않을 MediaType
+		    String notCon = request.getParameter("notConType") != null ? request.getParameter("notConType") : "";
+		    if(notCon != null && !notCon.equals("")){
+		    	searchVO.setNotConType(notCon);	
+		    } else {
+		    	searchVO.setNotConType("MUSIC");
+		    }
+		    
 		    
 		    // filegubun값 필요
 			searchVO.setFileGubun("");

@@ -120,9 +120,16 @@
 									<tr>
 										<th>
 											<select id="mediaType" name="mediaType" style="height:26px;">
-							                    <option value="" selected="">콘텐츠전체</option>
-							                    <option value="IMAGE">이미지</option>
+							                    <c:choose>
+							                   	<c:when test="${regist.codeNm ne '음원POP'}">
+							                   	<option value="" selected>콘텐츠전체</option>
+							                   	<option value="IMAGE">이미지</option>
 							                    <option value="MEDIA">동영상</option>
+							                   	</c:when>
+							                   	<c:otherwise>
+							                   	<option value="MUSIC">음원POP</option>
+							                   	</c:otherwise>
+							                    </c:choose>
 							                </select>
 										</th>
 										<th>
@@ -383,6 +390,14 @@
 	    	$("#searchKeyword").val($("#searchConName").val());
 	    	var strPage = 0;
 	    	var conPageSize = 8;
+	    	var selectType = $("#mediaType").val();
+	    	var nonConType = "";
+	    	
+	    	if(selectType != "MUSIC"){
+	    		nonConType = "MUSIC";
+	    	} else {
+	    		nonConType = "NO";
+	    	}
 	    	
 	    	apiExecute(
 	   			"POST", 
@@ -390,8 +405,9 @@
 	   			{
 					strPage : strPage ,					  
 	   				conPageSize : $("#conPageSize").val(),
-	   				mediaType : $("#mediaType").val(),
-	   				originFileNm : $("#searchKeyword").val()
+	   				mediaType : selectType,
+	   				originFileNm : $("#searchKeyword").val(),
+	   				notConType : nonConType
 				},
 				null,				
 				function(result) {							

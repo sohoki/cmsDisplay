@@ -29,10 +29,12 @@
 	border-left: 1px solid  #d4d4d4;
 	height: 350px;
 	position: relative;
+	overflow: hidden;
+    overflow-y: auto;
 }
 .total_left .total_list {padding: 10px 10%;}
 .total_left .total_list  li{
-	font-size: 16px;
+	font-size: 15px;
 	color: #8f8f8f;
 	border-bottom: 1px solid #e7e9ed;
 	padding: 10px;
@@ -46,6 +48,10 @@
 .page_icon04 { width: 13px; display: inline-block;height: 11px; background: url("../img/pageNum04.png")no-repeat; cursor: pointer}
 .total_num li, .total_num ul { display: inline-block; padding: 0 5px;cursor: pointer; }
 .total_btn01 { width: 20px; height: 20px; display: inline-block;background: url("../img/setting_icon.png") no-repeat;float: right;cursor: pointer;}
+.total_settingBtn { width: 20px; height: 20px; display: inline-block;background: url("../img/setting_icon.png") no-repeat;float: left;cursor: pointer;}
+.total_foldBtn { width: 20px; height: 20px; display: inline-block; float: right;cursor: pointer;}
+.total_close_btn { background: url("../img/close_fold_icon.png") no-repeat;}
+.total_open_btn { background: url("../img/open_fold_icon.png") no-repeat;}
 input.list_searchT {
 	background: none;
     border-bottom: 1px solid #c3c3c3;
@@ -143,4 +149,15 @@ input[type="checkbox"] {
 .total_left .total_list li{font-size: 14px}
 .total_left .total_list li{ padding: 10px 0}
 .total_num li, .total_num ul{padding: 0 1px;}
+}
+
+
+
+
+.noneDisplaySet{
+	display:none;
+}
+.leftIconWithTxt{
+    left: 12px;
+    position: relative;
 }

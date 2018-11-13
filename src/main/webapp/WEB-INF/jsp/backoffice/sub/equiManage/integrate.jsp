@@ -47,6 +47,10 @@
 	
 	$(document).ready(function(){
 		/* 페이지 최초 호출 간 작업 사항 순서 절대 수정금지 */
+		
+		
+		
+		
 		selectGroupId	= "${groupId}";
 		selectCenterId	= "${centerId}";
 		loginAuthorCode	= "${authorCode}";
@@ -78,12 +82,25 @@
 		$("#selectEquipNm").text("단말기를 선택해주세요.");
 		
 		/* 페이지 최초 호출 간 작업 사항 종료 */
-
-		
-
 		
 	});
 	
+	function centerListSetting(code){
+		if(code == "0"){
+			$("#centerList_close_btn").addClass("noneDisplaySet");
+			$("#centerList_open_btn").removeClass("noneDisplaySet");
+			
+			$(".leftRoleList").attr("style", "height:700px;");
+			$(".leftCenterList").addClass("noneDisplaySet");
+			
+		} else {
+			$("#centerList_open_btn").addClass("noneDisplaySet");
+			$("#centerList_close_btn").removeClass("noneDisplaySet");
+			
+			$(".leftRoleList").attr("style", "");
+			$(".leftCenterList").removeClass("noneDisplaySet");
+		}
+	}
 	
 	function systemType(type){
 		
@@ -96,10 +113,11 @@
 		}
 	}
 	
-	
-	
 	function roleInCenterListCall(groupId){
 		// centerList
+		
+		centerListSetting("1");
+		
 		$(".equipListBody").html("");
 		$(".roleGroupList.select").removeClass("select");
 		$("#roleGroupInfo_"+groupId).addClass("select");
@@ -364,14 +382,14 @@
                         <li><a href="javascript:systemType('MUSIC');">음원방송</a></li>
                         <div class="clearfix"></div>
                     </ul>   
-                    <div class="total_left">
+                    <div class="total_left leftRoleList">
                         <ul class="total_list">
                         <!-- <li class="select">스타필드</li> 선택시 addClass select -->
                         <c:forEach items="${roleList }" var="roleinfo" varStatus="status">
 							<li class="roleGroupList <c:if test="${status.first}">select</c:if>" id="roleGroupInfo_${roleinfo.groupId}"onclick="javascript:roleInCenterListCall('${roleinfo.groupId}')">${roleinfo.roleNm}</li>
 						</c:forEach>
                         </ul>
-                        <div class="total_num">
+                        <!-- <div class="total_num">
                             <span class="page_icon01"></span>
                             <span class="page_icon02"></span>
                             <ul>
@@ -383,20 +401,22 @@
                             </ul>
                             <span class="page_icon03"></span>
                             <span class="page_icon04"></span>
-                        </div>
+                        </div> -->
                     </div> 
                     <!--점포분류-->
                     <div class="total_leftB">
-                        점포 
-                        <span class="total_btn01"><a href=""></a></span>
+                    <span class="total_settingBtn"><a href=""></a></span>
+                    <span class="leftIconWithTxt">점포</span>
+                    <img src="/img/close_fold_icon.png" id="centerList_close_btn" class="total_foldBtn" onclick="centerListSetting('0');" />
+                    <img src="/img/open_fold_icon.png" id="centerList_open_btn" class="total_foldBtn noneDisplaySet" onclick="centerListSetting('1');" />
                     </div>
-                    <div class="total_left border-bottom">
+                    <div class="total_left border-bottom leftCenterList">
                         <ul class="total_list centerListBody">
 <%-- 						<c:forEach items="${centerList }" var="centerinfo" varStatus="status">
 							<li onclick="javascript:centerSelect('${centerinfo.centerId}')">${centerinfo.centerNm}</li>
 						</c:forEach> --%>
                         </ul>
-                        <div class="total_num">
+                        <!-- <div class="total_num">
                             <span class="page_icon01"></span>
                             <span class="page_icon02"></span>
                             <ul>
@@ -408,7 +428,7 @@
                             </ul>
                             <span class="page_icon03"></span>
                             <span class="page_icon04"></span>
-                        </div>
+                        </div> -->
                     </div> 
                 </div>
                 <!--통합관리좌측메뉴//-->
