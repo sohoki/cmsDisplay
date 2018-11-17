@@ -32,7 +32,7 @@
 	overflow: hidden;
     overflow-y: auto;
 }
-.total_left .total_list {padding: 10px 10%;}
+.total_left .total_list {padding: 10px 8%;}
 .total_left .total_list  li{
 	font-size: 15px;
 	color: #8f8f8f;

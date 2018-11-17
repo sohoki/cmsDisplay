@@ -137,25 +137,25 @@
 	</div>
     <script type="text/javascript">
 		function linkPage(pageNo) {
-				$(":hidden[name=pageIndex]").val(pageNo);				
-				$("form[name=regist]").submit();
-		   }	
-		  function view_Con(code, code1){	  
-			  $('#mode').val(code);
-			  $('#conSeq').val(code1);
-			  if ( $('#mode').val()  == "Ins"   ){
-				  $("form[name=regist]").attr("action", "/backoffice/sub/conManage/conMutiDetail.do").submit();
-			  }else {
-				  //$("form[name=regist]").attr("action", "/backoffice/sub/conManage/conMutiView.do").submit();  
-				  $("form[name=regist]").attr("action", "/backoffice/sub/conManage/conMutiView_back.do").submit();
-			  }
-		  }
-		 function search_form(){
-			 $("form[name=regist]").attr("action", "/backoffice/sub/conManage/conMutiList.do").submit();		 
-		 }
-		 function con_View(code){
+			$(":hidden[name=pageIndex]").val(pageNo);				
+			$("form[name=regist]").submit();
+		}	
+		function view_Con(code, code1){	  
+			$('#mode').val(code);
+			$('#conSeq').val(code1);
+			if ( $('#mode').val()  == "Ins" ){
+				$("form[name=regist]").attr("action", "/backoffice/sub/conManage/conMutiDetail.do").submit();
+			}else {
+				//$("form[name=regist]").attr("action", "/backoffice/sub/conManage/conMutiView.do").submit();  
+				$("form[name=regist]").attr("action", "/backoffice/sub/conManage/conMutiView_back.do").submit();
+			}
+		}
+		function search_form(){
+			$("form[name=regist]").attr("action", "/backoffice/sub/conManage/conMutiList.do").submit();		 
+		}
+		function con_View(code){
 			 // ?
-		 }
-		</script>
+		}
+	</script>
 </body>
 </html>		

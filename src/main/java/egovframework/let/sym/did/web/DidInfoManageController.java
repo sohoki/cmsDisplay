@@ -807,6 +807,12 @@ public class DidInfoManageController {
 			  
 			  searchVO.setRequestSystemType(requestSystemType);
 			  
+			  
+			  ModelAndView modelAndView = new ModelAndView("jsonView");
+			  modelAndView.addObject("roleList", didInfoManageService.selectIntegrateRoleList(searchVO));
+			  
+			  model.addAttribute("roleInfo", modelAndView);
+			  
 			  model.addAttribute("roleList",   didInfoManageService.selectIntegrateRoleList(searchVO) ); // selectIntegrateRoleList
 			  model.addAttribute("centerList",   didInfoManageService.selectIntegrateCenterList(searchVO) ); // selectIntegrateCenterList
 			  // model.addAttribute("deviceList",   didInfoManageService.selectIntegrateDeviceList(searchVO) );  // selectIntegrateDeviceList

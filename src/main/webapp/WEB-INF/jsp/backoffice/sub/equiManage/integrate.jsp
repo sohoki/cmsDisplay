@@ -49,7 +49,7 @@
 		/* 페이지 최초 호출 간 작업 사항 순서 절대 수정금지 */
 		
 		
-		
+		roleSetting();
 		
 		selectGroupId	= "${groupId}";
 		selectCenterId	= "${centerId}";
@@ -339,6 +339,12 @@
 			}
 		}); */
 	}
+	
+	function roleSetting(){
+		console.log("${jsonView }");
+		
+	}
+	
 	
 	</script>
 	<style>
