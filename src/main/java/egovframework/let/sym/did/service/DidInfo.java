@@ -55,11 +55,19 @@ public class DidInfo {
 	private String didSerialjavascript;
 	private String parentGroupId;
 	private String groupId;
+	private String groupLevel;
 	private String centerCnt;
 	
 	
 	
 	
+	
+	public String getGroupLevel() {
+		return groupLevel;
+	}
+	public void setGroupLevel(String groupLevel) {
+		this.groupLevel = groupLevel;
+	}
 	public String getCenterCnt() {
 		return centerCnt;
 	}

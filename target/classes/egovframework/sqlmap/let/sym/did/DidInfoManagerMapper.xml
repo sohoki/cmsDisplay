@@ -346,7 +346,7 @@
      
      <select id="selectIntegrateRoleList"  resultType="DidInfoVO">
 		SELECT 
-			group_nm as roleNm, GROUP_ID as groupId, parent_group_id as parentGroupId
+			LEVEL as groupLevel, group_nm as roleNm, GROUP_ID as groupId, parent_group_id as parentGroupId
 		FROM LETTNAUTHORGROUPINFO
 		WHERE
 			<!-- 사이니지 인지 음원방송인지 확인하는 조건문 추가 --> 

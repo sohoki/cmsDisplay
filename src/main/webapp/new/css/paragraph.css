@@ -33,7 +33,7 @@
     overflow-y: auto;
 }
 .total_left .total_list {padding: 10px 8%;}
-.total_left .total_list  li{
+.total_left .total_list  li, .total_left .total_list  ol{
 	font-size: 15px;
 	color: #8f8f8f;
 	border-bottom: 1px solid #e7e9ed;
@@ -52,6 +52,15 @@
 .total_foldBtn { width: 20px; height: 20px; display: inline-block; float: right;cursor: pointer;}
 .total_close_btn { background: url("../img/close_fold_icon.png") no-repeat;}
 .total_open_btn { background: url("../img/open_fold_icon.png") no-repeat;}
+.all_role_foldImg{
+	background-color: #4d585d;
+    width: 20px;
+    position: absolute;
+}
+.all_role_foldTxt{
+    text-align: right;
+    margin-left: 24px;
+}
 input.list_searchT {
 	background: none;
     border-bottom: 1px solid #c3c3c3;

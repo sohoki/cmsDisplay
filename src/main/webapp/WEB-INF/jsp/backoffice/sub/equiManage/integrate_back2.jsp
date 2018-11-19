@@ -1,3 +1,4 @@
+<!-- 부서정보 열기/닫기 세팅 -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -49,7 +50,7 @@
 		/* 페이지 최초 호출 간 작업 사항 순서 절대 수정금지 */
 		
 		
-		
+		roleSetting();
 		
 		selectGroupId	= "${groupId}";
 		selectCenterId	= "${centerId}";
@@ -340,6 +341,12 @@
 		}); */
 	}
 	
+	function openChild(myId){
+		$(".child_role").attr("style", "none");
+		$(".myParent_"+myId).attr("style", "");
+	}
+	
+	
 	</script>
 	<style>
 	 	.equipList:hover{
@@ -386,7 +393,22 @@
                         <ul class="total_list">
                         <!-- <li class="select">스타필드</li> 선택시 addClass select -->
                         <c:forEach items="${roleList }" var="roleinfo" varStatus="status">
-							<li class="roleGroupList <c:if test="${status.first}">select</c:if>" id="roleGroupInfo_${roleinfo.groupId}"onclick="javascript:roleInCenterListCall('${roleinfo.groupId}')">${roleinfo.roleNm}</li>
+                        	<c:choose>
+                        	<c:when test="${roleinfo.groupLevel eq '1' || roleinfo.groupLevel eq '2'}">
+	                        	<li class="roleGroupList <c:if test="${status.first}">select</c:if>" id="roleGroupInfo_${roleinfo.groupId}">
+									<div>
+										<a clas="parentRoleBtn" onclick="openChild('${roleinfo.groupId}')" value="0"><img class="all_role_foldImg" src="/img/list_open_icon.png"></a>
+										<a class="all_role_foldTxt" onclick="javascript:roleInCenterListCall('${roleinfo.groupId}')">${roleinfo.roleNm}</a>
+									</div>
+								</li>
+                        	</c:when>
+                        	<c:otherwise>
+                        		<ol style="display:none;" class="child_role myParent_${roleinfo.parentGroupId} roleGroupList <c:if test="${status.first}">select</c:if>" id="roleGroupInfo_${roleinfo.groupId}"onclick="javascript:roleInCenterListCall('${roleinfo.groupId}')">
+									<a>${roleinfo.roleNm}</a>
+								</ol>
+                        	</c:otherwise>
+                        	</c:choose>
+							
 						</c:forEach>
                         </ul>
                         <!-- <div class="total_num">
