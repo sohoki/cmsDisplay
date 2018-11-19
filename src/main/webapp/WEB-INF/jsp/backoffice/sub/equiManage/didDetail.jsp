@@ -56,11 +56,9 @@
 		<!--//상단 탭메뉴-->
 		<ul class="topMenu" >
 				<li class="active"><a href="/backoffice/sub/equiManage/didList.do" class="did">단말기 관리</a></li>
-				<c:if test="${groupCode ne 'EMART_00000000000005' and authorCode == 'ROLE_ADMIN' }">
 				<li><a href="/backoffice/sub/equiManage/did_groupList.do" class="didGroup">그룹 관리</a></li>
 				<li><a href="/backoffice/sub/equiManage/didSendMessage.do" class="didGroup">메세지 관리</a></li>
 				<li><a href="/backoffice/sub/equiManage/didSendMessageLst.do" class="didGroup">메세지 현황</a></li>
-				</c:if>
 				<div class="clear"></div>				
 		</ul>
         <div class="con">			

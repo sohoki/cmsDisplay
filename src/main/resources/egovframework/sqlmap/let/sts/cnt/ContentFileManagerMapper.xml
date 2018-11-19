@@ -212,7 +212,7 @@
    <insert id="insertFileManage" >
         insert into LETTNFILEDETAIL(ATCH_FILE_ID, FILE_STRE_COURS, STRE_FILE_NM, ORIGNL_FILE_NM, FILE_EXTSN, FILE_SIZE, FILE_THUMNAIL, PLAY_TIME, FILE_GUBUN, USEYN, GROUP_ID)
         values ( #{atchFileId} , #{fileStreCours}, #{streFileNm}, #{orignlFileNm}, #{fileExtsn}  , #{fileSize},  
-                 #{fileThumnail ,jdbcType=VARCHAR}   , #{playTime,  jdbcType=VARCHAR } , #{fileGubun,  jdbcType=VARCHAR }, 'Y', #{groupId}
+                 #{fileThumnail ,jdbcType=VARCHAR}   , #{playTime,  jdbcType=VARCHAR } , #{fileGubun,  jdbcType=VARCHAR }, 'Y', #{groupId, jdbcType=VARCHAR}
                  )
    </insert>
    <update id="updateFileManage">

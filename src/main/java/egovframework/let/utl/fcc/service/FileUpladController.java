@@ -125,13 +125,13 @@ public class FileUpladController {
             try {
             	//디렉톨 생성 여부 확인 
             	String inDate   = new java.text.SimpleDateFormat("yyyyMM").format(new java.util.Date());            	
-            	File filedir = new File(filePath+inDate);
+            	File filedir = new File(filePath+"/"+inDate);
             	
             	if (!filedir.isDirectory()){
             		filedir.mkdir();
             	}
                 //파일 저장
-            	fileFullPath = filePath + inDate+"/" + originalFilename;            	
+            	fileFullPath = filePath +"/"+ inDate+"/" + originalFilename;            	
             	File file_s =  new File(fileFullPath );
             	Ext = fileExt(file_s,".");            	            	
             	String atchFileId = egovFileIdGnrService.getNextStringId();
@@ -157,12 +157,13 @@ public class FileUpladController {
                 	
                 }
                 
-				vo.setFileStreCours(filePath+inDate+"/");
+				vo.setFileStreCours(filePath+"/"+inDate+"/");
         		vo.setStreFileNm(file_s.getName());
         		vo.setOrignlFileNm(streFileNm);
         		vo.setFileExtsn(fileExt(file_s,"."));        		
         		vo.setFileSize( fileSize( file_s ));
                 vo.setFileOrder( Integer.toString( Integer.parseInt(atchFileId.replace("FILE_",""))));
+                vo.setUseYn("Y");
                 conFileService.insertFileManage(vo);
                 model.addAttribute("status", Globals.STATUS_SUCCESS);
                 
@@ -202,13 +203,13 @@ public class FileUpladController {
             	//디렉톨 생성 여부 확인 
             	String inDate   = new java.text.SimpleDateFormat("yyyyMM").format(new java.util.Date());
             	String regDate   = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
-            	File filedir = new File(filePath+inDate);
+            	File filedir = new File(filePath+"/"+inDate);
             	
             	if (!filedir.isDirectory()){
             		filedir.mkdir();
             	}
                 //파일 저장
-            	fileFullPath = filePath+inDate+"/" + originalFilename;
+            	fileFullPath = filePath+"/"+inDate+"/"+ originalFilename;
             	File file_s =  new File(fileFullPath );            	
             	Ext = fileExt(file_s,".");            	            	
             	String atchFileId = egovFileIdGnrService.getNextStringId();

@@ -435,6 +435,11 @@ public class BrodContentInfoManageController {
 				vo.setBrodCode( egovBrodIdGnrService.getNextStringId());
 				vo.setFrstRegisterId(loginVO.getMberId());
 				
+				
+				if(vo.getBasicFileId() == null || vo.getBasicFileId().equals("")){
+					vo.setBasicFileId("FILE_000000000000001");
+				}
+				
 				ret = brodContent.insertBrodContent(vo);
 				meesage = "sucess.common.insert";
 				url = "forward:/backoffice/sub/brodManage/brodContentList.do";				
