@@ -36,6 +36,13 @@
 					menuVisible($(".leftMenuImg_network"), $(".leftMenu_send"));
 				}
 				break;
+			case "setting" 	:
+				if($(".leftMenu_setting").is(":visible")){
+					menuHidden($(".leftMenuImg_setting"), $(".leftMenu_setting"));
+				}else{
+					menuVisible($(".leftMenuImg_setting"), $(".leftMenu_setting"));
+				}
+				break;
 		}
 	}	
 	function menuVisible(imgElement, element){

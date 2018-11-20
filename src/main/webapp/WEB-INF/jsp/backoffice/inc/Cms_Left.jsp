@@ -42,7 +42,8 @@
 			<ol class="leftMenu_send leftChildMenu"><a href="/backoffice/sub/operManage/xmlList.do">&nbsp;>&nbsp;&nbsp;전문관리</a></ol>
 			<ol class="leftMenu_send leftChildMenu"><a href="/backoffice/sub/operManage/sendResultList.do">&nbsp;>&nbsp;&nbsp;전문통신현황</a></ol>	
         <%-- <c:if test="${authorCode eq 'ROLE_ADMIN' }"> --%>
-		<li><a class="leftMenuTxt80" href="/backoffice/sub/basicManage/manageList.do" >설정</a></li>
+		<li><div><a class="leftMenuTxt" href="/backoffice/sub/basicManage/manageList.do" >설정</a><a class="leftMenuImg" onclick="menuOpen('setting')"><img class="leftMenuImg_setting" src="/img/list_open_icon.png"/></a></div></li>
+		<ol class="leftMenu_setting leftChildMenu"><a href="/backoffice/sub/basicManage/centerList.do">&nbsp;>&nbsp;&nbsp;지점관리</a></ol>
 		<%-- </c:if> --%>
 	</ul>
 </div>

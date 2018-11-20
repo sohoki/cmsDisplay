@@ -28,10 +28,11 @@
 						   		and ORIGNL_FILE_NM LIKE '%' || #{searchKeyword} || '%'
 							</otherwise>
 						</choose>
-					</if>							
-					<if test="fileGubun != '' ">     			  
-				        and a.FILE_GUBUN = #{fileGubun}
-				    </if>   						
+					</if>
+					<if test="fileGubun != ''">
+						and a.FILE_GUBUN = #{fileGubun}
+					</if>
+					
 			        ORDER BY a.ATCH_FILE_ID  DESC
               )X
               where 1=1 
@@ -41,6 +42,14 @@
 			  <if test="notConType != '' ">
 			       and X.mediaType != #{notConType}
 			  </if>     	      
+			  <choose>
+					<when test="fileThumnail == 'no_image.png'">
+						and X.FILE_THUMNAIL = 'no_image.png'
+					</when>
+					<otherwise>
+						and X.FILE_THUMNAIL != 'no_image.png'
+					</otherwise>
+				</choose>
 	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}      	
    </select>
    <select id="selectBasicFilePageListByPagination" resultType="ContentFileInfoVO">
@@ -161,9 +170,17 @@
 							</otherwise>
 						</choose>
 				</if>            
-				<if test="fileGubun != '' ">     
-			       and FILE_GUBUN = #{fileGubun}
-			    </if>   	             
+				<if test="fileGubun != ''">
+					and FILE_GUBUN = #{fileGubun}
+				</if>
+				<choose>
+					<when test="fileThumnail == 'no_image.png'">
+						and FILE_THUMNAIL = 'no_image.png'
+					</when>
+					<otherwise>
+						and FILE_THUMNAIL != 'no_image.png'
+					</otherwise>
+				</choose>	             
             ) X
             where 1=1 
            	<if test="mediaType != ''">
@@ -183,6 +200,7 @@
      select a.ATCH_FILE_ID, a.ORIGNL_FILE_NM    
 	 from LETTNFILEDETAIL a
 	 where UseYN ='Y' and FILE_EXTSN in ('mp3', 'wav', 'mid')
+	 and FILE_THUMNAIL != 'no_image.png'
 	 order by ORIGNL_FILE_NM asc
    </select>
     

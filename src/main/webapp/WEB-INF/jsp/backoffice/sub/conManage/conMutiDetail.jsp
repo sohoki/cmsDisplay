@@ -99,7 +99,8 @@
 
       <div id="wrap">
 		<!--//HEADER-->
-		<c:import url="/backoffice/inc/cms_header.do" />
+		<%-- <c:import url="/backoffice/inc/cms_header.do" /> --%>
+		<c:import url="/backoffice/inc/emart_header.do" />
 		<!--HEADER//-->
 		<div class="left-contain">
 			<c:import url="/backoffice/inc/cms_left.do" />

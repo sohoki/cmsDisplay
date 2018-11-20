@@ -250,7 +250,6 @@
        }
        //단말기 전송
        function send_DID(code){
-    	   alert("서비스 준비 중 입니다.");
     	   
     	   var url  = "" ;
     	   if (code == "Tim"){
@@ -272,7 +271,6 @@
     	   }else {
     		   url = "/backoffice/sub/equiManage/didReBoot.do";
     	   }
-    	   alert("서비스 준비 중 입니다. 2");
     	   apiExecute(
  				  "POST", 
  				   url,

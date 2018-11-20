@@ -260,6 +260,7 @@ public class ContentFileInfoManageController {
 			  if (searchVO.getMediaType() == null){ searchVO.setMediaType("");}
 			  if (searchVO.getMediaType().equals("MUSIC")){
 				  searchVO.setNotConType("");
+				  searchVO.setFileThumnail("no_image.png");
 			  } else {
 				  if (searchVO.getNotConType() == null){ searchVO.setNotConType("MUSIC");}
 			  }
@@ -396,11 +397,13 @@ public class ContentFileInfoManageController {
 		    
 		    if(searchMediaType.equals("MUSIC")){
 		    	searchVO.setNotConType("");
+		    	searchVO.setFileThumnail("no_image.png");
 		    } else {
 		    	searchVO.setNotConType("MUSIC");
 		    }
 		    
 		    searchVO.setFileGubun("");
+		    
 		    
 			List<ContentFileInfoVO> fileInfoVO = conFileService.selectFilePageListByPagination(searchVO);		
 			
@@ -438,18 +441,27 @@ public class ContentFileInfoManageController {
 		    String searchMediaType = request.getParameter("mediaType") != null ? request.getParameter("mediaType") : "";
 		    searchVO.setMediaType(searchMediaType);
 		    
-		    // 조회하지 않을 MediaType
 		    String notCon = request.getParameter("notConType") != null ? request.getParameter("notConType") : "";
-		    if(notCon != null && !notCon.equals("")){
-		    	searchVO.setNotConType(notCon);	
+		    if(searchMediaType.equals("MUSIC")){
+		    	searchVO.setNotConType("");
+		    	searchVO.setFileThumnail("no_image.png");
 		    } else {
-		    	searchVO.setNotConType("MUSIC");
+		    	if(notCon != null && !notCon.equals("")){
+			    	searchVO.setNotConType(notCon);	
+			    } else {
+			    	searchVO.setNotConType("MUSIC");
+			    }	
 		    }
+		    
+		    
+		    // 조회하지 않을 MediaType
+		    
+		    
 		    
 		    
 		    // filegubun값 필요
 			searchVO.setFileGubun("");
-		    
+			
 		    
 			List<ContentFileInfoVO> fileInfoVO = conFileService.selectFilePageListByPagination(searchVO);		
 			

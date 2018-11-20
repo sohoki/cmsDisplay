@@ -758,6 +758,8 @@ public class XmlInfoManageController {
 					  sObject.put("CENTER_STARTTIME", vo.getCenterStartTime());
 					  sObject.put("CENTER_ENDTIME", vo.getCenterEndTime());
 					  sObject.put("CENTER_ID", vo.getCenterId());
+					  sObject.put("FILE_STRE_COURS", vo.getFileStreCours());
+					  sObject.put("STRE_FILE_NM", vo.getStreFileNm());
 					  dataArray.add(sObject);
 					  obj.put("BRODINFO", dataArray);  					  
 				  }
@@ -787,6 +789,8 @@ public class XmlInfoManageController {
 					  sObject.put("CENTER_STARTTIME", vo.getCenterStartTime());
 					  sObject.put("CENTER_ENDTIME", vo.getCenterEndTime());			  
 					  sObject.put("CENTER_ID", vo.getCenterId());
+					  sObject.put("FILE_STRE_COURS", vo.getFileStreCours());
+					  sObject.put("STRE_FILE_NM", vo.getStreFileNm());
 					  dataArray.add(sObject);
 					  obj.put("BRODINFO", dataArray);  					  
 				  }
