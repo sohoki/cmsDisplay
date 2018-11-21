@@ -829,6 +829,10 @@ public class ContentMutiManageController {
 			String mid = vo_info.getConMid();
 			String conDc = vo_info.getConDc();
 			
+			if(conDc == null || conDc.equals("") || conDc.equals("0")){
+				conDc = "1";
+			}
+			
 			String top0 = "";
 			String top1 = "";
 			
@@ -840,7 +844,7 @@ public class ContentMutiManageController {
 			
 			String left0 = "";
 			String left1 = "";
-			
+			LOGGER.info("width : " + width + ", height : " + height + ", conDc : " + conDc);
 			//변수값 설정 			
 			if ( Integer.parseInt( width ) >  Integer.parseInt( height )  && Integer.parseInt( conDc ) > 1   ){
 				width0 = mid;

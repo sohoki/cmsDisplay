@@ -37,7 +37,17 @@ padding-left:4px;
   	<input type="hidden" name="fileHeight" id="fileHeight"  value="${regist.fileHeight }" />
   	<input type="hidden" name="playTime" id="playTime"  value="${regist.playTime }" />
   	<input type="hidden" name="streFileNm" id="streFileNm"  value="${regist.streFileNm }" />
-  	<input type="hidden" name="fileStreCours" id="fileStreCours"  value="${regist.fileStreCours }" />
+	<c:if test="${fn:startsWith(regist.fileStreCours , '//')}">
+	   <input type="hidden" name="fileStreCours" id="fileStreCours"  value='${fn:replace(regist.fileStreCours, "//", "/upload/")}' />
+	</c:if>
+	<c:if test="${!fn:startsWith(regist.fileStreCours , '//')}">
+	   <input type="hidden" name="fileStreCours" id="fileStreCours"  value="${regist.fileStreCours }" />
+	</c:if>
+	
+  	
+  	
+  	
+  	
   	
 	<div id="container" style="top:16px; width:100%;">
 		<!--내용시작-->		
@@ -52,13 +62,28 @@ padding-left:4px;
 		</c:if>
 		<br><br>
 		<c:choose>
-			<c:when test="${ empty regist.fileThumnail}">
+			<c:when test="${empty regist.fileThumnail}">
 				<img name="atchFileId" src="<c:url value='${regist.fileStreCours}${regist.streFileNm}'/>"  width="320px" id="contentImg"/>
 				<%-- <img name="atchFileId" src="<c:url value='${regist.fileStreCours}${regist.streFileNm}'/>"  width="320px" id="contentImg" onload="imgLoad(this);"/> --%>
 			</c:when>
 			<c:otherwise>
 				<video width="320px" autoplay loop id="viewVideo">
-					<source src="<c:url value='${regist.fileStreCours}${regist.streFileNm}'/>" type="video/${regist.fileExtsn}">
+					<c:if test="${fn:startsWith(regist.fileStreCours , '//')}">
+					1
+					   <source src="<c:url value='${fn:replace(regist.fileStreCours, "//", "/upload/")}${regist.streFileNm}'/>" id="${regist.streFileNm}" type="video/${regist.fileExtsn}">
+					</c:if>
+					<c:if test="${!fn:startsWith(regist.fileStreCours , '//')}">
+					2
+					   <source src="<c:url value='${regist.fileStreCours}${regist.streFileNm}'/>" id="${regist.streFileNm}" type="video/${regist.fileExtsn}" />
+					</c:if>
+			       <%-- <c:when test="${fn:contains(regist.fileStreCours , '//')}"> --%>
+			       		
+			       		<%-- <source src="<c:url value='${fn:replace(regist.fileStreCours, "//", "/upload/")}${regist.streFileNm}'/>" id="${regist.streFileNm}" type="video/${regist.fileExtsn}"> --%>
+			       <%-- </c:when>
+			       <c:otherwise> --%>
+			       	
+			       	<%-- <source src="<c:url value='${regist.fileStreCours}${regist.streFileNm}'/>" id="${regist.streFileNm}" type="video/${regist.fileExtsn}" /> --%>
+			       <%-- </c:otherwise>     --%>   	   
 				</video>	
 			</c:otherwise>					        							        
 		</c:choose>
