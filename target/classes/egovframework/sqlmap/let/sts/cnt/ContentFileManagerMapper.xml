@@ -47,7 +47,7 @@
 						and X.FILE_THUMNAIL = 'no_image.png'
 					</when>
 					<otherwise>
-						and X.FILE_THUMNAIL != 'no_image.png'
+						and (X.FILE_THUMNAIL != 'no_image.png' OR X.FILE_THUMNAIL IS null)
 					</otherwise>
 				</choose>
 	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}      	

@@ -156,8 +156,15 @@ public class ScheduleInfoManageController {
 			                                           				   , BindingResult bindingResult
 																	   , ModelMap model ) throws Exception{	
 		model.addAttribute("regist", vo);
+		String schSeq = request.getParameter("schSeq") == null ? "" : request.getParameter("schSeq");
 		if (!vo.getMode().equals("Ins")){
-	     	model.addAttribute("regist", scheduleInfoManageService.selectScheduleInfoManageDetailView(vo.getSchCode()));   		     
+			if(schSeq != null && !schSeq.equals("")){
+				vo.setSchCode(schSeq);
+				model.addAttribute("regist", scheduleInfoManageService.selectScheduleInfoManageDetailView(vo.getSchCode()));
+			} else {
+				model.addAttribute("regist", scheduleInfoManageService.selectScheduleInfoManageDetailView(vo.getSchCode()));
+			}   
+     			
 		}
 		
 		return "/backoffice/sub/equiManage/schView";

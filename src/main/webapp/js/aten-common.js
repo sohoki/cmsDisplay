@@ -99,7 +99,7 @@ function selectTime(element, defaultValue, defaultText, existValue){
     	switch(req){
     		case "d"  : reqLink = "/backoffice/sub/equiManage/didView.do?didId="+seq; 		   break;
     		case "c"  : reqLink = "/backoffice/sub/conManage/conMutiView_back.do?conSeq="+seq; break;
-    		case "s"  : reqLink = "/backoffice/sub/equiManage/schView.do?schSeq="+seq;		   break;
+    		case "s"  : reqLink = "/backoffice/sub/equiManage/schView.do?schSeq="+seq;		   break;    							   
     		case "mc" : reqLink = "/backoffice/sub/conManage/conMutiDetail.do?mode=Ins&conSeq="+0; 	   break;
     		case "ms" : reqLink = "/backoffice/sub/equiManage/schDetail.do?mode=Ins&schCode="+0;		   break;
     		case "g"  : reqLink = "/backoffice/sub/equiManage/did_groupList.do?searchCondition=GROUP_ID&searchKeyword="+seq; break;

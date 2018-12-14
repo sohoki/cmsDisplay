@@ -421,18 +421,24 @@ public class XmlInfoManageController {
 		JSONObject obj = new JSONObject();
 		obj.put("command_type", vo.getXmlProcessName());
 		
+		
+		
 		try {			
 			 JSONArray dataArray = new JSONArray();
 			 
-			 JSONObject sObject = new JSONObject();//배열 내에 들어갈 json			
-			for (int i = 0; i < inputParamArrays .length; i++){			
-				sObject.put(inputParamArrays[i].toString().trim(), inputParamSampleArrays[i].toString().trim());				
+			 JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
+			 
+			for (int i = 0; i < inputParamArrays.length; i++){			
+				sObject.put(inputParamArrays[i].toString().trim(), inputParamSampleArrays[i].toString().trim());
+				
 			}
+			
 			dataArray.add(sObject);
 			obj.put("command_data", dataArray);
+			
 		}catch (JSONException e) {
 			e.printStackTrace();
-			LOGGER.debug("jsonDoc:"+ e.toString());			
+			LOGGER.debug("jsonDoc:"+ e.toString());	
 		}		
 	   return obj.toJSONString(); 	
 	}
@@ -508,8 +514,17 @@ public class XmlInfoManageController {
 	@RequestMapping("/backoffice/sub/operManage/jsonAuthReq.do")
 	public String selectJsonSendPage(HttpServletRequest request, ModelMap model ) throws Exception{
 		
+		
+		
+		
 		String xmlSeq =   request.getParameter("xmlSeq") != null ? request.getParameter("xmlSeq") : "";
+		
+		
+		
 		String json =  jsonDoc(xmlInfoManageService.selectXmlrInfoManageDetail(xmlSeq));
+	
+		
+		
 		
 		XmlInfo vo = new XmlInfo();		
 		vo.setXmlSeq(xmlSeq);
@@ -531,7 +546,7 @@ public class XmlInfoManageController {
 	    JSONObject jsonObject = (JSONObject) jsonparse.parse(json);						 
 		String commandType = jsonObject.get("command_type").toString();
 		
-		System.out.println("commandType:" + commandType);	
+			
 		
 		int ProcessCk = xmlInfoManageService.selectXmlProcessCount(commandType);
 		if (ProcessCk > 0){			
@@ -1035,16 +1050,20 @@ public class XmlInfoManageController {
 					}				  
 			  }else if (commandType.equals("SP_DIDCONTENTFILELST")){
 				  
+				  
+				  
+				    
 				    ContentFileInfoVO fileSearch = new ContentFileInfoVO();
 					fileSearch.setDidId(dataObject.get("DID_ID").toString());					
 					fileSearch.setSchCode(dataObject.get("SCH_CODE").toString());					
+					
 					
 					List<ContentFileInfoVO> resultFileLst = fileService.selectFileContentLstDid(fileSearch);
 					
 					JSONObject obj = new JSONObject();
 				    obj.put("command_type", commandType);
 				    JSONArray dataArray = new JSONArray();
-				  			
+				    
 				   for (int i = 0; i < resultFileLst.size(); i++){
 					    JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
 						sObject.put(  "HIS_SEQ", resultFileLst.get(i).getHisSeq());
@@ -1055,7 +1074,9 @@ public class XmlInfoManageController {
 						sObject.put(  "ATCH_FILE_ID", resultFileLst.get(i).getAtchFileId());
 						sObject.put(  "STRE_FILE_NM", URLDecoder.decode(  resultFileLst.get(i).getStreFileNm() , "UTF-8"));						
 						sObject.put(  "FILE_EXTSN", resultFileLst.get(i).getFileExtsn());
-						sObject.put(  "FILE_SIZE", resultFileLst.get(i).getFileSize());						
+						sObject.put(  "FILE_SIZE", resultFileLst.get(i).getFileSize());
+						sObject.put(  "FILE_ORDER", resultFileLst.get(i).getFileOrder());
+						sObject.put(  "TIME_INTERVAL", resultFileLst.get(i).getTimeInterval());	
 						dataArray.add(sObject);
 				   }			 	  
 				   obj.put("CONINFO", dataArray);				 
