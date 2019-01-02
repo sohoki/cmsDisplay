@@ -770,7 +770,7 @@ public class DidInfoManageController {
 			 // System.out.println("로그인 계정 ROLE CODE ? " + user.getGroupId());
 			 
 			
-		
+		/*
 		   if(  searchVO.getPageUnit() > 0  ){    	   
 				    	   searchVO.setPageUnit(searchVO.getPageUnit());
 			}else {
@@ -778,7 +778,7 @@ public class DidInfoManageController {
 			}
 			searchVO.setPageSize(propertiesService.getInt("pageSize"));
 	       
-	      /** pageing */       
+	      // pageing       
 		  if (searchVO.getCenterId() ==  null) { searchVO.setCenterId("");}
 		  if (searchVO.getDidModelType() ==  null) { searchVO.setDidModelType("");}
 	   	  PaginationInfo paginationInfo = new PaginationInfo();
@@ -788,9 +788,9 @@ public class DidInfoManageController {
 
 		  searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		  searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
-		  searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+		  searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());*/
 		  
-		  try{
+		  /*try{
 			  
 			  String requestSystemType = request.getParameter("systemType") == null ? request.getParameter("systemType") : "SIGNAGE";
 			  searchVO.setRequestSystemType(requestSystemType);
@@ -808,14 +808,14 @@ public class DidInfoManageController {
 			  searchVO.setRequestSystemType(requestSystemType);
 			  
 			  model.addAttribute("roleList",   didInfoManageService.selectIntegrateRoleList(searchVO) ); // selectIntegrateRoleList
-			  model.addAttribute("centerList",   didInfoManageService.selectIntegrateCenterList(searchVO) ); // selectIntegrateCenterList
+			  model.addAttribute("centerList",   didInfoManageService.selectIntegrateCenterList(searchVO) ); // selectIntegrateCenterList 
 			  // model.addAttribute("deviceList",   didInfoManageService.selectIntegrateDeviceList(searchVO) );  // selectIntegrateDeviceList
 			  
 		  }catch(Exception e){
 				LOGGER.debug("error:" + e.toString());
-		  }
+		  }*/
 		   
-		   
+		   /*
 	       
 	       int totCnt = didInfoManageService.selectDidInfoManageListTotCnt_S(searchVO) ;       
 		   paginationInfo.setTotalRecordCount(totCnt);
@@ -823,13 +823,39 @@ public class DidInfoManageController {
 	       model.addAttribute("totalCnt", totCnt);
 	       model.addAttribute("selectCenter", centerInfoManageService.selectCenterInfoManageCombo(centerInfoVO));
 		   model.addAttribute("selectGroup", groupDidInfoManageService.selectComboLst());
-		   model.addAttribute("regist", searchVO);
+		   model.addAttribute("regist", searchVO);*/
 		   
 	      return "/backoffice/sub/equiManage/integrate";
 	}
 	
 	
-	@RequestMapping(value="/backoffice/sub/conManage/selectIntegrateCetnerList.do")
+	@RequestMapping(value="/backoffice/sub/equiManage/selectRoleCenterInfo.do")
+	@ResponseBody
+	public ModelAndView selectRoleCenterInfo(HttpServletRequest request) throws Exception{
+		
+		DidInfoVO didInfoVO = new DidInfoVO();
+		ModelAndView model = new ModelAndView("jsonView");
+
+		String groupId				= request.getParameter("groupId") != null ? request.getParameter("groupId") : "";
+		String firstIndex 			= request.getParameter("firstIdx") != null ? request.getParameter("firstIdx") : "0";
+		String lastIndex 			= request.getParameter("lastIdx") != null ? request.getParameter("lastIdx") : "0"; 
+		String recordCountPerPage	= request.getParameter("recordCnt") != null ? request.getParameter("recordCnt") : "10"; 
+		
+		String requestSystemType = request.getParameter("systemType") != null ? request.getParameter("systemType") : "SIGNAGE";
+		didInfoVO.setRequestSystemType(requestSystemType);
+		System.out.println(didInfoVO.getRequestSystemType());
+		didInfoVO.setFirstIndex(Integer.parseInt(firstIndex));
+		didInfoVO.setLastIndex(Integer.parseInt(lastIndex));
+		didInfoVO.setRecordCountPerPage(Integer.parseInt(recordCountPerPage));
+		didInfoVO.setGroupId(groupId);
+		
+		model.addObject("roleList",   didInfoManageService.selectIntegrateRoleList(didInfoVO) ); // selectIntegrateRoleList
+
+		return model;
+	}
+	
+	
+	@RequestMapping(value="/backoffice/sub/equiManage/selectIntegrateCetnerList.do")
 	@ResponseBody
 	public ModelAndView selectIntegrateCetnerList(HttpServletRequest request) throws Exception{
 		
@@ -883,7 +909,6 @@ public class DidInfoManageController {
 		return model;
 	}
 	
-	
 	@RequestMapping(value="/backoffice/sub/conManage/selectIntegrateEquipInfo.do")
 	@ResponseBody
 	public ModelAndView selectIntegrateEquipInfo(HttpServletRequest request) throws Exception{
@@ -903,7 +928,6 @@ public class DidInfoManageController {
 			// 데이터를 점검 해달라는 내용을 삽입해야함
 			
 		}
-		
 
 		return model;
 	}

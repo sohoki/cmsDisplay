@@ -350,14 +350,14 @@
 		FROM LETTNAUTHORGROUPINFO
 		WHERE
  			<!-- 사이니지 인지 음원방송인지 확인하는 조건문 추가 --> 
-<!--			<choose>
+			<choose>
 				<when test="requestSystemType == 'SIGNAGE'">
-					group_id != 'EMART_00000000000004' AND parent_group_id != 'EMART_00000000000004' 
+					group_id != 'EMART_00000000000005' AND parent_group_id != 'EMART_00000000000005' 
 				</when>
 				<otherwise>
 					group_id != 'EMART_00000000000003' AND parent_group_id != 'EMART_00000000000003' 
 				</otherwise>
-			</choose> -->
+			</choose>
 		START WITH parent_group_id = 'EMART_00000000000001'
 		CONNECT BY PRIOR GROUP_ID = parent_group_id
      </select>

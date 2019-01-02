@@ -39,7 +39,11 @@
 	border-bottom: 1px solid #e7e9ed;
 	padding: 10px;
 }
-.total_left .total_list li.select, .total_num ul li.select{ color: #dc2c33 }
+.leftRoleList{
+	padding : 6px;
+	box-sizing: border-box;
+}
+.total_left .total_list li.select, .total_num ul li.select, .treeview a.select{ color: #dc2c33 }
 .total_leftB {background: #30373a; color:#fff; padding: 15px 25px;font-size: 16px;}
 .total_num { position: absolute; width: 100%;text-align: center; bottom:10px;}
 .page_icon01 { width: 13px; display: inline-block;height: 11px; background: url("../img/pageNum01.png")no-repeat;cursor: pointer }

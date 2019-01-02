@@ -15,8 +15,10 @@
     <title>이마트CMS</title>
     <link rel="stylesheet" href="/new/css/reset.css">
     <link rel="stylesheet" href="/new/css/layout.css">    
-    <link rel="stylesheet" href="/new/css/paragraph.css"> 
+    <link rel="stylesheet" href="/new/css/paragraph.css">
+    <link rel="stylesheet" href="/new/css/jquery.treeview.css">  
     <script src="/new/js/jquery.min.js"></script>
+    <script src="/new/js/jquery.treeview.js"></script>
     <!--[if lte IE 8]>
     <script src="js/poly-checked.min.js"></script> 
     <![endif]-->
@@ -24,8 +26,6 @@
     <link rel="stylesheet" href="/new/css/needpopup.css">
     <!--datepicker-->
     <link rel="stylesheet" href="/new/css/calendar.css">
-	
-
 	<script>
 	var groupLstFirstIdx	= "0";
 	var groupLstLastIdx 	= "0";
@@ -48,9 +48,6 @@
 	$(document).ready(function(){
 		/* 페이지 최초 호출 간 작업 사항 순서 절대 수정금지 */
 		
-		
-		
-		
 		selectGroupId	= "${groupId}";
 		selectCenterId	= "${centerId}";
 		loginAuthorCode	= "${authorCode}";
@@ -71,7 +68,7 @@
 
 		
 		// 부서 내 점포 리스트 호출
-		
+		roleInfoListCall(selectGroupId);
 		roleInCenterListCall(selectGroupId);
 		callEquipList(selectGroupId, selectCenterId); // 단말 리스트 호출
 		
@@ -106,11 +103,82 @@
 		
 		if(type == "SIGNAGE"){
 			if(loginAuthorType == "MUSIC"){alert("열람권한이 없습니다.");return false;}
-			
+			nowViewSystemType = "SIGNAGE";	
+			$(".signageTab").addClass("select");
+			$(".musicTab").removeClass("select");
 		} else if(type == "MUSIC"){
 			if(loginAuthorType == "SIGNAGE"){alert("열람권한이 없습니다.");return false;}
-
+			nowViewSystemType = "MUSIC";
+			$(".musicTab").addClass("select");
+			$(".signageTab").removeClass("select");
 		}
+		roleInfoListCall(selectGroupId);
+	}
+	
+	
+	function roleInfoListCall(groupId){
+		if(nowViewSystemType == ""){
+			nowViewSystemType = "SIGNAGE";
+		}
+		$.ajax({
+			url : '/backoffice/sub/equiManage/selectRoleCenterInfo.do',
+			type : 'POST',
+			data : {
+				'groupId'	: groupId, 
+				'firstIdx'	: centerLstFirstIdx,
+				'lastIdx'	: centerLstLastIdx,
+				'recordCnt'	: centerLstRecordCnt,
+				'systemType': nowViewSystemType
+			},
+			dataType : 'json',
+			success : function(result) {
+				if (result) {
+					
+					/* console.log(result.roleList); */
+					var roleListAppend = "";
+					if(result.roleList.length != 0){
+						var roleListTag = $("#roleTree");
+						roleListTag.html("");
+						
+						var roleData = result.roleList;
+						var nowRoleLevel = "";
+						var nowRoleDataId = "";
+						var nowRoleDataNm = "";
+						var nowRoleParentDataId = "";
+						var appendLi = "";
+						
+						for(var i = 0; i < roleData.length ; i++){
+							nowRoleLevel = roleData[i].groupLevel;
+							nowRoleDataId = roleData[i].groupId;
+							nowRoleDataNm = roleData[i].roleNm;
+							nowRoleParentDataId = roleData[i].parentGroupId;
+							// <li class="roleGroupList  id="roleGroupInfo_부서ID"onclick="javascript:roleInCenterListCall('부서ID')">부서명</li>
+							appendLi = '<li id="roleGroupInfo_'+ nowRoleDataId +'" lvl="' + nowRoleLevel + '"><a class="file code allRoleList role_'+nowRoleDataId+'" onclick="javascript:roleInCenterListCall(\''+nowRoleDataId+'\')">'+ nowRoleDataNm +'</a></li>';
+							// leftRoleList total_list
+							if( nowRoleLevel == 1 ){
+								roleListTag.append(appendLi);
+							} else {
+								var parentLi = $("li[id='roleGroupInfo_"+ nowRoleParentDataId+"']");
+								parentLi.find("a").removeClass("file");
+								parentLi.find("a").addClass("folder");
+								var bUl = $("ul[id='parentId_"+nowRoleParentDataId+"']");
+								if(bUl.length == 0) {
+									appendLi = "<ul id='parentId_"+nowRoleParentDataId+"'>" + appendLi + "</ul>";
+									parentLi.append(appendLi);
+								} else {
+									bUl.append(appendLi);
+								}
+							}
+						}
+						roleListTag.treeview({collapsed: true});
+					}
+				}
+			},
+			error : function(e) {
+				console.log("fail");
+				console.log(e);
+			}
+		});
 	}
 	
 	function roleInCenterListCall(groupId){
@@ -119,31 +187,35 @@
 		centerListSetting("1");
 		
 		$(".equipListBody").html("");
-		$(".roleGroupList.select").removeClass("select");
-		$("#roleGroupInfo_"+groupId).addClass("select");
+		$(".allRoleList.select").removeClass("select");
+		$(".role_"+groupId).addClass("select");
+		
+		if(nowViewSystemType == ""){
+			nowViewSystemType = "SIGNAGE";
+		}
 		
 		$.ajax({
-			url : '/backoffice/sub/conManage/selectIntegrateCetnerList.do',
+			url : '/backoffice/sub/equiManage/selectIntegrateCetnerList.do',
 			type : 'POST',
 			data : {
 				'groupId'	: groupId, 
 				'firstIdx'	: centerLstFirstIdx,
 				'lastIdx'	: centerLstLastIdx,
-				'recordCnt'	: centerLstRecordCnt
-				// 'systemType'	: nowViewSystemType
+				'recordCnt'	: centerLstRecordCnt,
+				'systemType': nowViewSystemType
 			},
 			dataType : 'json',
 			success : function(result) {
 				if (result) {
 					console.log(result.centerList);
+					console.log(result.centerList.length);
 					var centerListAppend = "";
-					
 					if(result.centerList.length != 0){
 						
 						var data = result.centerList;
-						
-						for(var i = 0; i < result.centerList.length; i++){
-							centerListAppend = "<li id='centerInfo_"+data[i].centerId+"' class='centerList' onclick='javascript:callEquipList(&#39;"+groupId+"&#39;, &#39;"+data[i].centerId+"&#39;)'>"+data[i].centerNm+"</li>";
+						console.log(data.length);
+						for(var i = 0; i < data.length; i++){
+							centerListAppend += "<li id='centerInfo_"+data[i].centerId+"' class='centerList' onclick='javascript:callEquipList(&#39;"+groupId+"&#39;, &#39;"+data[i].centerId+"&#39;)'>"+data[i].centerNm+"</li>";
 						}
 					} else {
 						centerListAppend = "<div style='text-align:center;'>등록 된 점포가 없습니다.</div>";
@@ -277,20 +349,14 @@
 					}
 					
 					$("#selectEquipMsg").html("<span onclick='euqipRemarkWrite(&#39;"+result.equipInfo.didId+"&#39;);'>"+remarkTxt+"</span>");	
-					
-					
 				}
 				
 				if(result.equipSchList.length > 0){
-					
 					//$("#selectEquipSchInfo") // 날짜삽입
 					/* $("#selectSchName").text();
 					$("#selectConName").text();
 					$("#selectSch").text(); */
-					
 				}
-				
-				
 			},
 			error : function(e) {
 				console.log("fail");
@@ -298,16 +364,11 @@
 				$(".equipListBody").html("<tr><td colspan='8'><div style='text-align:center;'>데이터 호출간 장애가 발생하였습니다.<br>재시도 부탁드립니다.</div></td></tr>");
 			}
 		});
-		
 	}
-	
 	function euqipRemarkWrite(id){
 		// 단말 내 비고 작성
 		
-		
-		
 	}
-	
 	function remarkBtnAction(el){
 		var val = $(el).attr("value");
 		switch(val){
@@ -319,8 +380,6 @@
 		$(el).attr("value", "1");
 	}
 	function remarkSubmitMode(el){
-		
-		
 		$(el).attr("value", "0");
 		/* $.ajax({
 			url : '/backoffice/sub/conManage/selectIntegrateEquipInfo.do',
@@ -331,7 +390,6 @@
 			dataType : 'json',
 			success : function(result) {				
 				console.log(result);
-				
 			},
 			error : function(e) {
 				console.log("fail");
@@ -339,7 +397,6 @@
 			}
 		}); */
 	}
-	
 	</script>
 	<style>
 	 	.equipList:hover{
@@ -361,6 +418,12 @@
 		#selectEquipMsg{
 			cursor: pointer;
 		}
+		.equipDetailConnContent{
+			text-align: center;
+		    color: #fff;
+		    background: #dc2c33;
+		    border-bottom: none !important;
+		}
 	</style>
 </head>
 <body>
@@ -373,21 +436,23 @@
         <!--HEADER//-->
         <div class="container">
             <div class="content">
-
                 <!--//통합관리좌측메뉴끝-->
                 <div class="box03-1">
                     <!--분야분류-->
                     <ul class="total_tab">
-                        <li><a href="javascript:systemType('SIGNAGE');" class="select">사이니지</a></li>
-                        <li><a href="javascript:systemType('MUSIC');">음원방송</a></li>
+                        <li><a href="javascript:systemType('SIGNAGE');" class="signageTab select">사이니지</a></li>
+                        <li><a href="javascript:systemType('MUSIC');" class="musicTab">음원방송</a></li>
                         <div class="clearfix"></div>
                     </ul>   
                     <div class="total_left leftRoleList">
-                        <ul class="total_list">
+                        <ul id="roleTree">
+                        <!-- <ul class="total_list"> -->
                         <!-- <li class="select">스타필드</li> 선택시 addClass select -->
-                        <c:forEach items="${roleList }" var="roleinfo" varStatus="status">
-							<li class="roleGroupList <c:if test="${status.first}">select</c:if>" id="roleGroupInfo_${roleinfo.groupId}"onclick="javascript:roleInCenterListCall('${roleinfo.groupId}')">${roleinfo.roleNm}</li>
-						</c:forEach>
+<%--                         <c:forEach items="${roleList }" var="roleinfo" varStatus="status">
+							<li class="roleGroupList <c:if test="${status.first}">select</c:if>" id="roleGroupInfo_${roleinfo.groupId}"onclick="javascript:roleInCenterListCall('${roleinfo.groupId}')">
+								${roleinfo.roleNm}
+							</li>
+						</c:forEach> --%>
                         </ul>
                         <!-- <div class="total_num">
                             <span class="page_icon01"></span>
@@ -432,7 +497,6 @@
                     </div> 
                 </div>
                 <!--통합관리좌측메뉴//-->
-                
                 <!--//통합관리 list-->
                 <div class="box03-2">
                     <div class="padding30">
@@ -489,7 +553,6 @@
                         <a data-needpopup-show="#did_pop01" class="top_btn">장비통신 이력</a>
                         <a href="" class="top_btn">재부팅</a>
                         <!-- <a href="" class="top_btn">원격지원</a> -->
-
                         <!-- <a href="" class="top_btn">메세지 전송</a> -->
                     </div>
                     <!--// 해당 단말기 정보-->
@@ -547,7 +610,7 @@
                                 <td data-needpopup-show="#equip_remark_modify" id="selectEquipMsg"></td>
                             </tr>
                             <tr>
-                            	<td colspan="2" style="text-align: center;">연동 콘텐츠</td>
+                            	<td colspan="2" class="equipDetailConnContent">연동 콘텐츠</td>
                             </tr>
                             <tr>
                             	<th>스케줄명<br>(콘텐츠명)</th>
