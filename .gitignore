@@ -1,2 +1,10 @@
-
 emart_cms.war
+
+#content file#
+
+*.mp3
+*.wav
+*.mp4
+*.avi
+*.mov
+*.webm
