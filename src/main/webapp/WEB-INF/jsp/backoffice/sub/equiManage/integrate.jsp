@@ -750,9 +750,14 @@
             </div>
             <div class="pop_box50">
                 <div class="padding15">
-                    <p class="pop_tit">사이즈</p>
-                    <input type="text" class="input_noti input_noti2" placeholder="가로 사이즈 입력">        
-                    <input type="text" class="input_noti input_noti2" placeholder="세로 사이즈 입력">             
+                	<div style="display: flow-root; margin-right: 4px;">
+	                    <p class="pop_tit" style="float:left;">사이즈</p>
+	                    <p class="pop_tit" style="float:right;">직접입력</p>
+                    </div>
+                    <div>
+	                    <input type="text" class="input_noti input_noti2" placeholder="가로 사이즈 입력">        
+	                    <input type="text" class="input_noti input_noti2" placeholder="세로 사이즈 입력">
+                    </div>             
                 </div>                
             </div>
             <div class="pop_box50">
