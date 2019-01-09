@@ -921,13 +921,12 @@ public class ContentMutiManageController {
 				}
 				
 				
-				htmlPage.append("   var albumLst"+i+"= '"+ jsonA  +"';\r\n");				
-				htmlPage.append("   var timeId"+i+"= '';\r\n");
-				htmlPage.append("   var data"+i+"= '';\r\n");
+				htmlPage.append("var albumLst"+i+"= '"+ jsonA  +"';\r\n");				
+				htmlPage.append("var timeId"+i+"= '';\r\n");
 			}
 			// onRead 
-			htmlPage.append("   $(document).ready(function(){    \r\n");
-			htmlPage.append("      console.log('contents play start');    \r\n"); // 신규 추가 2017.11.30 // 박성민, 안드로이드 확인 필요사항
+			htmlPage.append(" $(document).ready(function(){    \r\n");
+			htmlPage.append("   console.log('contents play start');    \r\n"); // 신규 추가 2017.11.30 // 박성민, 안드로이드 확인 필요사항
 			
 			/*if(musicPOPChk){
 				// setAudio
@@ -941,102 +940,18 @@ public class ContentMutiManageController {
 				htmlPage.append("       }); \r\n");		
 			}*/
 			
-			htmlPage.append("      function startContentSch(){    \r\n"); // 신규 추가 2018.10.25, autoplay set
+			htmlPage.append("   function startContentSch(){    \r\n"); // 신규 추가 2018.10.25, autoplay set
 			for (int i = 0 ; i < detailInfo.size() ; i++ ){
-				htmlPage.append("         data"+i+" = JSON.parse(albumLst"+i+");             \r\n");
+				htmlPage.append("  var jsonData"+i+" = JSON.parse(albumLst"+i+");             \r\n");
+				htmlPage.append("  if (jsonData"+i+".length > 0){    \r\n ");
+				htmlPage.append("     $('#nowFileCnt"+i+"').val('0');  \r\n ");
+				htmlPage.append("       myHandler"+i+"(jsonData"+i+"[0].streFileNm, jsonData"+i+"[0].mediaType, jsonData"+i+"[0].timeInterval, jsonData"+i+"[0].fileStreCours);    \r\n ");
+				htmlPage.append("  }  \r\n ");
 			}
-			htmlPage.append("         mediaSetting();             \r\n");
-			htmlPage.append("      }    \r\n"); // 신규 추가 2018.10.25, autoplay set
-			htmlPage.append("      startContentSch();    \r\n"); // 신규 추가 2018.10.25, autoplay set
-			htmlPage.append("   });   \r\n ");
-			htmlPage.append("   function mediaSetting(){   \r\n ");
-			htmlPage.append("      var createCon = '';   \r\n ");
+			htmlPage.append("   }    \r\n"); // 신규 추가 2018.10.25, autoplay set
+			htmlPage.append("   startContentSch();    \r\n"); // 신규 추가 2018.10.25, autoplay set
+			htmlPage.append(" });   \r\n ");
 			
-			
-			
-			for (int i = 0 ; i < detailInfo.size() ; i++ ){
-				htmlPage.append("      for(var i = 0; i < data"+i+".length; i++){   \r\n ");
-				htmlPage.append("         switch(data"+i+"[i].mediaType){   \r\n ");
-				if (playGubun.equals("L")){
-					htmlPage.append("            case 'IMAGE' : createCon = '<img id=\"showCon"+i+"_'+i+'\" class=\"image"+i+" allContent\" src=\"./'+data"+i+"[i].streFileNm+'\" />';  break;   \r\n ");
-				} else {
-					htmlPage.append("            case 'IMAGE' : createCon = '<img id=\"showCon"+i+"_'+i+'\" class=\"image"+i+" allContent\" src=\"'+data"+i+"[i].fileStreCours + data"+i+"[i].streFileNm+'\" />';  break;   \r\n ");
-				}
-				htmlPage.append("            case 'MEDIA' : createCon = '<video id=\"showCon"+i+"_'+i+'\" class=\"media"+i+" allContent\" ><source src=\"\" type=\"video/mp4\" /></video>'; break;   \r\n ");
-				htmlPage.append("            default : createCon = '<audio id=\"showCon"+i+"_'+i+'\" class=\"audio"+i+" allContent\" controls><source src=\"\" type=\"audio/mpeg\" /></audio>'; break;   \r\n ");
-				htmlPage.append("         }   \r\n ");
-				htmlPage.append("         $(\"#content_show"+i+"\").append(createCon);   \r\n ");
-				htmlPage.append("         $(\"#showCon"+i+"_\"+i).hide();   \r\n ");
-				htmlPage.append("         if(data"+i+"[i].mediaType != 'IMAGE'){   \r\n ");
-				if (playGubun.equals("L")){
-					// LOCAL FILE 생성 부분
-					htmlPage.append("            $(\"#showCon"+i+"_\"+i).attr('src', './'+data"+i+"[i].streFileNm);   \r\n ");
-				} else {
-					// CMS 화면생성 부분					
-					htmlPage.append("            $(\"#showCon"+i+"_\"+i).attr('src', data"+i+"[i].fileStreCours + data"+i+"[i].streFileNm);   \r\n ");
-				}
-				htmlPage.append("         }   \r\n ");
-				htmlPage.append("      }   \r\n ");
-				htmlPage.append("      contentPlay"+i+"();   \r\n ");
-			}
-			htmlPage.append("   }   \r\n ");
-			
-			for (int i = 0 ; i < detailInfo.size() ; i++ ){
-				htmlPage.append("   var nowPlayNum"+i+" = 0;   \r\n ");
-				htmlPage.append("   var nonConProcess"+i+" = '';   \r\n ");
-			
-				htmlPage.append("   function contentPlay"+i+"(){   \r\n ");
-				htmlPage.append("      console.log(nowPlayNum"+i+" + '번 콘텐츠 송출');   \r\n ");
-				htmlPage.append("      $(\"#showCon"+i+"_\"+nowPlayNum"+i+").show();   \r\n ");
-				htmlPage.append("      $(\"#showCon"+i+"_\"+(nowPlayNum"+i+"-1)).hide();   \r\n ");
-				
-				htmlPage.append("      if(nowPlayNum"+i+" == data"+i+".length){   \r\n ");
-				htmlPage.append("         var link = document.location.href;   \r\n ");
-				htmlPage.append("         location.href=link;   \r\n ");
-				htmlPage.append("      } else {   \r\n ");
-				htmlPage.append("         if(data"+i+"[nowPlayNum"+i+"].mediaType == 'IMAGE'){   \r\n ");
-				htmlPage.append("            setTimeout(function(){contentFinish"+i+"();}, parseInt(parseInt(data"+i+"[nowPlayNum"+i+"].timeInterval)*1000));   \r\n ");
-				htmlPage.append("            setTimeout(function(){nextContentsLoad"+i+"();}, parseInt((parseInt(data"+i+"[nowPlayNum"+i+"].timeInterval)*1000)-3000));   \r\n ");
-				htmlPage.append("         } else {  \r\n ");
-				htmlPage.append("            $(\"#showCon"+i+"_\"+nowPlayNum"+i+")[0].autoplay = true;   \r\n ");
-				if (playGubun.equals("L")){
-					// LOCAL FILE 생성 부분
-					htmlPage.append("            $(\"#showCon"+i+"_\"+nowPlayNum"+i+")[0].src = './' + data"+i+"[nowPlayNum"+i+"].streFileNm + '?autoplay=1';   \r\n ");
-				} else {
-					// CMS 화면생성 부분
-					htmlPage.append("            $(\"#showCon"+i+"_\"+nowPlayNum"+i+")[0].src = data"+i+"[nowPlayNum"+i+"].fileStreCours + data"+i+"[nowPlayNum"+i+"].streFileNm + '?autoplay=1';   \r\n ");
-				}
-				htmlPage.append("            console.log(parseInt((parseInt(data"+i+"[nowPlayNum"+i+"].timeInterval)*1000)+3000));    \r\n ");
-				htmlPage.append("            nonConProcess"+i+" = setTimeout(function(){console.log('compulsion !'); contentFinish"+i+"();}, parseInt((parseInt(data"+i+"[nowPlayNum"+i+"].timeInterval)*1000)+3000));    \r\n ");
-				htmlPage.append("            console.log(parseInt((parseInt(data"+i+"[nowPlayNum"+i+"].timeInterval)*1000)-3000));   \r\n ");
-				htmlPage.append("            setTimeout(function(){nextContentsLoad"+i+"();}, parseInt((parseInt(data"+i+"[nowPlayNum"+i+"].timeInterval)*1000)-3000));   \r\n ");
-				htmlPage.append("            $(\"#showCon"+i+"_\"+nowPlayNum"+i+").on('ended', function(){   \r\n ");
-				htmlPage.append("               contentFinish"+i+"();   \r\n ");
-				htmlPage.append("            });   \r\n ");
-				htmlPage.append("            $(\"#showCon"+i+"_\"+nowPlayNum"+i+").on('error', function(){   \r\n ");
-				htmlPage.append("               console.log('error !!');   \r\n ");
-				htmlPage.append("               contentFinish"+i+"();   \r\n ");
-				htmlPage.append("            });   \r\n ");
-				htmlPage.append("         }   \r\n ");
-				htmlPage.append("      }   \r\n ");
-				htmlPage.append("   }   \r\n ");
-				
-				htmlPage.append("   function nextContentsLoad"+i+"(){   \r\n ");
-				htmlPage.append("      console.log((nowPlayNum"+i+"+1) + '번 콘텐츠 로딩');   \r\n ");
-				htmlPage.append("      $(\"#showCon"+i+"_\"+(nowPlayNum"+i+"+1)).load();   \r\n ");
-				htmlPage.append("   }   \r\n ");
-				htmlPage.append("   function contentFinish"+i+"(){   \r\n ");
-				htmlPage.append("      if(data"+i+"[nowPlayNum"+i+"].mediaType != 'IMAGE'){   \r\n ");
-				htmlPage.append("         $(\"#showCon"+i+"_\"+nowPlayNum"+i+")[0].pause();   \r\n ");
-				htmlPage.append("      }   \r\n ");
-				htmlPage.append("      clearTimeout(nonConProcess"+i+");   \r\n ");
-				htmlPage.append("      nowPlayNum"+i+"++;   \r\n ");
-				htmlPage.append("      contentPlay"+i+"();   \r\n ");
-				htmlPage.append("   }   \r\n ");
-				
-			}
-			htmlPage.append("</script>	\r\n");
-/*			
 			for (int i = 0 ; i < detailInfo.size() ; i++ ){
 				htmlPage.append("  function myHandler"+i+"(fileNm, fileType, file_Interval, fileStreCours) {              \r\n");
 				// 여기 부분 수정
@@ -1051,10 +966,8 @@ public class ContentMutiManageController {
 					}	
 					htmlPage.append("       $(\"#content_show"+i+"\").html(img"+i+");     \r\n");
 					htmlPage.append("       $(\"#Image"+i+"\").on(\"load\", function(){    \r\n");
-					htmlPage.append("  	          clearTimeout(contentLoad"+i+");   \r\n");
-					htmlPage.append("	          $(\"#content_show"+i+"\").animate({opacity:1}, 500, function(){  \r\n"); 
+					htmlPage.append("  	          clearTimeout(contentLoad"+i+");   \r\n"); 
 					htmlPage.append("		      setTimeout(videoPlay"+i+", file_Interval*1000);   \r\n");
-					htmlPage.append("	         });  \r\n");
 					htmlPage.append("        }); \r\n");
 					htmlPage.append("       $(\"#Image"+i+"\").on(\"error\", function(err){  \r\n"); 
 					htmlPage.append("            videoPlay"+i+"(); 			\r\n");
@@ -1064,12 +977,10 @@ public class ContentMutiManageController {
 				    htmlPage.append("        $(\"#content_show"+i+"\").html(vod"+i+");   \r\n");
 				    htmlPage.append("        $(\"#Video"+i+"\").attr('src','./'+fileNm);   \r\n");
 				    htmlPage.append("             clearTimeout(contentLoad"+i+");     \r\n");
-				    htmlPage.append("        $(\"#Video"+i+"\").on('loadstart', function(){   \r\n"); 
-				    htmlPage.append("           $(\"#content_show"+i+"\").animate({opacity:1}, 500, function(){  \r\n"); 
+				    htmlPage.append("        $(\"#Video"+i+"\").on('loadstart', function(){   \r\n");  
 				    htmlPage.append("		       $(\"#Video"+i+"\").on('ended', function(){ \r\n"); // Video0+i 로 된 부분 Video+i 로 변경, 수정 완료
 				    htmlPage.append("                 videoPlay"+i+"();   \r\n");
 				    htmlPage.append("               });   \r\n");
-				    htmlPage.append("           });    \r\n");
 				    htmlPage.append("        });    \r\n");
 				    htmlPage.append("        $(\"#Video"+i+"\").on(\"error\", function(err){   \r\n"); 
 				    htmlPage.append("           videoPlay"+i+"(); 		  \r\n");
@@ -1080,11 +991,9 @@ public class ContentMutiManageController {
 				    htmlPage.append("        $(\"#audio"+i+"\").attr('src','./'+fileNm);   \r\n");
 				    htmlPage.append("             clearTimeout(contentLoad"+i+");     \r\n");
 				    htmlPage.append("        $(\"#audio"+i+"\").on('loadstart', function(){   \r\n"); 
-				    htmlPage.append("           $(\"#content_show"+i+"\").animate({opacity:1}, 500, function(){  \r\n"); 
 				    htmlPage.append("		       $(\"#audio"+i+"\").on('ended', function(){ \r\n"); // Video0+i 로 된 부분 Video+i 로 변경, 수정 완료
 				    htmlPage.append("                 videoPlay"+i+"();   \r\n");
-				    htmlPage.append("               });   \r\n");
-				    htmlPage.append("           });    \r\n");
+				    htmlPage.append("              });   \r\n");
 				    htmlPage.append("        });    \r\n");
 				    htmlPage.append("        $(\"#Video"+i+"\").on(\"error\", function(err){   \r\n"); 
 				    htmlPage.append("           videoPlay"+i+"(); 		  \r\n");
@@ -1100,23 +1009,21 @@ public class ContentMutiManageController {
 						htmlPage.append("       var img"+i+" = '<img id=\"Image1\" src=\"'+fileStreCours + fileNm+'\" width=\"" +width1+"\" height=\"" +height1+ "\" />';    \r\n");	
 					}			
 					
-//					htmlPage.append("       $(\"#image_show"+i+"\").html(img"+i+");     \r\n");
-//				    htmlPage.append("       $(\"#Video"+i+"\").attr(\"poster\", '').attr(\"src\",'');     \r\n");
-//				    htmlPage.append("       timeid"+i+" = setTimeout(videoPlay"+i+", file_Interval*1000); \r\n");
-//				    htmlPage.append("      } else { \r\n");
-//				    htmlPage.append("         $(\"#image_show"+i+"\").html('');     \r\n");
-//				    htmlPage.append(" 	     $(\"#Video"+i+"\").attr(\"poster\", '').attr('src','/upload/'+fileNm.substring(0,6)+'/'+fileNm); \r\n");
-//				    htmlPage.append(" 	         $(\"#Video"+i+"\").bind('ended', function(){     \r\n");
-//				    htmlPage.append("            videoPlay"+i+"();    \r\n");
-//				    htmlPage.append("      });  \r\n");
-//				    htmlPage.append("   };  \r\n");
-//				    htmlPage.append(" };  \r\n");	
+					/*htmlPage.append("       $(\"#image_show"+i+"\").html(img"+i+");     \r\n");
+				    htmlPage.append("       $(\"#Video"+i+"\").attr(\"poster\", '').attr(\"src\",'');     \r\n");
+				    htmlPage.append("       timeid"+i+" = setTimeout(videoPlay"+i+", file_Interval*1000); \r\n");
+				    htmlPage.append("      } else { \r\n");
+				    htmlPage.append("         $(\"#image_show"+i+"\").html('');     \r\n");
+				    htmlPage.append(" 	     $(\"#Video"+i+"\").attr(\"poster\", '').attr('src','/upload/'+fileNm.substring(0,6)+'/'+fileNm); \r\n");
+				    htmlPage.append(" 	         $(\"#Video"+i+"\").bind('ended', function(){     \r\n");
+				    htmlPage.append("            videoPlay"+i+"();    \r\n");
+				    htmlPage.append("      });  \r\n");
+				    htmlPage.append("   };  \r\n");
+				    htmlPage.append(" };  \r\n");*/	
 					htmlPage.append("       $(\"#content_show"+i+"\").html(img"+i+");     \r\n");
 					htmlPage.append("       $(\"#Image"+i+"\").on(\"load\", function(){    \r\n");						
-					htmlPage.append("  	          clearTimeout(contentLoad"+i+");   \r\n");
-					htmlPage.append("	          $(\"#content_show"+i+"\").animate({opacity:1}, 500, function(){  \r\n");					
+					htmlPage.append("  	          clearTimeout(contentLoad"+i+");   \r\n");					
 					htmlPage.append("		      setTimeout(videoPlay"+i+", file_Interval*1000);   \r\n");
-					htmlPage.append("	         });  \r\n");
 					htmlPage.append("        }); \r\n");
 					htmlPage.append("       $(\"#Image"+i+"\").on(\"error\", function(err){  \r\n");					
 					htmlPage.append("            videoPlay"+i+"(); 			\r\n");
@@ -1127,12 +1034,9 @@ public class ContentMutiManageController {
 				    htmlPage.append("        $(\"#Video"+i+"\").attr('src',''+fileStreCours + fileNm +'');   \r\n");
 				    htmlPage.append("             clearTimeout(contentLoad"+i+");     \r\n");
 				    htmlPage.append("        $(\"#Video"+i+"\").on('loadstart', function(){   \r\n"); 
-				    htmlPage.append("           $(\"#content_show"+i+"\").animate({opacity:1}, 500, function(){  \r\n"); 
 				    htmlPage.append("		       $(\"#Video"+i+"\").on('ended', function(){ \r\n");
 				    htmlPage.append("                 videoPlay"+i+"();   \r\n");
-				    htmlPage.append("                 $(\"#Video"+i+"\").play();   \r\n");
-				    htmlPage.append("                 });   \r\n");
-				    htmlPage.append("              });    \r\n");
+				    htmlPage.append("              });   \r\n");
 				    htmlPage.append("        });    \r\n");
 				    htmlPage.append("        $(\"#Video"+i+"\").on(\"error\", function(err){   \r\n"); 
 				    htmlPage.append("           videoPlay"+i+"(); 		  \r\n");
@@ -1143,12 +1047,9 @@ public class ContentMutiManageController {
 				    htmlPage.append("        $(\"#audio"+i+"\").attr('src',''+fileStreCours + fileNm +'');   \r\n");
 				    htmlPage.append("             clearTimeout(contentLoad"+i+");     \r\n");
 				    htmlPage.append("        $(\"#audio"+i+"\").on('loadstart', function(){   \r\n"); 
-				    htmlPage.append("           $(\"#content_show"+i+"\").animate({opacity:1}, 500, function(){  \r\n"); 
 				    htmlPage.append("		       $(\"#audio"+i+"\").on('ended', function(){ \r\n");
 				    htmlPage.append("                 videoPlay"+i+"();   \r\n");
-				    htmlPage.append("                 $(\"#audio"+i+"\").play();   \r\n");
-				    htmlPage.append("                 });   \r\n");
-				    htmlPage.append("              });    \r\n");
+				    htmlPage.append("              });   \r\n");
 				    htmlPage.append("        });    \r\n");
 				    htmlPage.append("        $(\"#audio"+i+"\").on(\"error\", function(err){   \r\n"); 
 				    htmlPage.append("           videoPlay"+i+"(); 		  \r\n");
@@ -1160,25 +1061,24 @@ public class ContentMutiManageController {
 			}
 			
 			for (int i = 0 ; i < detailInfo.size() ; i++ ){
-//				htmlPage.append("  function videoPlay"+i+"(){  \r\n");
-//				htmlPage.append("   if( timeId"+i+" == '1') { clearTimeout(timeId"+i+"); }  \r\n");
-//				htmlPage.append("   var jsonData = JSON.parse(albumLst"+i+");   \r\n");			      
-//				htmlPage.append("       if ($(\"#nowFileCnt"+i+"\").val() == parseInt(jsonData.length-1)){  \r\n");			 
-//				htmlPage.append("           var link = document.location.href;  \r\n ");
-//				htmlPage.append("           location.href=link;	  \r\n ");
-//				htmlPage.append("           $('#nowFileCnt"+i+"').val('0');  \r\n ");	
-//				htmlPage.append("          var num = 0;  \r\n ");
-//				htmlPage.append("       } else {  \r\n");
-//				htmlPage.append("          var num = +$(\"#nowFileCnt"+i+"\").val() + 1;  \r\n ");
-//				htmlPage.append("          $(\"#nowFileCnt"+i+"\").val(num);      \r\n ");				      
-//				htmlPage.append("       };  \r\n");
-//				htmlPage.append("       myHandler"+i+"(jsonData[num].streFileNm, jsonData[num].mediaType, jsonData[num].timeInterval);    \r\n ");
-//				htmlPage.append(" };  \r\n");
+				/*htmlPage.append("  function videoPlay"+i+"(){  \r\n");
+				htmlPage.append("   if( timeId"+i+" == '1') { clearTimeout(timeId"+i+"); }  \r\n");
+				htmlPage.append("   var jsonData = JSON.parse(albumLst"+i+");   \r\n");			      
+				htmlPage.append("       if ($(\"#nowFileCnt"+i+"\").val() == parseInt(jsonData.length-1)){  \r\n");			 
+				htmlPage.append("           var link = document.location.href;  \r\n ");
+				htmlPage.append("           location.href=link;	  \r\n ");
+				htmlPage.append("           $('#nowFileCnt"+i+"').val('0');  \r\n ");	
+				htmlPage.append("          var num = 0;  \r\n ");
+				htmlPage.append("       } else {  \r\n");
+				htmlPage.append("          var num = +$(\"#nowFileCnt"+i+"\").val() + 1;  \r\n ");
+				htmlPage.append("          $(\"#nowFileCnt"+i+"\").val(num);      \r\n ");				      
+				htmlPage.append("       };  \r\n");
+				htmlPage.append("       myHandler"+i+"(jsonData[num].streFileNm, jsonData[num].mediaType, jsonData[num].timeInterval);    \r\n ");
+				htmlPage.append(" };  \r\n");*/
 				
 				// setAudio
 				
 				htmlPage.append(" function videoPlay"+i+"(){    \r\n");
-				htmlPage.append(" $(\"#content_show"+i+"\").animate({opacity:0}, 500, function(){  \r\n"); 
 				htmlPage.append(" 	var jsonData = JSON.parse(albumLst"+i+");     \r\n");
 			    htmlPage.append(" 	   if ($(\"#nowFileCnt"+i+"\").val() == parseInt(jsonData.length-1)){  \r\n");
 			    htmlPage.append(" 		   var link=document.location.href;    \r\n"); // 신규 추가 2017.11.30 // 박성민, 안드로이드 앱 다운현상 방지
@@ -1191,12 +1091,9 @@ public class ContentMutiManageController {
 			    htmlPage.append(" 	   }   \r\n");
 			    htmlPage.append(" 	   $(\"#content_show"+i+"\").html('');  \r\n");
 			    htmlPage.append(" 	   myHandler"+i+"(jsonData[num].streFileNm, jsonData[num].mediaType, jsonData[num].timeInterval, jsonData[num].fileStreCours);  \r\n");  
-			    htmlPage.append("   });  \r\n");
 			    htmlPage.append(" }  \r\n");
 			}			
-			htmlPage.append("</script>	\r\n");
-			*/
-						
+			htmlPage.append("</script>	\r\n");			
 			//다음 시퀀스가 있는지 없는지 확인 후 setTime값으로 하기			
 			
 			if (!vo_info.getConNextSeq().equals("0") && !vo_info.getConNextSeq().equals("")){
@@ -1218,51 +1115,47 @@ public class ContentMutiManageController {
 			}
 			
 			htmlPage.append("<style>	\r\n");
-			htmlPage.append("   .container { position: relative; width: 100%; }	\r\n");
-			htmlPage.append("   .container video { float: left; }	\r\n");
+			htmlPage.append(" .container { position: relative; width: 100%; }	\r\n");
+			htmlPage.append(" .container video { float: left; }	\r\n");
 			for (int i = 0 ; i < detailInfo.size() ; i++ ){
-				htmlPage.append("   .media"+i+", .image"+i+" {	\r\n");
+				
+				htmlPage.append("    #Video"+i+" {	\r\n");
 				if (i ==0){	  
 					/*htmlPage.append("    position: relative; top: "+top0+";	\r\n");*/
-					htmlPage.append("      width: "+width0+"px; height: auto ; \r\n");				
+					htmlPage.append("    width: "+width0+"px; height: auto ; \r\n");				
 					/*htmlPage.append("    float:left;               	\r\n");*/
 				}else {
 					/*htmlPage.append("    position: relative; top: "+top1+";	\r\n");*/					
-					htmlPage.append("      width: "+width1+"px; height: auto;	\r\n");					
+					htmlPage.append("    width: "+width1+"px; height: auto;	\r\n");					
 					/*htmlPage.append("    float:left;               	\r\n");*/
 				}
-				htmlPage.append("   }	\r\n");
-				htmlPage.append("   #content_show"+i+" {	\r\n");
+				htmlPage.append("    }	\r\n");
+				htmlPage.append("    #content_show"+i+" {	\r\n");
 				if (i ==0){	  
-					htmlPage.append("       position: relative; top: "+top0+";	\r\n");
-					htmlPage.append("       width: "+width0+"px; height: auto ; z-index: 102;	\r\n");				
-					htmlPage.append("       float:left;               	\r\n");
+					htmlPage.append("    position: relative; top: "+top0+";	\r\n");
+					htmlPage.append("    width: "+width0+"px; height: auto ; z-index: 102;	\r\n");				
+					htmlPage.append("    float:left;               	\r\n");
 				}else {
-					htmlPage.append("       position: relative; top: "+top1+";	\r\n");					
-					htmlPage.append("       width: "+width1+"px; height: auto; z-index: 103;	\r\n");					
-					htmlPage.append("       float:left;               	\r\n");
+					htmlPage.append("    position: relative; top: "+top1+";	\r\n");					
+					htmlPage.append("    width: "+width1+"px; height: auto; z-index: 103;	\r\n");					
+					htmlPage.append("    float:left;               	\r\n");
 				}
-				htmlPage.append("   }               	\r\n");
+				htmlPage.append("    }               	\r\n");
 			}
-			htmlPage.append("   .clear { clear: both; }  \r\n");	
-			htmlPage.append("   .allContent { position : fixed;  top : 0;}	\r\n");
+			htmlPage.append(".clear { clear: both; }  \r\n");	
 			htmlPage.append("</style>	\r\n");
 			htmlPage.append("</head>	\r\n");
 			htmlPage.append("<body style='margin:0;background:#000'>	\r\n");
-			if (playGubun.equals("L")){
-				// LOCAL FILE 생성 부분
-				htmlPage.append("   <iframe src='./silence.mp3' allow='autoplay' id='setAudio' style='display:none'></iframe>  \r\n");
-			} else {
-				// CMS 화면생성 부분
-				htmlPage.append("   <iframe src='/upload/silence.mp3' allow='autoplay' id='setAudio' style='display:none'></iframe>  \r\n");
-			}
-				
+			htmlPage.append("   <iframe src='/upload/silence.mp3' allow='autoplay' id='setAudio' style='display:none'></iframe>  \r\n");	
 		    for (int i = 0 ; i < detailInfo.size() ; i++ ){
+		    		// <iframe src="silence.mp3" allow="autoplay" id="audio" style="display:none"></iframe>
+		    		
 		    		htmlPage.append("   <input type='hidden' name='nowFileCnt"+i+"' id='nowFileCnt"+i+"'>	\r\n");
 		    		htmlPage.append("   <div id='content_show"+i+"'></div>  \r\n");	
 				    htmlPage.append(" ");
 		    }			
-			htmlPage.append("</body>	\r\n");
+		    
+			htmlPage.append("  </body>	\r\n");
 			htmlPage.append("</html>	\r\n");
 			
 			
