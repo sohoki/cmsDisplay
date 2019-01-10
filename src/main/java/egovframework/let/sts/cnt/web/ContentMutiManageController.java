@@ -877,22 +877,22 @@ public class ContentMutiManageController {
 			
 			
 			
-		    htmlPage.append("<!DOCTYPE HTML>   \r\n ");
+		    htmlPage.append("<!DOCTYPE HTML>\r\n");
 			
-			htmlPage.append("<html>   \r\n");  
-			htmlPage.append("<head>  \r\n ");    
-			htmlPage.append("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>  \r\n ");    
-			htmlPage.append("<title>" + vo_info.getConNm() + "</title>   \r\n");    
+			htmlPage.append("<html>\r\n");  
+			htmlPage.append("<head>\r\n");    
+			htmlPage.append("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>\r\n");    
+			htmlPage.append("<title>" + vo_info.getConNm() + "</title>\r\n");    
 			if (playGubun.equals("L")){
-				htmlPage.append("<script type='text/javascript' src='./jquery-2.2.4.min.js'></script>   \r\n");	
+				htmlPage.append("<script type='text/javascript' src='./jquery-2.2.4.min.js'></script>\r\n");	
 			}else {
-				htmlPage.append("<script type='text/javascript' src='/js/jquery-2.2.4.min.js'></script>   \r\n");
+				htmlPage.append("<script type='text/javascript' src='/js/jquery-2.2.4.min.js'></script>\r\n");
 			}
 			
 			
 			List<ContentDetailInfo> detailInfo =  contentDetail.selectContentDetailLst(conSeq);
 			
-			htmlPage.append("<script type='text/javascript'> \r\n");
+			htmlPage.append("<script type='text/javascript'>\r\n");
 			boolean musicPOPChk = false;
 			String mediaType = "";
 			for (int i = 0 ; i < detailInfo.size() ; i++ ){
@@ -921,31 +921,25 @@ public class ContentMutiManageController {
 				}
 				
 				
-				htmlPage.append("var albumLst"+i+"= '"+ jsonA  +"';\r\n");				
-				htmlPage.append("var timeId"+i+"= '';\r\n");
+				htmlPage.append("    var albumLst"+i+" = '"+ jsonA  +"';\r\n");				
+				htmlPage.append("    var contentCount"+i+" = 0;\r\n");
+				htmlPage.append("    var jsonData"+i+";\r\n");				
+				htmlPage.append("    var firstPlay"+i+";\r\n");
+				htmlPage.append("    var prepareFileNm"+i+";\r\n");
+				htmlPage.append("    var prepareFileType"+i+";\r\n");
+				htmlPage.append("    var prepareFileTime"+i+";\r\n");
+				htmlPage.append("    var prepareFileStreCours"+i+";\r\n");
+				htmlPage.append("    var prepareMakeType"+i+";\r\n");
 			}
 			// onRead 
-			htmlPage.append(" $(document).ready(function(){    \r\n");
-			htmlPage.append("   console.log('contents play start');    \r\n"); // 신규 추가 2017.11.30 // 박성민, 안드로이드 확인 필요사항
-			
-			/*if(musicPOPChk){
-				// setAudio
-				htmlPage.append("       $(\"setAudio\").on('loadstart', function(){   \r\n"); 
-			    htmlPage.append("			$(\"#setAudio\").on('ended', function(){ \r\n");
-			    htmlPage.append("       		startContentSch();   \r\n");
-			    htmlPage.append("       	});   \r\n");
-				htmlPage.append("        });   \r\n"); 
-				htmlPage.append("       $(\"#setAudio\").on(\"error\", function(err){  \r\n"); 
-				htmlPage.append("       	alert('ERROR !!!'); 			\r\n");
-				htmlPage.append("       }); \r\n");		
-			}*/
-			
-			htmlPage.append("   function startContentSch(){    \r\n"); // 신규 추가 2018.10.25, autoplay set
+			htmlPage.append("    $(document).ready(function(){\r\n");
+			htmlPage.append("        console.log('contents play start');\r\n"); // 신규 추가 2017.11.30 // 박성민, 안드로이드 확인 필요사항
+			htmlPage.append("        function startContentSch(){\r\n"); // 신규 추가 2018.10.25, autoplay set
 			for (int i = 0 ; i < detailInfo.size() ; i++ ){
-				htmlPage.append("  var jsonData"+i+" = JSON.parse(albumLst"+i+");             \r\n");
-				htmlPage.append("  if (jsonData"+i+".length > 0){    \r\n ");
-				htmlPage.append("     $('#nowFileCnt"+i+"').val('0');  \r\n ");
-				htmlPage.append("       myHandler"+i+"(jsonData"+i+"[0].streFileNm, jsonData"+i+"[0].mediaType, jsonData"+i+"[0].timeInterval, jsonData"+i+"[0].fileStreCours);    \r\n ");
+				htmlPage.append("            var jsonData"+i+" = JSON.parse(albumLst"+i+");             \r\n");
+				htmlPage.append("            if(jsonData"+i+".length > 0){    \r\n ");
+				htmlPage.append("                $('#nowFileCnt"+i+"').val('0');  \r\n ");
+				htmlPage.append("                myHandler"+i+"(jsonData"+i+"[0].streFileNm, jsonData"+i+"[0].mediaType, jsonData"+i+"[0].timeInterval, jsonData"+i+"[0].fileStreCours);    \r\n ");
 				htmlPage.append("  }  \r\n ");
 			}
 			htmlPage.append("   }    \r\n"); // 신규 추가 2018.10.25, autoplay set
