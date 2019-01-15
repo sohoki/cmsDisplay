@@ -828,6 +828,14 @@ public class ContentMutiManageController {
 			String height = vo_info.getConHeight();
 			String mid = vo_info.getConMid();
 			String conDc = vo_info.getConDc();
+			/**
+			 * viewType ? 화면구성 방식
+			 * 0 : 전체화면
+			 * 1 : 가로 분할 화면
+			 * 2 : 세로 분할 화면
+			 * */
+			int viewType = 0;
+			
 			
 			if(conDc == null || conDc.equals("") || conDc.equals("0")){
 				conDc = "1";
@@ -845,8 +853,10 @@ public class ContentMutiManageController {
 			String left0 = "";
 			String left1 = "";
 			LOGGER.info("width : " + width + ", height : " + height + ", conDc : " + conDc);
+
 			//변수값 설정 			
 			if ( Integer.parseInt( width ) >  Integer.parseInt( height )  && Integer.parseInt( conDc ) > 1   ){
+				viewType = 1;
 				width0 = mid;
 				width1 = Integer.toString((Integer.parseInt(width) -  Integer.parseInt( mid)));
 				height0= height;
@@ -856,6 +866,7 @@ public class ContentMutiManageController {
 				left0 = "0";
 				left1 =  Integer.toString(Integer.parseInt(mid) + 1);				
 			}else if ( Integer.parseInt( width ) <  Integer.parseInt( height )  && Integer.parseInt( conDc ) > 1   ){
+				viewType = 2;
 				width0= width;
 				width1= width;
 				height0 = mid;
@@ -865,6 +876,7 @@ public class ContentMutiManageController {
 				left0 = "0";
 				left1 = "0";
 			}else {
+				viewType = 0;
 				width0= width;
 				height0= height;
 				width1= width;
@@ -875,10 +887,11 @@ public class ContentMutiManageController {
 				left1 = "0";
 			}
 			
-			
-			
+			/**
+			 * 콘텐츠 화면 생성 부 !
+			 * 2019-01-11 전체소스 수정
+			 * */
 		    htmlPage.append("<!DOCTYPE HTML>\r\n");
-			
 			htmlPage.append("<html>\r\n");  
 			htmlPage.append("<head>\r\n");    
 			htmlPage.append("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>\r\n");    
@@ -906,9 +919,7 @@ public class ContentMutiManageController {
 				if(i == 0){
 					System.out.println(detailFileContent.get(0).getAtchFileId());
 					System.out.println(detailFileContent.get(0).getMediaType());
-					
 					mediaType= detailFileContent.get(0).getMediaType();
-					// mediaType= (String) jsonA.getJSONArray(0).getJSONObject(0).get("mediaType");
 					if(mediaType == null){
 						musicPOPChk = true;
 					} else {
@@ -919,177 +930,183 @@ public class ContentMutiManageController {
 						}
 					}
 				}
-				
-				
 				htmlPage.append("    var albumLst"+i+" = '"+ jsonA  +"';\r\n");				
 				htmlPage.append("    var contentCount"+i+" = 0;\r\n");
 				htmlPage.append("    var jsonData"+i+";\r\n");				
-				htmlPage.append("    var firstPlay"+i+";\r\n");
-				htmlPage.append("    var prepareFileNm"+i+";\r\n");
-				htmlPage.append("    var prepareFileType"+i+";\r\n");
-				htmlPage.append("    var prepareFileTime"+i+";\r\n");
-				htmlPage.append("    var prepareFileStreCours"+i+";\r\n");
-				htmlPage.append("    var prepareMakeType"+i+";\r\n");
+				htmlPage.append("    var firstPlay"+i+", errorFlag"+i+";\r\n");
+				htmlPage.append("    var prepareFileNm"+i+", prepareFileType"+i+", prepareFileTime"+i+", prepareFileStreCours"+i+", prepareMakeType"+i+";\r\n");
 			}
 			// onRead 
 			htmlPage.append("    $(document).ready(function(){\r\n");
-			htmlPage.append("        console.log('contents play start');\r\n"); // 신규 추가 2017.11.30 // 박성민, 안드로이드 확인 필요사항
-			htmlPage.append("        function startContentSch(){\r\n"); // 신규 추가 2018.10.25, autoplay set
+			htmlPage.append("        console.log('contents play start');\r\n");
+			htmlPage.append("        function startContentSch(){\r\n");
 			for (int i = 0 ; i < detailInfo.size() ; i++ ){
-				htmlPage.append("            var jsonData"+i+" = JSON.parse(albumLst"+i+");             \r\n");
-				htmlPage.append("            if(jsonData"+i+".length > 0){    \r\n ");
-				htmlPage.append("                $('#nowFileCnt"+i+"').val('0');  \r\n ");
-				htmlPage.append("                myHandler"+i+"(jsonData"+i+"[0].streFileNm, jsonData"+i+"[0].mediaType, jsonData"+i+"[0].timeInterval, jsonData"+i+"[0].fileStreCours);    \r\n ");
-				htmlPage.append("  }  \r\n ");
+				htmlPage.append("            jsonData"+i+" = JSON.parse(albumLst"+i+");\r\n");
+				htmlPage.append("            if(jsonData"+i+".length > 0){\r\n ");
+				htmlPage.append("                firstPlay"+i+" = true;\r\n ");
+				htmlPage.append("                tagMaking"+i+"(jsonData"+i+"[contentCount"+i+"].streFileNm, jsonData"+i+"[contentCount"+i+"].mediaType, jsonData"+i+"[contentCount"+i+"].timeInterval, jsonData"+i+"[contentCount"+i+"].fileStreCours, 'A');\r\n");
+				htmlPage.append("            }\r\n");
 			}
-			htmlPage.append("   }    \r\n"); // 신규 추가 2018.10.25, autoplay set
-			htmlPage.append("   startContentSch();    \r\n"); // 신규 추가 2018.10.25, autoplay set
-			htmlPage.append(" });   \r\n ");
-			
+			htmlPage.append("        }\r\n");
+			htmlPage.append("        startContentSch();\r\n");
+			htmlPage.append("    });\r\n");
 			for (int i = 0 ; i < detailInfo.size() ; i++ ){
-				htmlPage.append("  function myHandler"+i+"(fileNm, fileType, file_Interval, fileStreCours) {              \r\n");
-				// 여기 부분 수정
-				htmlPage.append("           var contentLoad"+i+" = setTimeout(videoPlay"+i+", 3*1000);  \r\n");
-				if (playGubun.equals("L")){
-					// local file myHandler 생성부
-					htmlPage.append("      if (fileType == 'IMAGE'){       \r\n");
+				htmlPage.append("    function tagMaking"+i+"(fileNm, fileType, fileInterval, fileStreCours, makeType){\r\n");
+				htmlPage.append("        var result, mediaTag;\r\n");
+				
+				if (playGubun.equals("L")){ // local file myHandler 생성부
+					htmlPage.append("        if (makeType == 'A'){\r\n");
+					htmlPage.append("            $('#content_show"+i+"a').html('');\r\n");
+					htmlPage.append("            switch(fileType){\r\n");
 					if (i==0){
-						htmlPage.append("       var img"+i+" = '<img id=\"Image0\" src=\"./'+fileNm+'\" width=\"" +width0+"\" height=\"" +height0+ "\" />';    \r\n");
-					}else {
-						htmlPage.append("       var img"+i+" = '<img id=\"Image1\" src=\"./'+fileNm+'\" width=\"" +width1+"\" height=\"" +height1+ "\" />';    \r\n");	
-					}	
-					htmlPage.append("       $(\"#content_show"+i+"\").html(img"+i+");     \r\n");
-					htmlPage.append("       $(\"#Image"+i+"\").on(\"load\", function(){    \r\n");
-					htmlPage.append("  	          clearTimeout(contentLoad"+i+");   \r\n"); 
-					htmlPage.append("		      setTimeout(videoPlay"+i+", file_Interval*1000);   \r\n");
-					htmlPage.append("        }); \r\n");
-					htmlPage.append("       $(\"#Image"+i+"\").on(\"error\", function(err){  \r\n"); 
-					htmlPage.append("            videoPlay"+i+"(); 			\r\n");
-					htmlPage.append("       }); \r\n");					
-				    htmlPage.append("   } else if (fileType == 'MEDIA'){ \r\n");
-				    htmlPage.append("   var vod"+i+" = '<video id=\"Video"+i+"\" autoplay><source src=\"\" type=\"video/mp4\" /></video>'; \r\n");				    
-				    htmlPage.append("        $(\"#content_show"+i+"\").html(vod"+i+");   \r\n");
-				    htmlPage.append("        $(\"#Video"+i+"\").attr('src','./'+fileNm);   \r\n");
-				    htmlPage.append("             clearTimeout(contentLoad"+i+");     \r\n");
-				    htmlPage.append("        $(\"#Video"+i+"\").on('loadstart', function(){   \r\n");  
-				    htmlPage.append("		       $(\"#Video"+i+"\").on('ended', function(){ \r\n"); // Video0+i 로 된 부분 Video+i 로 변경, 수정 완료
-				    htmlPage.append("                 videoPlay"+i+"();   \r\n");
-				    htmlPage.append("               });   \r\n");
-				    htmlPage.append("        });    \r\n");
-				    htmlPage.append("        $(\"#Video"+i+"\").on(\"error\", function(err){   \r\n"); 
-				    htmlPage.append("           videoPlay"+i+"(); 		  \r\n");
-				    htmlPage.append("      });   \r\n");				    
-				    htmlPage.append("   } else { \r\n");
-				    htmlPage.append("   var mPop"+i+" = '<audio id=\"audio"+i+"\" controls autoplay><source src=\"\" type=\"audio/mpeg\" /></audio>'; \r\n");				    
-				    htmlPage.append("        $(\"#content_show"+i+"\").html(mPop"+i+");   \r\n");
-				    htmlPage.append("        $(\"#audio"+i+"\").attr('src','./'+fileNm);   \r\n");
-				    htmlPage.append("             clearTimeout(contentLoad"+i+");     \r\n");
-				    htmlPage.append("        $(\"#audio"+i+"\").on('loadstart', function(){   \r\n"); 
-				    htmlPage.append("		       $(\"#audio"+i+"\").on('ended', function(){ \r\n"); // Video0+i 로 된 부분 Video+i 로 변경, 수정 완료
-				    htmlPage.append("                 videoPlay"+i+"();   \r\n");
-				    htmlPage.append("              });   \r\n");
-				    htmlPage.append("        });    \r\n");
-				    htmlPage.append("        $(\"#Video"+i+"\").on(\"error\", function(err){   \r\n"); 
-				    htmlPage.append("           videoPlay"+i+"(); 		  \r\n");
-				    htmlPage.append("      });   \r\n");				    
-				    htmlPage.append(" 	};  \r\n");
-				    htmlPage.append(" };  \r\n"); // 누락 부분 추가 체크
+						htmlPage.append("                case 'IMAGE' : result = '<img id=\"content"+i+"a\" src=\"./'+fileNm+'\" width=\""+width0+"\" height=\""+height0+"\" />'; break;\r\n");	
+					} else {
+						htmlPage.append("                case 'IMAGE' : result = '<img id=\"content"+i+"a\" src=\"./'+fileNm+'\" width=\""+width1+"\" height=\""+height1+"\" />'; break;\r\n");
+					}
+					htmlPage.append("                case 'MEDIA' : result = '<video id=\"content"+i+"a\" src=\"./'+fileNm+'\"><source type=\"video/mp4\"/></video>'; break;\r\n");
+					htmlPage.append("                default      : result = '<audio id=\"content"+i+"a\" controls src=\"./'+fileNm+'\"><source type=\"audio/mpeg\"/></audio>'; break;\r\n");
+					htmlPage.append("            }\r\n");
+					htmlPage.append("            mediaTag = $('#content"+i+"a');\r\n");
+					htmlPage.append("            $('#content_show"+i+"a').html(result);\r\n");
+				    htmlPage.append("        } else {\r\n");
+					htmlPage.append("            $('#content_show"+i+"b').html('');\r\n");
+					htmlPage.append("            switch(fileType){\r\n");
+					if (i==0){
+						htmlPage.append("                case 'IMAGE' : result = '<img id=\"content"+i+"b\" src=\"./'+fileNm+'\" width=\""+width0+"\" height=\""+height0+"\" />'; break;\r\n");	
+					} else {
+						htmlPage.append("                case 'IMAGE' : result = '<img id=\"content"+i+"b\" src=\"./'+fileNm+'\" width=\""+width1+"\" height=\""+height1+"\" />'; break;\r\n");
+					}
+					htmlPage.append("                case 'MEDIA' : result = '<video id=\"content"+i+"b\" src=\"./'+fileNm+'\"><source type=\"video/mp4\"/></video>'; break;\r\n");
+					htmlPage.append("                default      : result = '<audio id=\"content"+i+"b\" controls src=\"./'+fileNm+'\"><source type=\"audio/mpeg\"/></audio>'; break;\r\n");
+					htmlPage.append("            }\r\n");
+					htmlPage.append("            mediaTag = $('#content"+i+"b');\r\n");
+					htmlPage.append("            $('#content_show"+i+"b').html(result);\r\n");
+				    htmlPage.append("        }\r\n");
 				}else {
-					// 화면생성, 미리보기 myHandler 생성부
-					htmlPage.append("      if (fileType == 'IMAGE'){       \r\n"); // 이미지 부분
+					// 화면생성, 미리보기 생성부
+					htmlPage.append("        if (makeType == 'A'){\r\n");
+					htmlPage.append("            $('#content_show"+i+"a').html('');\r\n");
+					htmlPage.append("            switch(fileType){\r\n");
 					if (i==0){
-						htmlPage.append("       var img"+i+" = '<img id=\"Image0\" src=\"'+fileStreCours + fileNm+'\" width=\"" +width0+"\" height=\"" +height0+ "\" />';    \r\n");
-					}else {
-						htmlPage.append("       var img"+i+" = '<img id=\"Image1\" src=\"'+fileStreCours + fileNm+'\" width=\"" +width1+"\" height=\"" +height1+ "\" />';    \r\n");	
-					}			
-					
-					/*htmlPage.append("       $(\"#image_show"+i+"\").html(img"+i+");     \r\n");
-				    htmlPage.append("       $(\"#Video"+i+"\").attr(\"poster\", '').attr(\"src\",'');     \r\n");
-				    htmlPage.append("       timeid"+i+" = setTimeout(videoPlay"+i+", file_Interval*1000); \r\n");
-				    htmlPage.append("      } else { \r\n");
-				    htmlPage.append("         $(\"#image_show"+i+"\").html('');     \r\n");
-				    htmlPage.append(" 	     $(\"#Video"+i+"\").attr(\"poster\", '').attr('src','/upload/'+fileNm.substring(0,6)+'/'+fileNm); \r\n");
-				    htmlPage.append(" 	         $(\"#Video"+i+"\").bind('ended', function(){     \r\n");
-				    htmlPage.append("            videoPlay"+i+"();    \r\n");
-				    htmlPage.append("      });  \r\n");
-				    htmlPage.append("   };  \r\n");
-				    htmlPage.append(" };  \r\n");*/	
-					htmlPage.append("       $(\"#content_show"+i+"\").html(img"+i+");     \r\n");
-					htmlPage.append("       $(\"#Image"+i+"\").on(\"load\", function(){    \r\n");						
-					htmlPage.append("  	          clearTimeout(contentLoad"+i+");   \r\n");					
-					htmlPage.append("		      setTimeout(videoPlay"+i+", file_Interval*1000);   \r\n");
-					htmlPage.append("        }); \r\n");
-					htmlPage.append("       $(\"#Image"+i+"\").on(\"error\", function(err){  \r\n");					
-					htmlPage.append("            videoPlay"+i+"(); 			\r\n");
-					htmlPage.append("       }); \r\n");					
-				    htmlPage.append("   } else if (fileType == 'MEDIA'){ \r\n");	 // 영상 부분			    
-				    htmlPage.append("   var vod"+i+" = '<video id=\"Video"+i+"\" autoplay><source src=\"\" type=\"video/mp4\" /></video>'; \r\n");				    
-				    htmlPage.append("        $(\"#content_show"+i+"\").html(vod"+i+");   \r\n");
-				    htmlPage.append("        $(\"#Video"+i+"\").attr('src',''+fileStreCours + fileNm +'');   \r\n");
-				    htmlPage.append("             clearTimeout(contentLoad"+i+");     \r\n");
-				    htmlPage.append("        $(\"#Video"+i+"\").on('loadstart', function(){   \r\n"); 
-				    htmlPage.append("		       $(\"#Video"+i+"\").on('ended', function(){ \r\n");
-				    htmlPage.append("                 videoPlay"+i+"();   \r\n");
-				    htmlPage.append("              });   \r\n");
-				    htmlPage.append("        });    \r\n");
-				    htmlPage.append("        $(\"#Video"+i+"\").on(\"error\", function(err){   \r\n"); 
-				    htmlPage.append("           videoPlay"+i+"(); 		  \r\n");
-				    htmlPage.append("        });   \r\n");
-				    htmlPage.append("   } else { \r\n"); // 음원 부분				    
-				    htmlPage.append("   var mPop"+i+" = '<audio id=\"audio"+i+"\" controls autoplay><source src=\"\" type=\"audio/mpeg\" /></audio>'; \r\n");				    
-				    htmlPage.append("        $(\"#content_show"+i+"\").html(mPop"+i+");   \r\n");
-				    htmlPage.append("        $(\"#audio"+i+"\").attr('src',''+fileStreCours + fileNm +'');   \r\n");
-				    htmlPage.append("             clearTimeout(contentLoad"+i+");     \r\n");
-				    htmlPage.append("        $(\"#audio"+i+"\").on('loadstart', function(){   \r\n"); 
-				    htmlPage.append("		       $(\"#audio"+i+"\").on('ended', function(){ \r\n");
-				    htmlPage.append("                 videoPlay"+i+"();   \r\n");
-				    htmlPage.append("              });   \r\n");
-				    htmlPage.append("        });    \r\n");
-				    htmlPage.append("        $(\"#audio"+i+"\").on(\"error\", function(err){   \r\n"); 
-				    htmlPage.append("           videoPlay"+i+"(); 		  \r\n");
-				    htmlPage.append("        });   \r\n");
-				    htmlPage.append("     }  \r\n");
-				    htmlPage.append(" }  \r\n");
+						htmlPage.append("                case 'IMAGE' : result = '<img id=\"content"+i+"a\" src=\"'+fileStreCours+fileNm+'\" width=\""+width0+"\" height=\""+height0+"\" />'; break;\r\n");	
+					} else {
+						htmlPage.append("                case 'IMAGE' : result = '<img id=\"content"+i+"a\" src=\"'+fileStreCours+fileNm+'\" width=\""+width1+"\" height=\""+height1+"\" />'; break;\r\n");
+					}
+					htmlPage.append("                case 'MEDIA' : result = '<video id=\"content"+i+"a\" src=\"'+fileStreCours+fileNm+'\"><source type=\"video/mp4\"/></video>'; break;\r\n");
+					htmlPage.append("                default      : result = '<audio id=\"content"+i+"a\" controls src=\"'+fileStreCours+fileNm+'\"><source type=\"audio/mpeg\"/></audio>'; break;\r\n");
+					htmlPage.append("            }\r\n");
+					htmlPage.append("            mediaTag = $('#content"+i+"a');\r\n");
+					htmlPage.append("            $('#content_show"+i+"a').html(result);\r\n");
+				    htmlPage.append("        } else {\r\n");
+					htmlPage.append("            $('#content_show"+i+"b').html('');\r\n");
+					htmlPage.append("            switch(fileType){\r\n");
+					if (i==0){
+						htmlPage.append("                case 'IMAGE' : result = '<img id=\"content"+i+"b\" src=\"'+fileStreCours+fileNm+'\" width=\""+width0+"\" height=\""+height0+"\" />'; break;\r\n");	
+					} else {
+						htmlPage.append("                case 'IMAGE' : result = '<img id=\"content"+i+"b\" src=\"'+fileStreCours+fileNm+'\" width=\""+width1+"\" height=\""+height1+"\" />'; break;\r\n");
+					}
+					htmlPage.append("                case 'MEDIA' : result = '<video id=\"content"+i+"b\" src=\"'+fileStreCours+fileNm+'\"><source type=\"video/mp4\"/></video>'; break;\r\n");
+					htmlPage.append("                default      : result = '<audio id=\"content"+i+"b\" controls src=\"'+fileStreCours+fileNm+'\"><source type=\"audio/mpeg\"/></audio>'; break;\r\n");
+					htmlPage.append("            }\r\n");
+					htmlPage.append("            mediaTag = $('#content"+i+"b');\r\n");
+					htmlPage.append("            $('#content_show"+i+"b').html(result);\r\n");
+				    htmlPage.append("        }\r\n");
 				}
-			    			    				
+				htmlPage.append("        if(firstPlay"+i+"){\r\n");
+			    htmlPage.append("            firstPlay"+i+" = false;\r\n");
+			    htmlPage.append("            mediaPlaySetting"+i+"(fileNm, fileType, fileInterval, fileStreCours, makeType);\r\n");
+			    htmlPage.append("        } else if (errorFlag"+i+"){\r\n");
+			    htmlPage.append("            errorFlag"+i+" = false;\r\n");
+			    htmlPage.append("            mediaPlaySetting"+i+"(fileNm, fileType, fileInterval, fileStreCours, makeType);\r\n");
+			    htmlPage.append("        } else {\r\n");
+			    htmlPage.append("            prepareFileNm"+i+" = fileNm;\r\n");
+			    htmlPage.append("            prepareFileType"+i+" = fileType;\r\n");
+			    htmlPage.append("            prepareFileTime"+i+" = fileInterval;\r\n");
+			    htmlPage.append("            prepareFileStreCours"+i+" = fileStreCours;\r\n");
+			    htmlPage.append("            prepareMakeType"+i+" = makeType;\r\n");
+			    htmlPage.append("        }\r\n");
+				htmlPage.append("    }\r\n");			
 			}
-			
 			for (int i = 0 ; i < detailInfo.size() ; i++ ){
-				/*htmlPage.append("  function videoPlay"+i+"(){  \r\n");
-				htmlPage.append("   if( timeId"+i+" == '1') { clearTimeout(timeId"+i+"); }  \r\n");
-				htmlPage.append("   var jsonData = JSON.parse(albumLst"+i+");   \r\n");			      
-				htmlPage.append("       if ($(\"#nowFileCnt"+i+"\").val() == parseInt(jsonData.length-1)){  \r\n");			 
-				htmlPage.append("           var link = document.location.href;  \r\n ");
-				htmlPage.append("           location.href=link;	  \r\n ");
-				htmlPage.append("           $('#nowFileCnt"+i+"').val('0');  \r\n ");	
-				htmlPage.append("          var num = 0;  \r\n ");
-				htmlPage.append("       } else {  \r\n");
-				htmlPage.append("          var num = +$(\"#nowFileCnt"+i+"\").val() + 1;  \r\n ");
-				htmlPage.append("          $(\"#nowFileCnt"+i+"\").val(num);      \r\n ");				      
-				htmlPage.append("       };  \r\n");
-				htmlPage.append("       myHandler"+i+"(jsonData[num].streFileNm, jsonData[num].mediaType, jsonData[num].timeInterval);    \r\n ");
-				htmlPage.append(" };  \r\n");*/
-				
-				// setAudio
-				
-				htmlPage.append(" function videoPlay"+i+"(){    \r\n");
-				htmlPage.append(" 	var jsonData = JSON.parse(albumLst"+i+");     \r\n");
-			    htmlPage.append(" 	   if ($(\"#nowFileCnt"+i+"\").val() == parseInt(jsonData.length-1)){  \r\n");
-			    htmlPage.append(" 		   var link=document.location.href;    \r\n"); // 신규 추가 2017.11.30 // 박성민, 안드로이드 앱 다운현상 방지
-			    htmlPage.append(" 		   location.href=link;    \r\n"); // 신규 추가 2017.11.30 // 박성민, 안드로이드 앱 다운현상 방지
-			    htmlPage.append(" 		   $('#nowFileCnt"+i+"').val('"+i+"');    \r\n");
-			    htmlPage.append(" 		   var num = 0;    \r\n");
-			    htmlPage.append(" 	   } else {    \r\n");
-			    htmlPage.append(" 		   var num = +$(\"#nowFileCnt"+i+"\").val() + 1;  \r\n");  
-			    htmlPage.append(" 		   $(\"#nowFileCnt"+i+"\").val(num);        \r\n");
-			    htmlPage.append(" 	   }   \r\n");
-			    htmlPage.append(" 	   $(\"#content_show"+i+"\").html('');  \r\n");
-			    htmlPage.append(" 	   myHandler"+i+"(jsonData[num].streFileNm, jsonData[num].mediaType, jsonData[num].timeInterval, jsonData[num].fileStreCours);  \r\n");  
-			    htmlPage.append(" }  \r\n");
-			}			
-			htmlPage.append("</script>	\r\n");			
+				htmlPage.append("    function mediaPlaySetting"+i+"(fileNm, fileType, fileInterval, fileStreCours, makeType){\r\n");
+				htmlPage.append("        var mediaTag;\r\n");
+				htmlPage.append("        var contentLoadCheck = setTimeout(function(){\r\n");
+				htmlPage.append("            console.log('CONTENTS LOADING ISSUE, NEXT !');\r\n");
+				htmlPage.append("            nextSeqConChk"+i+"('1', makeTypeRevers(makeType));\r\n");
+				htmlPage.append("        }, 3000);\r\n");
+				htmlPage.append("        var contentPauseChk = setTimeout(function(){\r\n");
+				htmlPage.append("            console.log('content Pause ? Play Time : ' + ((fileInterval*1000)+3000));\r\n");
+				htmlPage.append("            nextSeqConChk"+i+"('2', prepareMakeType"+i+");\r\n");
+				htmlPage.append("        }, ((fileInterval*1000)+3000));\r\n");
+				htmlPage.append("        switch(makeType){\r\n");
+				htmlPage.append("            case 'A' : mediaTag = $('#content"+i+"a'); $('#content_show"+i+"b').css('z-index', '150'); break;\r\n");
+				htmlPage.append("            case 'B' : mediaTag = $('#content"+i+"b'); $('#content_show"+i+"b').css('z-index', '300'); break;\r\n");
+				htmlPage.append("        }\r\n");
+				htmlPage.append("        if(fileType == 'IMAGE'){\r\n");
+				htmlPage.append("            mediaTag.each(function(){\r\n");
+				htmlPage.append("                clearTimeout(contentLoadCheck);\r\n");
+				htmlPage.append("                setTimeout(function(){\r\n");
+				htmlPage.append("                    clearTimeout(contentPauseChk);\r\n");
+				htmlPage.append("                    nextSeqConChk"+i+"('2', prepareMakeType"+i+");\r\n");
+				htmlPage.append("                }, fileInterval*1000);\r\n");
+				htmlPage.append("                nextSeqConChk"+i+"('1', makeTypeRevers(makeType));\r\n");
+				htmlPage.append("            });\r\n");
+				htmlPage.append("        } else {\r\n");
+				htmlPage.append("            mediaTag[0].autoplay = true;\r\n");
+				if (playGubun.equals("L")){
+					htmlPage.append("            mediaTag[0].src = './' + fileNm + '?autoplay=1';\r\n");	
+				} else {
+					htmlPage.append("            mediaTag[0].src = fileStreCours+fileNm + '?autoplay=1';\r\n");
+				}
+				htmlPage.append("            mediaTag.on('loadeddata', function(){\r\n");
+				htmlPage.append("                clearTimeout(contentLoadCheck);\r\n");
+				htmlPage.append("                nextSeqConChk"+i+"('1', makeTypeRevers(makeType));\r\n");
+				htmlPage.append("            });\r\n");
+				htmlPage.append("            mediaTag.on('ended', function(){\r\n");
+				htmlPage.append("                clearTimeout(contentPauseChk);\r\n");
+				htmlPage.append("                nextSeqConChk"+i+"('2', prepareMakeType"+i+");\r\n");
+				htmlPage.append("            });\r\n");
+				htmlPage.append("        }\r\n");
+				htmlPage.append("        mediaTag.on('error', function(err){\r\n");
+				htmlPage.append("            clearTimeout(contentLoadCheck);\r\n");
+				htmlPage.append("            clearTimeout(contentPauseChk);\r\n");
+				htmlPage.append("            console.log('CONTENT NAME : ' + fileNm + ', ERROR !');\r\n");
+				htmlPage.append("            errorFlag"+i+" = true;\r\n");
+				htmlPage.append("            nextSeqConChk"+i+"('1', makeType);\r\n");
+				htmlPage.append("        });\r\n");
+			    htmlPage.append("    }\r\n");
+			    
+			    /** 
+			     * 분할부분과 관련하여 최종 콘텐츠 재생 후 관련 내용 시작 부
+			     * 2019-01-14 페이지를 새로고치는 부분에서 기준값이 필요로 하다,
+			     * 1. 메인되는 모니터를 정할지
+			     * 2. 완전히 따로노는 무한 플레이 방식을 고수할지 (안정화 상당량 필요)
+			     * 3. 내용정리 필요
+			     * */
+			    htmlPage.append("    function nextSeqConChk"+i+"(checkType, makeType){\r\n");
+			    htmlPage.append("        if(contentCount"+i+" == jsonData"+i+".length){\r\n");
+			    htmlPage.append("            location.href = document.location.href;\r\n");
+			    htmlPage.append("        } else {\r\n");
+			    htmlPage.append("            if(checkType == '1'){\r\n");
+			    htmlPage.append("                contentCount"+i+"++;\r\n");
+			    htmlPage.append("                if(contentCount"+i+" != jsonData"+i+".length){\r\n");
+			    htmlPage.append("                    tagMaking"+i+"(jsonData"+i+"[contentCount"+i+"].streFileNm, jsonData"+i+"[contentCount"+i+"].mediaType, jsonData"+i+"[contentCount"+i+"].timeInterval, jsonData"+i+"[contentCount"+i+"].fileStreCours, makeType);\r\n");
+			    htmlPage.append("                }\r\n");
+			    htmlPage.append("            } else {\r\n");
+			    htmlPage.append("                mediaPlaySetting"+i+"(prepareFileNm"+i+", prepareFileType"+i+", prepareFileTime"+i+", prepareFileStreCours"+i+", prepareMakeType"+i+");\r\n");
+			    htmlPage.append("            }\r\n");
+			    htmlPage.append("        }\r\n");
+			    htmlPage.append("    }\r\n");
+			}
+			htmlPage.append("    function makeTypeRevers(makeType){\r\n");
+		    htmlPage.append("        if(makeType == 'A'){\r\n");
+		    htmlPage.append("            return 'B';\r\n");
+		    htmlPage.append("        } else {\r\n");
+		    htmlPage.append("            return 'A';\r\n");
+		    htmlPage.append("        }\r\n");
+		    htmlPage.append("    }\r\n");
+			htmlPage.append("</script>\r\n");			
 			//다음 시퀀스가 있는지 없는지 확인 후 setTime값으로 하기			
-			
 			if (!vo_info.getConNextSeq().equals("0") && !vo_info.getConNextSeq().equals("")){
 				
 				htmlPage.append("<script type='text/javascript'> \r\n");
@@ -1109,50 +1126,63 @@ public class ContentMutiManageController {
 			}
 			
 			htmlPage.append("<style>	\r\n");
-			htmlPage.append(" .container { position: relative; width: 100%; }	\r\n");
-			htmlPage.append(" .container video { float: left; }	\r\n");
+			htmlPage.append("    body{\r\n");
+			htmlPage.append("        margin : 0;\r\n");
+			htmlPage.append("        background-color : #000;\r\n");
+			htmlPage.append("    }\r\n");
+			
 			for (int i = 0 ; i < detailInfo.size() ; i++ ){
+				htmlPage.append("    .contentBox"+i+"{\r\n");
+				htmlPage.append("        position : fixed;\r\n");
+				htmlPage.append("        top : 0;\r\n");
+				if (i ==0){
+					htmlPage.append("        width: "+width0+"px; height: "+height0+"px;\r\n");	
+				} else {
+					htmlPage.append("        width: "+width1+"px; height: "+height1+"px;\r\n");
+					if(viewType == 1){
+						htmlPage.append("        left: "+mid+"px;\r\n");
+					} else if(viewType == 2){
+						htmlPage.append("        top: "+mid+"px;\r\n");
+					}
+				}
+				htmlPage.append("        float : left;\r\n");
+				htmlPage.append("        background-color : #000;\r\n");
+				htmlPage.append("    }\r\n");
 				
-				htmlPage.append("    #Video"+i+" {	\r\n");
-				if (i ==0){	  
-					/*htmlPage.append("    position: relative; top: "+top0+";	\r\n");*/
-					htmlPage.append("    width: "+width0+"px; height: auto ; \r\n");				
-					/*htmlPage.append("    float:left;               	\r\n");*/
-				}else {
-					/*htmlPage.append("    position: relative; top: "+top1+";	\r\n");*/					
-					htmlPage.append("    width: "+width1+"px; height: auto;	\r\n");					
-					/*htmlPage.append("    float:left;               	\r\n");*/
-				}
-				htmlPage.append("    }	\r\n");
-				htmlPage.append("    #content_show"+i+" {	\r\n");
-				if (i ==0){	  
-					htmlPage.append("    position: relative; top: "+top0+";	\r\n");
-					htmlPage.append("    width: "+width0+"px; height: auto ; z-index: 102;	\r\n");				
-					htmlPage.append("    float:left;               	\r\n");
-				}else {
-					htmlPage.append("    position: relative; top: "+top1+";	\r\n");					
-					htmlPage.append("    width: "+width1+"px; height: auto; z-index: 103;	\r\n");					
-					htmlPage.append("    float:left;               	\r\n");
-				}
-				htmlPage.append("    }               	\r\n");
+				
+				htmlPage.append("    .contentBox"+i+" video{\r\n");
+				if(viewType == 0){
+					htmlPage.append("        width: "+width0+"px; height: "+height0+"px;\r\n");
+					htmlPage.append("        min-width: "+width0+"px; min-height: "+height0+"px;\r\n");	
+				} else {
+					if (i == 0){
+						htmlPage.append("        width: "+width0+"px; height: "+height0+"px;\r\n");
+						htmlPage.append("        min-width: "+width0+"px; min-height: "+height0+"px;\r\n");	
+					} else {
+						htmlPage.append("        width: "+width1+"px; height: "+height1+"px;\r\n");
+						htmlPage.append("        min-width: "+width1+"px; min-height: "+height1+"px;\r\n");
+					}
+					htmlPage.append("        object-fit: fill;\r\n");	
+				}				
+				htmlPage.append("    }\r\n");
+				
+				
 			}
-			htmlPage.append(".clear { clear: both; }  \r\n");	
+			
 			htmlPage.append("</style>	\r\n");
 			htmlPage.append("</head>	\r\n");
-			htmlPage.append("<body style='margin:0;background:#000'>	\r\n");
-			htmlPage.append("   <iframe src='/upload/silence.mp3' allow='autoplay' id='setAudio' style='display:none'></iframe>  \r\n");	
+			htmlPage.append("<body>\r\n");
+			if (playGubun.equals("L")){
+				htmlPage.append("    <iframe src='./silence.mp3' allow='autoplay' id='setAudio' style='display:none'></iframe>  \r\n");
+			} else {
+				htmlPage.append("    <iframe src='/upload/silence.mp3' allow='autoplay' id='setAudio' style='display:none'></iframe>  \r\n");	
+			}
 		    for (int i = 0 ; i < detailInfo.size() ; i++ ){
-		    		// <iframe src="silence.mp3" allow="autoplay" id="audio" style="display:none"></iframe>
-		    		
-		    		htmlPage.append("   <input type='hidden' name='nowFileCnt"+i+"' id='nowFileCnt"+i+"'>	\r\n");
-		    		htmlPage.append("   <div id='content_show"+i+"'></div>  \r\n");	
-				    htmlPage.append(" ");
+		    		htmlPage.append("    <div id='content_show"+i+"a' class='contentBox"+i+"' style='z-index:200;'></div>\r\n");
+		    		htmlPage.append("    <div id='content_show"+i+"b' class='contentBox"+i+"' style='z-index:150;'></div>\r\n");
 		    }			
-		    
-			htmlPage.append("  </body>	\r\n");
+			htmlPage.append("</body>	\r\n");
 			htmlPage.append("</html>	\r\n");
-			
-			
 		}catch(Exception e){
 			htmlPage.append(" 페이지 애러:"+ e.toString());
 			e.printStackTrace();
