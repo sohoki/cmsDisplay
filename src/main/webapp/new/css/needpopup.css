@@ -129,12 +129,12 @@
 .pop_tit {
   margin-bottom: 5px;
 }
-#popSel.popSel2 {
+.popSel.popSel2 {
   width: 49% !important;
   float: left;
   margin-right: 1%;
 }
-#popSel {
+.popSel {
   background: url("../img/selectBack.png") 95% center no-repeat;
   padding: 6px 12px;
   width: 100%;
@@ -146,7 +146,7 @@
   appearance:none;
   font-weight: 300;
 }
-#popSel::-ms-expand{ display:none  } 
+.popSel::-ms-expand{ display:none  } 
 /*radio style*/
 input[type="radio"]:checked,
 input[type="radio"]:not(:checked) {
@@ -208,4 +208,14 @@ input[type="radio"]:checked + label:after {
   border-top: 1px solid #dcdcdc;
   padding: 15px 40px;
   text-align: right;
+}
+.needpopup_search_area{
+	float: left;
+}
+.needpopup_search_area p{
+	display: inline-block;
+    margin: 0px 18px;
+}
+.pop_search_input{
+	width:256px;
 }

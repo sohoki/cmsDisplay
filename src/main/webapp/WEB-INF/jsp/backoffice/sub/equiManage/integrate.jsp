@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="/new/css/jquery.treeview.css">  
     <script src="/new/js/jquery.min.js"></script>
     <script src="/new/js/jquery.treeview.js"></script>
+    <script src="/new/js/a10-emartcms-integrate.js"></script>
     <!--[if lte IE 8]>
     <script src="js/poly-checked.min.js"></script> 
     <![endif]-->
@@ -183,7 +184,7 @@
 	
 	function roleInCenterListCall(groupId){
 		// centerList
-		
+		$(".select_device_orderBtn").attr("style", "opacity:0;");
 		centerListSetting("1");
 		
 		$(".equipListBody").html("");
@@ -207,13 +208,11 @@
 			dataType : 'json',
 			success : function(result) {
 				if (result) {
-					console.log(result.centerList);
-					console.log(result.centerList.length);
+					// console.log(result.centerList);
 					var centerListAppend = "";
 					if(result.centerList.length != 0){
 						
 						var data = result.centerList;
-						console.log(data.length);
 						for(var i = 0; i < data.length; i++){
 							centerListAppend += "<li id='centerInfo_"+data[i].centerId+"' class='centerList' onclick='javascript:callEquipList(&#39;"+groupId+"&#39;, &#39;"+data[i].centerId+"&#39;)'>"+data[i].centerNm+"</li>";
 						}
@@ -231,13 +230,13 @@
 	}
 	
 	function callEquipList(groupId, centerId){
-		
+		$(".select_device_orderBtn").attr("style", "opacity:0;");
 		$(".equipListBody").html("");
 		$(".centerList.select").removeClass("select");
 		$("#centerInfo_"+centerId).addClass("select");
 		
 		$.ajax({
-			url : '/backoffice/sub/conManage/selectIntegrateEquipList.do',
+			url : '/backoffice/sub/equiManage/selectIntegrateEquipList.do',
 			type : 'POST',
 			data : {
 				'groupId'	: groupId,
@@ -249,7 +248,7 @@
 			dataType : 'json',
 			success : function(result) {
 				//if (result.) {
-					console.log(result.equipList);
+					// console.log(result.equipList);
 					
 					if(result.equipList.length > 0){
 						
@@ -312,10 +311,12 @@
 		$(".centerList.select").removeClass("select");
 		$("#centerInfo_"+centerId).addClass("select"); */
 		
+		$(".select_device_orderBtn").attr("style", "opacity:1;");
+		
 		$(".equipListSelect").removeClass("equipListSelect");
 		
 		$.ajax({
-			url : '/backoffice/sub/conManage/selectIntegrateEquipInfo.do',
+			url : '/backoffice/sub/equiManage/selectIntegrateEquipInfo.do',
 			type : 'POST',
 			data : {
 				'didId'	: id
@@ -503,8 +504,8 @@
                         <!--// 상단 메뉴-->
                         <div class="list_box01">
                             <div class="float-left">
-                                <a href="" class="top_btn">단말기 삭제</a>
-                                <a data-needpopup-show="#new_Equip" class="top_btn">단말기 등록</a>
+                                
+                                <a data-needpopup-show="#new_Equip" class="top_btn" onclick="equipRegist();">단말기 등록</a>
                                 <a href="" class="top_btn" title="선택 된 단말들을 한 그룹에 추가합니다.">그룹등록</a>
 								<a data-needpopup-show="#did_pop02" class="top_btn">스케줄 관리</a>
                         		<a href="" class="top_btn">화면구성</a>
@@ -550,8 +551,9 @@
                 <div class="box03-3">
                     <div class="list_box01 select_device_orderBtn">
                         <a href="" class="top_btn">수정</a>
-                        <a data-needpopup-show="#did_pop01" class="top_btn">장비통신 이력</a>
                         <a href="" class="top_btn">재부팅</a>
+                        <a data-needpopup-show="#did_pop01" class="top_btn">장비통신 이력</a>
+                        <a href="" class="top_btn">단말기 삭제</a>
                         <!-- <a href="" class="top_btn">원격지원</a> -->
                         <!-- <a href="" class="top_btn">메세지 전송</a> -->
                     </div>
@@ -633,41 +635,47 @@
     </div>
 
     <!--// 단말기등록pop-->
-    <div id='new_Equip' class="needpopup">  
-        <!-- popheader-->                        
-        <div class="popHead">
+    <div id='new_Equip' class="needpopup">                      
+        <!-- <div class="popHead">
             <h2>단말기 등록</h2>
         </div>
-        <!-- pop contents-->   
         <div class="popCon">
-            <!--// 팝업 필드박스-->
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">단말기명</p>
                     <input type="text" class="input_noti" placeholder="단말기명을 입력해주세요.">
                 </div>                
             </div>
-            <!--팝업 필드박스 //-->
             <div class="pop_box50">
                 <div class="padding15">
-                    <p class="pop_tit">부서명</p>
-                    <input type="text" class="input_noti" placeholder="부서명을 입력해주세요.">
+                    <p class="pop_tit">단말ID</p>
+                    <input type="text" class="input_noti" placeholder="자동생성 됩니다." disabled>
                 </div>                
             </div>
             <div class="pop_box50">
                 <div class="padding15">
-                    <p class="pop_tit">모니터 갯수</p>
+                    <p class="pop_tit">단말IP</p>
+                    <input type="text" class="input_noti" placeholder="자동생성 됩니다." disabled>
+                </div>                
+            </div>
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">단말MAC</p>
+                    <input type="text" class="input_noti" placeholder="자동생성 됩니다." disabled>
+                </div>                
+            </div>
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">IP형태</p>
                     <select id="popSel">
-                        <option value>선택하세요.</option>
-                        <option value="">1개</option>
-                        <option value="">2개</option>
-                        <option value="">3개</option>
-                        <option value="">4개</option>
-                        <option value="">5개</option>
+                        <option value="">유선고정</option>
+                        <option value="">무선고정</option>
+                        <option value="">유선유동</option>
+                        <option value="">무선유동</option>
                     </select>               
                 </div>                
             </div>
-            <div class="pop_box50">
+			<div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">OS타입</p>
                     <select id="popSel">
@@ -680,7 +688,25 @@
             </div>
             <div class="pop_box50">
                 <div class="padding15">
-                    <p class="pop_tit">시리얼포트 사용</p>
+                    <p class="pop_tit">관리부서</p>
+                    <select id="popSel">
+                        <option value>선택하세요.</option>
+                        <option value="">1개</option>
+                    </select>               
+                </div>                
+            </div>
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">관리점포 </p>
+                    <select id="popSel">
+                        <option value>선택하세요.</option>
+                        <option value="">1개</option>
+                    </select>               
+                </div>                
+            </div>
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">그룹정보</p>
                     <select id="popSel">
                         <option value>선택하세요.</option>
                         <option value="">사용</option>
@@ -690,7 +716,7 @@
             </div>
             <div class="pop_box50">
                 <div class="padding15">
-                    <p class="pop_tit">Com port</p>
+                    <p class="pop_tit">운영시간</p>
                     <select id="popSel">
                         <option value>선택하세요.</option>
                         <option value="">com01</option>
@@ -699,6 +725,45 @@
                 </div>                
             </div>
             <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">송출사항</p>
+                    <select id="popSel">
+                        <option value>일반</option>
+                        <option value="">미러</option>
+                        <option value="">보이스POP</option>
+                        <option value="">음원방송</option>
+                    </select>               
+                </div>                
+            </div>
+            <div class="pop_box50">
+                <div class="padding15">
+                    <p class="pop_tit">단말형태</p>
+                    <select id="popSel">
+                        <option value>선택하세요.</option>
+                        <option value="">가로</option>
+                        <option value="">세로</option>
+                        <option value="">보이스POP</option>
+                        <option value="">음원방송</option>
+                    </select>               
+                </div>                
+            </div>
+			<div class="pop_box50">
+                <div class="padding15">
+                    <div style="display: flow-root; margin-right: 4px;">
+	                    <p class="pop_tit" style="float:left;">단말해상도</p>
+	                    <p class="pop_tit" style="float:right;">직접입력</p>
+                    </div>
+                    <select id="popSel">
+                        <option value>선택하세요.</option>
+                        <option value="">1920*1080</option>
+                        <option value="">1080*1920</option>
+                    </select>               
+                </div>                
+            </div>
+            
+            
+            
+           <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">Agent ver</p>
                     <select id="popSel">
@@ -718,55 +783,18 @@
                     </select>               
                 </div>                
             </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">DID형태</p>
-                    <select id="popSel">
-                        <option value>선택하세요.</option>
-                        <option value="">가로</option>
-                        <option value="">세로</option>
-                    </select>               
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">기기타입</p>
-                    <select id="popSel">
-                        <option value>선택하세요.</option>
-                        <option value="">com01</option>
-                        <option value="">com02</option>
-                    </select>               
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">지원해상도</p>
-                    <select id="popSel">
-                        <option value>선택하세요.</option>
-                        <option value="">1920*1080</option>
-                        <option value="">1080*1920</option>
-                    </select>               
-                </div>                
-            </div>
+			
+
             <div class="pop_box50">
                 <div class="padding15">
                 	<div style="display: flow-root; margin-right: 4px;">
-	                    <p class="pop_tit" style="float:left;">사이즈</p>
+	                    <p class="pop_tit" style="float:left;">해상도를 위한 임시유지</p>
 	                    <p class="pop_tit" style="float:right;">직접입력</p>
                     </div>
                     <div>
 	                    <input type="text" class="input_noti input_noti2" placeholder="가로 사이즈 입력">        
 	                    <input type="text" class="input_noti input_noti2" placeholder="세로 사이즈 입력">
                     </div>             
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">고정IP여부</p>
-                    <input type="radio" name="pop_radio1" id="pop_radio1y">
-                    <label for="pop_radio1y">사용</label>
-                    <input type="radio" name="pop_radio1" id="pop_radio1n">
-                    <label for="pop_radio1n">사용안함 </label>
                 </div>                
             </div>
             <div class="pop_box50">
@@ -778,58 +806,11 @@
                     <label for="pop_radio2n">사용안함 </label>
                 </div>                
             </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">운영시작시간</p>
-                    <select id="popSel" class="popSel2">
-                        <option value>시간 선택</option>
-                        <option value="">09</option>
-                        <option value="">10</option>
-                    </select>    
-                    <select id="popSel" class="popSel2">
-                        <option value>분 선택</option>
-                        <option value="">10</option>
-                        <option value="">20</option>
-                    </select>          
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">운영종료시간</p>
-                    <select id="popSel" class="popSel2">
-                        <option value>시간 선택</option>
-                        <option value="">09</option>
-                        <option value="">10</option>
-                    </select>    
-                    <select id="popSel" class="popSel2">
-                        <option value>분 선택</option>
-                        <option value="">10</option>
-                        <option value="">20</option>
-                    </select>          
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">스크립트 유지시간 </p>
-                    <select id="popSel">
-                        <option value>선택하세요.</option>
-                        <option value="">1시간</option>
-                        <option value="">2시간</option>
-                    </select>               
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">시리얼연동스크립트</p>
-                    <input type="text" class="input_noti" placeholder="시리얼연동 스크립트 입력해주세요.">              
-                </div>                
-            </div>
-
             <div class="clearfix"></div>
         </div>
         <div class="pop_footer">
             <a href="" class="top_btn">단말기 등록</a>
-        </div>
+        </div> -->
     </div>
     <!-- 단말기등록pop //-->
 
@@ -947,7 +928,7 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">사이니지 그룹</p>
-                    <select id="popSel">
+                    <select class="popSel">
                         <option value>선택하세요.</option>
                         <option value="" selected>에이텐</option>
                         <option value="">에이텐</option>
@@ -960,7 +941,7 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">연동 콘텐츠 </p>
-                    <select id="popSel">
+                    <select class="popSel">
                         <option value>선택하세요.</option>
                         <option value="" selected>콘텐츠1</option>
                         <option value="">콘텐츠1</option>
@@ -1020,12 +1001,12 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">운영 시작시간</p>
-                    <select id="popSel" class="popSel2">
+                    <select class="popSel popSel2">
                         <option value>시간 선택</option>
                         <option value="">09</option>
                         <option value="">10</option>
                     </select>    
-                    <select id="popSel" class="popSel2">
+                    <select class="popSel popSel2">
                         <option value>분 선택</option>
                         <option value="">10</option>
                         <option value="">20</option>
@@ -1035,12 +1016,12 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">운영 종료시간</p>
-                    <select id="popSel" class="popSel2">
+                    <select class="popSel popSel2">
                         <option value>시간 선택</option>
                         <option value="">09</option>
                         <option value="">10</option>
                     </select>    
-                    <select id="popSel" class="popSel2">
+                    <select class="popSel popSel2">
                         <option value>분 선택</option>
                         <option value="">10</option>
                         <option value="">20</option>
@@ -1050,7 +1031,7 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">폰트 크기 </p>
-                    <select id="popSel">
+                    <select class="popSel">
                         <option value>선택하세요.</option>
                         <option value="">10</option>
                         <option value="">20</option>

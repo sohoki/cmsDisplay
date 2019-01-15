@@ -578,7 +578,6 @@ public class DidInfoManageController {
 		model.addAttribute("selectIpType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT003"));
 		model.addAttribute("selectModelType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT004"));
 		model.addAttribute("selectSwver", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT005"));
-		
 		model.addAttribute("selectOs", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT011"));
 		model.addAttribute("selectSerialUse", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT012"));
 		model.addAttribute("selectComPort", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT013"));
@@ -884,7 +883,7 @@ public class DidInfoManageController {
 	
 	
 	
-	@RequestMapping(value="/backoffice/sub/conManage/selectIntegrateEquipList.do")
+	@RequestMapping(value="/backoffice/sub/equiManage/selectIntegrateEquipList.do")
 	@ResponseBody
 	public ModelAndView selectIntegrateEquipList(HttpServletRequest request) throws Exception{
 		
@@ -909,7 +908,7 @@ public class DidInfoManageController {
 		return model;
 	}
 	
-	@RequestMapping(value="/backoffice/sub/conManage/selectIntegrateEquipInfo.do")
+	@RequestMapping(value="/backoffice/sub/equiManage/selectIntegrateEquipInfo.do")
 	@ResponseBody
 	public ModelAndView selectIntegrateEquipInfo(HttpServletRequest request) throws Exception{
 		
@@ -928,7 +927,81 @@ public class DidInfoManageController {
 			// 데이터를 점검 해달라는 내용을 삽입해야함
 			
 		}
-
 		return model;
 	}
+	
+	
+	@RequestMapping(value="/backoffice/sub/equiManage/selectEquipRegistComboData.do")
+	@ResponseBody
+	public ModelAndView selectEquipRegistComboData(HttpServletRequest request) throws Exception{
+		
+		DidInfoVO didInfoVO = new DidInfoVO();
+		ModelAndView model = new ModelAndView("jsonView");
+
+		GroupVo groupVo = new GroupVo();
+		LoginVO user = (LoginVO) request.getSession().getAttribute("LoginVO");
+		if (user != null ){
+			groupVo.setParentGroupId(user.getParentGroupId());	
+			groupVo.setGroupId(user.getGroupId());
+		} else {
+			groupVo.setParentGroupId("EMART_00000000000001");
+			groupVo.setGroupId("EMART_00000000000002");
+		}
+		
+		
+		String wantData = request.getParameter("selectWantData") == null ? "0" : request.getParameter("selectWantData");
+		
+		if(wantData.equals("0")){
+			
+		} else if(wantData.equals("basicInfo")) {
+			// IP형태  - EMT003
+			// OS타입 - EMT011 
+			// 송출사항 - EMT004
+			// 단말형태 - EMT001
+			// 단말해상도 - EMT002
+			// 부서정보
+			model.addObject("selectType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT001") ); // 
+			model.addObject("selectResolution", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT002"));
+			model.addObject("selectIpType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT003"));
+			model.addObject("selectModelType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT004"));
+			model.addObject("selectOs", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT011"));
+		} else if(wantData.equals("centerInfo")) {
+			// 점포정보
+			CenterInfoVO centerInfoVO = new CenterInfoVO();
+	        String cenSearchKeyword = request.getParameter("cenSearchKeyword") == null ? "" : request.getParameter("cenSearchKeyword");
+	        centerInfoVO.setSearchKeyword(cenSearchKeyword);
+			model.addObject("selectCenter", centerInfoManageService.selectCenterInfoManageCombo(centerInfoVO)); // 점포정보
+		} else if(wantData.equals("groupInfo")) {
+			
+		} else if(wantData.equals("")) {
+			
+		}
+		
+		model.addObject("selectRole", groupManagerService.selectGroupManageCombo(groupVo));
+		
+		
+        
+			
+		
+        
+	
+		return model;
+	}
+	
+	/*
+	 * 
+	 * model.addAttribute("selectCenter", centerInfoManageService.selectCenterInfoManageCombo(centerInfoVO));
+        model.addAttribute("selectType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT001") );
+		model.addAttribute("selectResolution", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT002"));
+		model.addAttribute("selectIpType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT003"));
+		model.addAttribute("selectModelType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT004"));
+		model.addAttribute("selectSwver", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT005"));
+		model.addAttribute("selectOs", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT011"));
+		model.addAttribute("selectSerialUse", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT012"));
+		model.addAttribute("selectComPort", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT013"));
+		model.addAttribute("selectMoniterCnt", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT014"));
+	 * */
+	
+	
+	
 }
