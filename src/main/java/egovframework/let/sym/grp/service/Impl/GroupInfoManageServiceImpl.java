@@ -50,6 +50,12 @@ public class GroupInfoManageServiceImpl extends EgovAbstractServiceImpl implemen
 		// TODO Auto-generated method stub
 		return groupInfoManagerMapper.selectGroupInfoManageListTotCnt_S(searchVO);
 	}
+	
+	@Override
+	public String selectLastInsertGroup() {
+		// TODO Auto-generated method stub
+		return groupInfoManagerMapper.selectLastInsertGroup();
+	}
 
 	@Override
 	public int insertGroupInfoManage(GroupInfo vo) {

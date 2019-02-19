@@ -272,13 +272,6 @@
      
      
      
-     
-     
-     
-     
-     
-     
-     
      <!-- integrate -->     
      
      
@@ -380,6 +373,8 @@
 				SELECT A.DID_ID as "didId", A.DID_NM as "didNm", A.DID_IPADDR as "didIpaddr", B.CENTER_NM as "centerNm", 
 				CASE A.DID_STTUS WHEN 'N' THEN 'OFF' ELSE 'ON' END AS didSttus, A.DID_USEYN as "didUseYn", 
 				EMARTCMS.fn_DetailCodeNm(A.DID_OS) as didOs, a.DID_MAC as didMac, DID_WIDTH as didWidth, DID_HEIGHT as didHeight,
+				(SELECT e.GROUP_NM FROM TB_GROUPDID d, TB_GROUP e WHERE d.group_code=e.GROUP_CODE AND d.DID_ID=a.DID_ID) AS groupNm, 
+				(SELECT e.GROUP_CODE FROM TB_GROUPDID d, TB_GROUP e WHERE d.group_code=e.GROUP_CODE AND d.DID_ID=a.DID_ID) AS groupCode,
 				(
 					SELECT COUNT(*) FROM TB_SCHEDULE 
 					<![CDATA[

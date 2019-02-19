@@ -44,6 +44,9 @@
        <if test="searchKeyword != ''">
 	   		AND CENTER_NM LIKE '%'|| #{searchKeyword} || '%'
        </if>
+       <if test="selectRoleCode != ''">
+			AND role_code LIKE '%'|| #{selectRoleCode} || '%'
+       </if>
        order by  CENTER_NM  asc
     </select>
     <select id="selectCenterInfoManageDetail"  resultType="CenterInfoVO">

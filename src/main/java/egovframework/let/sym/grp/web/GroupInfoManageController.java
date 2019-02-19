@@ -164,10 +164,8 @@ public class GroupInfoManageController {
 	public String insertGroupDid(@ModelAttribute("loginVO") LoginVO loginVO,
 			GroupDidInfo vo,
 			ModelMap model)throws Exception{
-	
-		
+
 		try{
-			
 		      int ret = 	groupDidInfoManageService.insertGroupInfoManage(vo);		      
 		      if (ret > 0 ) {		    	  
 		    	  model.addAttribute("status", "didInsertOK");
@@ -248,8 +246,6 @@ public class GroupInfoManageController {
 			
 		}					
 		return url;
-		
-	
 	}
 	
 	
@@ -262,6 +258,119 @@ public class GroupInfoManageController {
         groupInfoVO.setSearchKeyword(grpSearchKeyword);
         return model.addObject("resultMap", didgroupInfoManageService.selectGroupInfoManageCombo(groupInfoVO));
 		
+	}
+	
+	
+	
+	
+	// 2019-02-11 create
+	@RequestMapping ("/backoffice/sub/equiManage/groupListInfo.do")
+	@ResponseBody
+	public ModelAndView selectGroupListInfo(HttpServletRequest request) throws Exception {
+			      
+		ModelAndView model = new ModelAndView("jsonView");
+		GroupInfoVO searchVO = new GroupInfoVO();
+
+		String firstIndex = request.getParameter("firstIndex") == null ? "0" : request.getParameter("firstIndex");
+		String lastIndex = request.getParameter("lastIndex") == null ? "0" : request.getParameter("lastIndex");
+		String recordCountPerPage = request.getParameter("recordCountPerPage") == null ? "10" : request.getParameter("recordCountPerPage");
+		
+		String searchCondition = request.getParameter("searchCondition") == null ? "" : request.getParameter("searchCondition");
+		String searchKeyword = request.getParameter("searchKeyword") == null ? "" : request.getParameter("searchKeyword");
+		
+		
+		searchVO.setFirstIndex(Integer.parseInt(firstIndex));
+		searchVO.setLastIndex(Integer.parseInt(lastIndex));
+		searchVO.setRecordCountPerPage(Integer.parseInt(recordCountPerPage));
+		
+		searchVO.setSearchCondition(searchCondition);
+		searchVO.setSearchKeyword(searchKeyword);
+		
+		model.addObject("resultList", didgroupInfoManageService.selectGroupInfoManageListByPagination(searchVO));
+		
+		return model;
+	}
+	
+	
+	
+	@RequestMapping(value="/backoffice/sub/equiManage/modifyGroupInfo.do")
+	@ResponseBody
+	public String modifyGroupInfo( HttpServletRequest request) throws Exception{
+		
+		String result = "";
+		
+		GroupInfo groupInfo = new GroupInfo();
+        
+		
+		String work = request.getParameter("work") == null ? "" : request.getParameter("work");
+		String groupNm = request.getParameter("new_group_nm") == null ? "" : request.getParameter("new_group_nm");
+        String groupCode = request.getParameter("new_group_code") == null ? "" : request.getParameter("new_group_code");
+        try{
+        	if(work != null && !work.equals("")){
+        		int ret  = 0;
+        		if(groupNm != null && !groupNm.equals("")){
+        			groupInfo.setGroupNm(groupNm);
+        			groupInfo.setGroupCode(groupCode);
+        			if (work.equals("INSERT")){
+        				groupCode = didgroupInfoManageService.selectLastInsertGroup();
+        				groupInfo.setGroupCode(groupCode);
+        				ret = didgroupInfoManageService.insertGroupInfoManage(groupInfo)  ;		
+        			}else if(work.equals("UPDATE")) {
+        				// 1. UPDATE의 경우에는  groupCode와  groupNm 둘 다 필수
+        				 // ret = didgroupInfoManageService.updateGroupInfoManage(groupInfo);
+        			}			
+        			if (ret > 0){
+        				// 성공
+        				result = work+"|SUCCESS|"+groupCode;
+        			}else {
+        				// 실패
+        				result = work+"|FAIL"+groupCode;
+        			}	
+        		} else {
+        			// 그룹명 입력되지 않음
+        			result = work+"|GROUPNM|EMPTY";
+        		}
+        	} else {
+        		// 요청작업 명시되지 않음
+        		result = "WORK|EMPTY";
+        	}
+		}catch (Exception e){
+			result = "ERROR";
+			e.printStackTrace();
+		}
+        
+        return result;
+		
+	}
+	
+	@RequestMapping ("/backoffice/sub/equiManage/insertGroupInDid.do")
+	@ResponseBody
+	public String insertGroupInDid(HttpServletRequest request)throws Exception{
+		String result = "";
+		try{
+			
+			GroupDidInfoVO vo = new GroupDidInfoVO();
+			String groupCode = request.getParameter("groupCode") == null ? "" : request.getParameter("groupCode");
+			String addDeviceId = request.getParameter("addDeviceId") == null ? "" : request.getParameter("addDeviceId");
+	        
+			String[] addDevice = addDeviceId.split(",");
+			vo.setGroupCode(groupCode);
+			for(int i = 0; i < addDevice.length; i++){
+				System.out.println("추가하고자 하는 DEVICE ID : " + addDevice[i]);
+				vo.setDidId(addDevice[i]);
+				if(i != 0){
+					result += ",";
+				}
+				if(groupDidInfoManageService.insertGroupInfoManage(vo) > 0){
+					result += addDevice[i]+"|SUCCESS";
+				} else {
+					result += addDevice[i]+"|FAIL";
+				}
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}				
+		return result;
 	}
 	
 	

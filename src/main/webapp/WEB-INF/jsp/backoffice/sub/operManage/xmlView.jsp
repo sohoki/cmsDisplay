@@ -147,7 +147,7 @@
   	      }else {
   	           url = "/backoffice/sub/operManage/jsonAuthReq.do?xmlSeq="+code1;
   		  }
-            window.open(url,"xml전문확인", 'width=600,height=860,top=100,left=650,scrollbars=auto')	        	   
+            window.open(url,"xml전문확인", 'width=600,height=860,top=100,left=650,scrollbars=auto');        	   
        }
     </script>
 </body>

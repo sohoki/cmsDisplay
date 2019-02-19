@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="/new/css/jquery.treeview.css">  
     <script src="/new/js/jquery.min.js"></script>
     <script src="/new/js/jquery.treeview.js"></script>
+    <script src="/js/aten-common.js"></script>
     <script src="/new/js/a10-emartcms-integrate.js"></script>
     <!--[if lte IE 8]>
     <script src="js/poly-checked.min.js"></script> 
@@ -45,6 +46,8 @@
 	var loginAuthorCode;
 	var loginAuthorType;
 	var nowViewSystemType;
+	
+	var clickGroupId;
 	
 	$(document).ready(function(){
 		/* 페이지 최초 호출 간 작업 사항 순서 절대 수정금지 */
@@ -75,8 +78,9 @@
 		
 		// select_device_orderBtn  select_device_info   device_select_before
 		
-		$(".select_device_orderBtn").attr("style", "opacity:0;");
-		
+		// $(".select_device_orderBtn").attr("style", "opacity:0;");
+		$(".select_device_orderBtn").hide();
+		$(".select_device_info").css("margin-top", "48px");
 		$("#selectEquipNm").text("단말기를 선택해주세요.");
 		
 		/* 페이지 최초 호출 간 작업 사항 종료 */
@@ -118,6 +122,7 @@
 	
 	
 	function roleInfoListCall(groupId){
+		
 		if(nowViewSystemType == ""){
 			nowViewSystemType = "SIGNAGE";
 		}
@@ -183,8 +188,10 @@
 	}
 	
 	function roleInCenterListCall(groupId){
-		// centerList
-		$(".select_device_orderBtn").attr("style", "opacity:0;");
+		clickGroupId = groupId;
+		// $(".select_device_orderBtn").attr("style", "opacity:0;");
+		$(".select_device_orderBtn").hide();
+		$(".select_device_info").css("margin-top", "48px");
 		centerListSetting("1");
 		
 		$(".equipListBody").html("");
@@ -230,10 +237,15 @@
 	}
 	
 	function callEquipList(groupId, centerId){
-		$(".select_device_orderBtn").attr("style", "opacity:0;");
+		// $(".select_device_orderBtn").attr("style", "opacity:0;");
+		$(".select_device_orderBtn").hide();
+		$(".select_device_info").css("margin-top", "48px");
 		$(".equipListBody").html("");
 		$(".centerList.select").removeClass("select");
 		$("#centerInfo_"+centerId).addClass("select");
+		
+		select_groupId = groupId;
+		select_centerId = centerId;
 		
 		$.ajax({
 			url : '/backoffice/sub/equiManage/selectIntegrateEquipList.do',
@@ -247,54 +259,57 @@
 			},
 			dataType : 'json',
 			success : function(result) {
-				//if (result.) {
-					// console.log(result.equipList);
+				if(result.equipList.length > 0){
+					// console.log(result.equipList);	
+					$(".roleGroupList.select").removeClass("select");
+					$("#roleGroupInfo_"+groupId).addClass("select");
 					
-					if(result.equipList.length > 0){
+					
+					var equipListAppend = "";
+					var deviceGroupNm = "";
+					for(var i = 0; i < result.equipList.length; i++){
 						
-						$(".roleGroupList.select").removeClass("select");
-						$("#roleGroupInfo_"+groupId).addClass("select");
-						
-						
-						var equipListAppend = "";
-						for(var i = 0; i < result.equipList.length; i++){
-							
-							var osType = "";
-							var onOffStatus = "";
-							var useStatus = "";
-							switch(result.equipList[i].didOs){
-								case "안드로이드"	: osType = '<span class="androidIcon"></span>'; break;
-								case "윈도우" 	: osType = '<span class="windowsIcon"></span>'; break;
-								case "IOS"		: osType = '<span class="iosIcon"></span>'; break;
-								default 		: osType = '<span class="androidIcon"></span>'; break;
-							}
-							switch(result.equipList[i].didSttus){
-								case "ON"	: onOffStatus = '<span class="onIcon"></span>'; break;
-								case "OFF"	: onOffStatus = '<span class="offIcon"></span>'; break;
-								default 	: onOffStatus = '<span class="offIcon"></span>'; break;
-							}
-							switch(result.equipList[i].didUseYn){
-								case "Y"	: useStatus = '<span class="onIcon"></span>'; break;
-								case "N"	: useStatus = '<span class="offIcon"></span>'; break;
-								default 	: useStatus = '<span class="offIcon"></span>'; break;
-							}
-							
-							
-							equipListAppend += '<tr class="equipList list_'+result.equipList[i].didId+'">';
-							equipListAppend += '<td><input type="checkbox" id="equipChk_'+i+'" class="equipChkList"><label for="equipChk_'+i+'"></label></td>';
-							equipListAppend += '<td>'+result.equipList[i].didId+'</td>';
-							equipListAppend += '<td onclick="javascript:equipDetailCall(&#39;'+result.equipList[i].didId+'&#39;);">'+result.equipList[i].didNm+'</td>';
-							equipListAppend += '<td>'+result.equipList[i].schCnt+'개</td>';
-							equipListAppend += '<td>'+onOffStatus+'</td>';
-							equipListAppend += '<td>'+osType+'</td>';
-							equipListAppend += '<td>'+useStatus+'</td>';
-							equipListAppend += '<td>'+result.equipList[i].didWidth+'*'+result.equipList[i].didHeight+'</td>';        
-							equipListAppend += "</tr>";
+						var osType = "";
+						var onOffStatus = "";
+						var useStatus = "";
+						switch(result.equipList[i].didOs){
+							case "안드로이드"	: osType = '<span class="androidIcon"></span>'; break;
+							case "윈도우" 	: osType = '<span class="windowsIcon"></span>'; break;
+							case "IOS"		: osType = '<span class="iosIcon"></span>'; break;
+							default 		: osType = '<span class="androidIcon"></span>'; break;
 						}
-						$(".equipListBody").html(equipListAppend);
+						switch(result.equipList[i].didSttus){
+							case "ON"	: onOffStatus = '<span class="onIcon"></span>'; break;
+							case "OFF"	: onOffStatus = '<span class="offIcon"></span>'; break;
+							default 	: onOffStatus = '<span class="offIcon"></span>'; break;
+						}
+						switch(result.equipList[i].didUseYn){
+							case "Y"	: useStatus = '<span class="onIcon"></span>'; break;
+							case "N"	: useStatus = '<span class="offIcon"></span>'; break;
+							default 	: useStatus = '<span class="offIcon"></span>'; break;
+						}
+						
+						deviceGroupNm = "";
+						// console.log(result.equipList[i].groupNm);
+						if(result.equipList[i].groupNm == null){
+							deviceGroupNm = "<td>-</<td>";
+						} else {
+							deviceGroupNm = "<td class='GROUPEXIST_"+result.equipList[i].didId+"'>"+result.equipList[i].groupNm+"</td>";
+						}
+						
+						equipListAppend += '<tr class="equipList list_'+result.equipList[i].didId+'">';
+						equipListAppend += '<td><input type="checkbox" id="equipChk_'+result.equipList[i].didId+'" name="equip_chk_info" class="equipChkList"><label for="equipChk_'+result.equipList[i].didId+'"></label></td>';
+						equipListAppend += '<td onclick="javascript:equipDetailCall(&#39;'+result.equipList[i].didId+'&#39;);"><span style="float:left; padding-left:8px;">'+result.equipList[i].didNm+'('+result.equipList[i].didId+')</span></td>';
+						equipListAppend += deviceGroupNm;
+						equipListAppend += '<td>'+result.equipList[i].schCnt+'개</td>';
+						equipListAppend += '<td>'+result.equipList[i].didWidth+'*'+result.equipList[i].didHeight+'</td>';
+						equipListAppend += '<td>'+onOffStatus+'</td>';
+						equipListAppend += '<td>'+useStatus+'</td>';
+						equipListAppend += '<td>'+osType+'</td>';
+						equipListAppend += "</tr>";
 					}
-
-				//}
+					$(".equipListBody").html(equipListAppend);
+				}
 			},
 			error : function(e) {
 				console.log("fail");
@@ -307,11 +322,15 @@
 	
 	function equipDetailCall(id){
 		
+		device_select_getId = id;
+		
 		/* $(".equipListBody").html("");
 		$(".centerList.select").removeClass("select");
 		$("#centerInfo_"+centerId).addClass("select"); */
 		
-		$(".select_device_orderBtn").attr("style", "opacity:1;");
+		// $(".select_device_orderBtn").attr("style", "opacity:1;");
+		$(".select_device_orderBtn").show();
+		$(".select_device_info").css("margin-top", "0px");
 		
 		$(".equipListSelect").removeClass("equipListSelect");
 		
@@ -326,12 +345,17 @@
 				
 				$(".list_"+id).addClass("equipListSelect");
 				
-				console.log(result);	
+				// console.log(result);	
 				
 				if(result.equipInfo.didId != ""){
 					$("#selectEquipId").text(result.equipInfo.didId);
 					$("#selectEquipNm").text(result.equipInfo.didNm);
-					$("#selectEquipGroupNm").text(result.equipInfo.groupNm);
+					if(result.equipInfo.groupNm == null){
+						$("#selectEquipGroupNm").html('<a onclick="mainListAreaFadeIn(\'grp\', \'check\', \'I\');" class="top_btn" style="padding:3px 7px; margin:0px;">그룹등록</a>');
+					} else {
+						$("#selectEquipGroupNm").html('<a onclick="mainListAreaFadeIn(\'grp\', \'check\', \'U\');" style="border-bottom: 1px solid #777; cursor: pointer;">'+result.equipInfo.groupNm+'</a>');
+					}
+					
 					$("#selectEquipIp").text(result.equipInfo.didIpaddr);
 					$("#selectEquipMac").text(result.equipInfo.didMac);
 					$("#selectEquipIpType").text(result.equipInfo.didIptype);
@@ -340,7 +364,12 @@
 					$("#selectEquipH").text(result.equipInfo.didHeight);
 					$("#selectEquipModelType").text(result.equipInfo.didModelType);
 					$("#selectEquipRuntime").text(result.equipInfo.didStartTime+"~"+result.equipInfo.didEndTime);
-					$("#selectEquipLastconn").text(result.equipInfo.didEndContime);
+					if(result.equipInfo.didEndContime == null){
+						$("#selectEquipLastconn").text("-");
+					} else {
+						$("#selectEquipLastconn").text(result.equipInfo.didEndContime);
+					}
+					
 					
 					var remarkTxt = "";
 					if(!result.equipInfo.didRemark){
@@ -425,6 +454,17 @@
 		    background: #dc2c33;
 		    border-bottom: none !important;
 		}
+		.groupBasicList{
+			cursor: pointer;
+		}
+		.groupBasicListSelect{
+			color: #FF0000;
+	    	background-color: #fafbfc;
+		}
+		.change_view_contents_area{
+		    height: 745px;
+    		overflow-y: auto;
+		}
 	</style>
 </head>
 <body>
@@ -501,15 +541,27 @@
                 <!--//통합관리 list-->
                 <div class="box03-2">
                     <div class="padding30">
+                    	<!-- 변동형 정보 표출  -->
+	                    <div class="change_view_area">
+							<div class="list_box01 change_view_btn_area">
+								<span class="change_view_info"></span>
+								<a data-needpopup-show="#new_group_add" class="top_btn" onclick='newGroupAdd()'>그룹 생성</a>
+								<a onclick="mainListAreaFadeIn('close', '', '');" class="top_btn change_view_close">닫기</a>
+								<div class="clearfix"></div>
+							</div>
+							<div class="list01 change_view_contents_area">
+								<table class="list01 change_view_list_area">
+								</table>
+							</div>	
+						</div>
                         <!--// 상단 메뉴-->
-                        <div class="list_box01">
+                        <div class="list_box01 basicBox">
                             <div class="float-left">
-                                
                                 <a data-needpopup-show="#new_Equip" class="top_btn" onclick="equipRegist();">단말기 등록</a>
-                                <a href="" class="top_btn" title="선택 된 단말들을 한 그룹에 추가합니다.">그룹등록</a>
 								<a data-needpopup-show="#did_pop02" class="top_btn">스케줄 관리</a>
                         		<a href="" class="top_btn">화면구성</a>
                                 <a data-needpopup-show="#did_pop03" class="top_btn">메세지전송</a>
+                                <a class="top_btn" id="device_groupAddBtn" onclick="groupAdminDoAction()" value="0" title="선택 된 단말들을 한 그룹에 추가합니다.">그룹관리</a>
                             </div>
                             <div class="float-right">
                                 <select id="searchSel">
@@ -523,20 +575,20 @@
                             <div class="clearfix"></div>
                         </div>
                         <!--// 단말기리스트-->
-                        <table class="list01">
+                        <table class="list01  basicBox">
                             <thead>
                                 <tr>
                                     <th>
-                                        <input type="checkbox" id="did_chk1">
-                                        <label for="did_chk1"></label>
+                                        <input type="checkbox" id="equip_allChk" name="equip_allChk" >
+                                        <label for="equip_allChk"></label>
                                     </th>
-                                    <th>단말기ID</th>
-                                    <th>단말기명</th>
-                                    <th>스케줄현황</th>
-                                    <th>네트워크</th>
-                                    <th>OS버전</th>
-                                    <th>사용현황</th>
+                                    <th style="width: 320px;">단말기명(단말기ID)</th>
+                                    <th>그룹정보</th>
+                                    <th>연동스케줄</th>
                                     <th>해상도</th>
+                                    <th>네트워크</th>
+                                    <th>사용현황</th>
+                                    <th>OS버전</th>
                                 </tr>
                             </thead>
                             <tbody class="equipListBody">
@@ -553,7 +605,7 @@
                         <a href="" class="top_btn">수정</a>
                         <a href="" class="top_btn">재부팅</a>
                         <a data-needpopup-show="#did_pop01" class="top_btn">장비통신 이력</a>
-                        <a href="" class="top_btn">단말기 삭제</a>
+                        <a id="device_deleteBtn" class="top_btn">단말기 삭제</a>
                         <!-- <a href="" class="top_btn">원격지원</a> -->
                         <!-- <a href="" class="top_btn">메세지 전송</a> -->
                     </div>
@@ -635,182 +687,7 @@
     </div>
 
     <!--// 단말기등록pop-->
-    <div id='new_Equip' class="needpopup">                      
-        <!-- <div class="popHead">
-            <h2>단말기 등록</h2>
-        </div>
-        <div class="popCon">
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">단말기명</p>
-                    <input type="text" class="input_noti" placeholder="단말기명을 입력해주세요.">
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">단말ID</p>
-                    <input type="text" class="input_noti" placeholder="자동생성 됩니다." disabled>
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">단말IP</p>
-                    <input type="text" class="input_noti" placeholder="자동생성 됩니다." disabled>
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">단말MAC</p>
-                    <input type="text" class="input_noti" placeholder="자동생성 됩니다." disabled>
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">IP형태</p>
-                    <select id="popSel">
-                        <option value="">유선고정</option>
-                        <option value="">무선고정</option>
-                        <option value="">유선유동</option>
-                        <option value="">무선유동</option>
-                    </select>               
-                </div>                
-            </div>
-			<div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">OS타입</p>
-                    <select id="popSel">
-                        <option value>선택하세요.</option>
-                        <option value="">안드로이드</option>
-                        <option value="">윈도우</option>
-                        <option value="">IOS</option>
-                    </select>               
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">관리부서</p>
-                    <select id="popSel">
-                        <option value>선택하세요.</option>
-                        <option value="">1개</option>
-                    </select>               
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">관리점포 </p>
-                    <select id="popSel">
-                        <option value>선택하세요.</option>
-                        <option value="">1개</option>
-                    </select>               
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">그룹정보</p>
-                    <select id="popSel">
-                        <option value>선택하세요.</option>
-                        <option value="">사용</option>
-                        <option value="">사용안함</option>
-                    </select>               
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">운영시간</p>
-                    <select id="popSel">
-                        <option value>선택하세요.</option>
-                        <option value="">com01</option>
-                        <option value="">com02</option>
-                    </select>               
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">송출사항</p>
-                    <select id="popSel">
-                        <option value>일반</option>
-                        <option value="">미러</option>
-                        <option value="">보이스POP</option>
-                        <option value="">음원방송</option>
-                    </select>               
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">단말형태</p>
-                    <select id="popSel">
-                        <option value>선택하세요.</option>
-                        <option value="">가로</option>
-                        <option value="">세로</option>
-                        <option value="">보이스POP</option>
-                        <option value="">음원방송</option>
-                    </select>               
-                </div>                
-            </div>
-			<div class="pop_box50">
-                <div class="padding15">
-                    <div style="display: flow-root; margin-right: 4px;">
-	                    <p class="pop_tit" style="float:left;">단말해상도</p>
-	                    <p class="pop_tit" style="float:right;">직접입력</p>
-                    </div>
-                    <select id="popSel">
-                        <option value>선택하세요.</option>
-                        <option value="">1920*1080</option>
-                        <option value="">1080*1920</option>
-                    </select>               
-                </div>                
-            </div>
-            
-            
-            
-           <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">Agent ver</p>
-                    <select id="popSel">
-                        <option value>선택하세요.</option>
-                        <option value="">sw0.9</option>
-                        <option value="">sw1.0</option>
-                    </select>               
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">설치지점</p>
-                    <select id="popSel">
-                        <option value>선택하세요.</option>
-                        <option value="">[음원]가든파이브</option>
-                        <option value="">[음원]가양</option>
-                    </select>               
-                </div>                
-            </div>
-			
-
-            <div class="pop_box50">
-                <div class="padding15">
-                	<div style="display: flow-root; margin-right: 4px;">
-	                    <p class="pop_tit" style="float:left;">해상도를 위한 임시유지</p>
-	                    <p class="pop_tit" style="float:right;">직접입력</p>
-                    </div>
-                    <div>
-	                    <input type="text" class="input_noti input_noti2" placeholder="가로 사이즈 입력">        
-	                    <input type="text" class="input_noti input_noti2" placeholder="세로 사이즈 입력">
-                    </div>             
-                </div>                
-            </div>
-            <div class="pop_box50">
-                <div class="padding15">
-                    <p class="pop_tit">사용유무</p>
-                    <input type="radio" name="pop_radio2" id="pop_radio2y">
-                    <label for="pop_radio2y">사용</label>
-                    <input type="radio" name="pop_radio2" id="pop_radio2n">
-                    <label for="pop_radio2n">사용안함 </label>
-                </div>                
-            </div>
-            <div class="clearfix"></div>
-        </div>
-        <div class="pop_footer">
-            <a href="" class="top_btn">단말기 등록</a>
-        </div> -->
+    <div id='new_Equip' class="needpopup">
     </div>
     <!-- 단말기등록pop //-->
 
@@ -1093,6 +970,9 @@
         </div>
     </div>
     <!-- 비고 등록 POP :: FINISH -->
+    
+    <div id='new_group_add' class="needpopup">
+    </div>
 
     <!--popup js-->
     <script src="/new/js/needpopup.js"></script> 

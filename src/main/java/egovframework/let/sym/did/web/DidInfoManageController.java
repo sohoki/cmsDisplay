@@ -948,12 +948,12 @@ public class DidInfoManageController {
 			groupVo.setGroupId("EMART_00000000000002");
 		}
 		
+		String callType = request.getParameter("callType") == null ? "0" : request.getParameter("callType");
 		
-		String wantData = request.getParameter("selectWantData") == null ? "0" : request.getParameter("selectWantData");
-		
-		if(wantData.equals("0")){
+		if(callType.equals("0")){
+			// 요청사항 없음, 에러, 재확인 요청
 			
-		} else if(wantData.equals("basicInfo")) {
+		} else if(callType.equals("basicInfo")) {
 			// IP형태  - EMT003
 			// OS타입 - EMT011 
 			// 송출사항 - EMT004
@@ -965,19 +965,21 @@ public class DidInfoManageController {
 			model.addObject("selectIpType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT003"));
 			model.addObject("selectModelType", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT004"));
 			model.addObject("selectOs", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT011"));
-		} else if(wantData.equals("centerInfo")) {
+			model.addObject("selectRole", groupManagerService.selectGroupManageCombo(groupVo));
+		} else if(callType.equals("centerInfo")) {
 			// 점포정보
 			CenterInfoVO centerInfoVO = new CenterInfoVO();
-	        String cenSearchKeyword = request.getParameter("cenSearchKeyword") == null ? "" : request.getParameter("cenSearchKeyword");
-	        centerInfoVO.setSearchKeyword(cenSearchKeyword);
+	        String selectRoleCode = request.getParameter("callDetail") == null ? "" : request.getParameter("callDetail");
+	        centerInfoVO.setSearchKeyword("");
+	        centerInfoVO.setSelectRoleCode(selectRoleCode);
 			model.addObject("selectCenter", centerInfoManageService.selectCenterInfoManageCombo(centerInfoVO)); // 점포정보
-		} else if(wantData.equals("groupInfo")) {
+		} else if(callType.equals("groupInfo")) {
 			
-		} else if(wantData.equals("")) {
+		} else if(callType.equals("")) {
 			
 		}
 		
-		model.addObject("selectRole", groupManagerService.selectGroupManageCombo(groupVo));
+		
 		
 		
         
@@ -986,6 +988,140 @@ public class DidInfoManageController {
         
 	
 		return model;
+	}
+	
+	
+	
+	@RequestMapping(value="/backoffice/sub/equiManage/modifyEquipDetail.do")
+	@ResponseBody
+	public String modifyEquipDetail(HttpServletRequest request) throws Exception{
+		
+		DidInfoVO didInfoVO = new DidInfoVO();
+		
+		String result = "FAIL";
+		
+		String work = request.getParameter("work") != null ? request.getParameter("work") : "";
+		
+		
+		
+		LOGGER.debug("incheck 1 : " + work);
+		LOGGER.debug("incheck 1-2 : " + request.getRequestURI());
+		LOGGER.debug("incheck 1-3 : " + request.getRequestURL());
+		LOGGER.debug("incheck 1-4 : " + request.getParameterMap().size());
+		LOGGER.debug("incheck 1-5 : " + request.getParameterMap().toString());
+		
+		// 요청 작업사항과 단말ID값이 정상적으로 존재시 진행
+		try{
+			if(work != null && !work.equals("")){
+				LOGGER.debug("incheck 2");
+				if (work.equals("insert")){
+					LOGGER.debug("incheck 3-1");
+					String centerId = request.getParameter("equip_regist_center") != null ? request.getParameter("equip_regist_center") : "";
+					String didNm = request.getParameter("equip_regist_nm") != null ? request.getParameter("equip_regist_nm") : "";
+					String didIptype = request.getParameter("equip_regist_iptype") != null ? request.getParameter("equip_regist_iptype") : "";
+					String didOs = request.getParameter("equip_regist_os") != null ? request.getParameter("equip_regist_os") : "";
+					String didRoleId = request.getParameter("equip_regist_role") != null ? request.getParameter("equip_regist_role") : "";
+					String didGroupId = request.getParameter("equip_regist_group") != null ? request.getParameter("equip_regist_group") : "";
+					String didOpenTime = request.getParameter("equip_regist_openTime") != null ? request.getParameter("equip_regist_openTime") : "";
+					String didCloseTime = request.getParameter("equip_regist_closeTime") != null ? request.getParameter("equip_regist_closeTime") : "";
+					String didSystemType = request.getParameter("equip_regist_systemType") != null ? request.getParameter("equip_regist_systemType") : "";
+					String didDeviceType = request.getParameter("equip_regist_deviceType") != null ? request.getParameter("equip_regist_deviceType") : "";
+					String didWidth = request.getParameter("equip_regist_resolution_w_width") != null ? request.getParameter("equip_regist_resolution_w_width") : "";
+					String didHeight = request.getParameter("equip_regist_resolution_w_height") != null ? request.getParameter("equip_regist_resolution_w_height") : "";
+					String didResolution = request.getParameter("equip_regist_resolution") != null ? request.getParameter("equip_regist_resolution") : "";
+					String didUseYn = request.getParameter("equip_regist_use") != null ? request.getParameter("equip_regist_use") : "";
+					
+					// 송출사항 : systemType
+					// 단말형태 : deviceType
+					
+					didInfoVO.setCenterId(centerId);
+					didInfoVO.setDidNm(didNm);
+					didInfoVO.setDidIptype(didIptype);
+					didInfoVO.setDidOs(didOs);
+					didInfoVO.setRoleCode(didRoleId);
+					didInfoVO.setGroupId(didGroupId);
+					didInfoVO.setDidStartTime(didOpenTime);
+					didInfoVO.setDidEndTime(didCloseTime);
+					didInfoVO.setDidModelType(didSystemType);
+					didInfoVO.setDidType(didDeviceType);
+					didInfoVO.setDidWidth(didWidth);
+					didInfoVO.setDidHeight(didHeight);
+					didInfoVO.setDidResolution(didResolution);
+					if(didUseYn.equals("on")){
+						didInfoVO.setDidUseYn("Y");
+					} else {
+						didInfoVO.setDidUseYn("N");
+					}
+					didInfoVO.setDidSwver("DIDSW02");
+					
+					if(centerId != null && !centerId.equals("")){
+						LOGGER.debug("incheck 3-2 : " + didNm + ", " + didUseYn);
+						String insertDid = didInfoManageService.selectLastInsertDid(didInfoVO.getCenterId());
+						
+						
+						
+						// LOGGER.info((new StringBuilder("insert try get didid : ")).append(insertDid).toString());
+		                
+						didInfoVO.setDidId(insertDid);
+		                int ret = didInfoManageService.insertDidInfoManage(didInfoVO);
+		                
+		                // LOGGER.info((new StringBuilder("insert try resultValue : ")).append(ret).toString());
+		               
+		                if(ret > 0){
+		                	LOGGER.debug("incheck 3-4");
+		                	 if(didInfoVO.getGroupId() != null && !didInfoVO.getGroupId().equals("")){
+		                		 LOGGER.debug("incheck 3-5 ? ");
+		                         // LOGGER.info((new StringBuilder("insert try group info : ")).append(vo.getGroupId()).toString());
+		                         GroupDidInfo groupDidInfo = new GroupDidInfo();
+		                         groupDidInfo.setDidId(didInfoVO.getDidId());
+		                         groupDidInfo.setGroupCode(didInfoVO.getGroupId());
+		                         if(groupDidInfoManageService.insertGroupInfoManage(groupDidInfo) > 0){
+		                             LOGGER.info("DID insert with Group info");
+		                         } else {
+		                             LOGGER.info("DID insert FAIL");
+		                         }
+		                     } else {
+		                    	 result = "SUCCESS";
+		                     }
+		                } else {
+		                	LOGGER.info("DID insert with Group info");
+		                	result = "FAIL";
+		                }
+					} else {
+						LOGGER.info("DID insert with CENTER_ID EMPTY !");
+						result = "FAIL";
+					}
+				} else {
+					String didId = request.getParameter("didId") != null ? request.getParameter("didId") : "";
+					didInfoVO.setDidId(didId);
+					if(work.equals("modify")){
+						if(didId != null && !didId.equals("")){
+							result = "MODIFY";
+						}
+					} else if (work.equals("delete")){
+						if(didId != null && !didId.equals("")){
+							int ret = didInfoManageService.deleteDidInfoManage(didInfoVO.getDidId()) ;		      
+							if (ret > 0 ) {
+								result = "SUCCESS";
+							}else {
+								result = "FAIL";
+							}	
+						}
+					} else {
+						LOGGER.info("Request work non insert & non data EMPTY !");
+						result = "FAIL";
+					}
+				}
+			} else {
+				LOGGER.info("Request work info EMPTY !");
+				result = "FAIL";
+			}
+		}catch (Exception e){
+			result = "FAIL";
+			LOGGER.info("modifyEquipDetail - Error, " + e.toString());
+			e.printStackTrace();
+		}				
+		return result;
 	}
 	
 	/*

@@ -5,7 +5,8 @@
 		 	SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
 		    select  A.GROUP_CODE as "groupCode", 
 		              A.GROUP_NM as "groupNm", 
-		              A.GROUP_USEYN as "groupUseYn"
+		              A.GROUP_USEYN as "groupUseYn",
+		              (select count(*) from TB_GROUPDID b where a.GROUP_CODE = b.GROUP_CODE) AS did_CNT
             from TB_GROUP a     		              
 		    WHERE 1=1		        
 		        <if test="searchKeyword != ''">
@@ -18,7 +19,7 @@
 							</otherwise>
 						</choose>
 				</if>		        		     
-		        ORDER BY a.GROUP_NM  ASC
+		        ORDER BY a.GROUP_REGDATE DESC
 	        ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}         		 	    
      </select>
     <select id="selectGroupInfoManageCombo" resultType="GroupInfoVO">
@@ -53,9 +54,14 @@
 						</choose>
 				</if>		  
     </select>
+    
+    
+    <select id="selectLastInsertGroup" resultType="java.lang.String">
+    	select EMARTCMS.FN_GROUPID from dual
+    </select>
      <insert id="insertGroupInfoManage" >        
              INSERT INTO TB_GROUP (GROUP_CODE, GROUP_NM, GROUP_USEYN)
-             VALUES ( #{groupCode}   , #{groupNm}, 'Y')                          
+             VALUES (#{groupCode}, #{groupNm}, 'Y')                          
      </insert>
      <update id="updateGroupInfoManage" >
        UPDATE  TB_GROUP SET GROUP_NM = #{groupNm}                             

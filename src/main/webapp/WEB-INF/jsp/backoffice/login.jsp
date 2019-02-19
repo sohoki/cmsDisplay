@@ -119,7 +119,7 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">*부서</p>
-                    <select id="popSel" class="pw_search_group pw_search_checkInfo" onchange='centerInfoSetting(this);'></select>               
+                    <select class="popSel pw_search_group pw_search_checkInfo" onchange='centerInfoSetting(this);'></select>               
                 </div>                
             </div>
             <!--// 팝업 필드박스-->
@@ -189,13 +189,13 @@
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">*부서</p>
-                    <select id="popSel" class="user_reg_group" onchange='centerInfoSetting(this);'></select>               
+                    <select class="popSel user_reg_group" onchange='centerInfoSetting(this);'></select>               
                 </div>                
             </div>
             <div class="pop_box50">
                 <div class="padding15">
                     <p class="pop_tit">점포</p>
-                    <select id="popSel" class="user_reg_center" disabled>
+                    <select class="popSel user_reg_center" disabled>
                     	<option value>부서를 선택해주세요</option>
                     </select>               
                 </div>                

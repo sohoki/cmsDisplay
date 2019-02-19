@@ -5,12 +5,21 @@ public class GroupInfo {
 	private String groupCode;
 	private String groupNm;
 	private String groupUseYn;
+	private String didCnt;
 	
 	private String menuGubun;	
 	
 	private String mode;
 	
 	
+	
+	
+	public String getDidCnt() {
+		return didCnt;
+	}
+	public void setDidCnt(String didCnt) {
+		this.didCnt = didCnt;
+	}
 	public String getMenuGubun() {
 		return menuGubun;
 	}

@@ -103,9 +103,9 @@ input.list_searchT {
 .list01 td, .list01 th{
 	font-weight: 300;
 	text-align: center;
-	padding: 5px;	
+	padding: 8px 4px;	
 }
-.list01 th { border-top: 1px solid #4a4a4a;  }
+.list01 th { border-top: 1px solid #4a4a4a;     border-bottom: 1px solid #bbbbbb; }
 .list01 td { border-bottom: 1px solid #e1e2e3;border-top: 1px solid #e1e2e3; }
 /*icon style*/
 .onIcon { display: inline-block; width: 15px; height: 15px; background: #696ebb; border-radius: 50%; vertical-align: middle;}
@@ -192,4 +192,14 @@ width: 100%;
     right: 0;
     margin: auto;
     width: 128px;
+}
+.detailSearchBtn{
+	cursor: pointer;
+	position: relative;
+    top: 0;
+    bottom: 0;
+    left: 6px;
+    right: 0;
+    margin: auto;
+    width: 13px;
 }

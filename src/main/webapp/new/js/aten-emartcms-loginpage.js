@@ -19,7 +19,10 @@
 			$("#join_pop input").val("");
 			$("#user_reg_id").attr("disabled", false);
 			$("#user_reg_name").attr("disabled", false);
-
+			
+			$(".user_reg_center").attr("disabled", true);
+			$(".user_reg_center").html('<option value="">부서를 선택해주세요</option>');
+			
 			$("#join_confirm_comment").text("내용을 모두 입력/선택 후 신청하기를 클릭해주세요.");
 			$("#join_confirm_comment, .join_id_comment, .join_pw_comment, .join_pwChk_comment").removeClass("id-pw-warning");
 			$("#join_confirm_comment, .join_id_comment, .join_pw_comment, .join_pwChk_comment").removeClass("id-pw-posible");
@@ -169,7 +172,7 @@
 	} 
    
    	function centerInfoSetting(el){
-		// $(el).val()
+   		console.log($(el).val());
 		$(".user_reg_center").html(null);
 		$(".pw_search_center").html(null);
 		 
@@ -215,7 +218,7 @@
 			dataType : 'json',
 			success : function(result) {
 				if(result.result.length > 0){
-					// console.log(result);	
+					console.log(result);
 					var resultData = result.data;
 					var appendOption;
 					appendOption += "<option value=''>부서선택</option>";

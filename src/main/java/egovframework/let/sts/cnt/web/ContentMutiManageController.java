@@ -611,7 +611,8 @@ public class ContentMutiManageController {
 			htmlPage.append("<!DOCTYPE HTML>   \r\n ");
 			htmlPage.append("<html>   \r\n");  
 			htmlPage.append("<head>  \r\n ");    
-			htmlPage.append("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>  \r\n ");    
+			htmlPage.append("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>\r\n");
+			htmlPage.append("<meta name='viewport' content='width=device-width, initial-scale=1.0'>\r\n"); 
 			htmlPage.append("<title>" + vo.getConNm() + "</title>   \r\n");    
 			htmlPage.append("<script type='text/javascript' src='/js/jquery.min.js'></script>   \r\n");
 			if (!vo.getConNextSeq().equals("0")  && !vo.getConFile().equals("N") ){
@@ -657,22 +658,23 @@ public class ContentMutiManageController {
 			
 			//----------------------------------------------------------------- 파일 생성 구문 
 			
-			htmlPageFile.append("<!DOCTYPE HTML>   \r\n ");
-			htmlPageFile.append("<html>   \r\n");  
-			htmlPageFile.append("<head>  \r\n ");    
-			htmlPageFile.append("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>  \r\n ");    
-			htmlPageFile.append("<title>" + vo.getConNm() + "</title>   \r\n");    
-			htmlPageFile.append("<script type='text/javascript' src='/js/jquery.min.js'></script>   \r\n");
+			htmlPageFile.append("<!DOCTYPE HTML>\r\n ");
+			htmlPageFile.append("<html>\r\n");  
+			htmlPageFile.append("<head>\r\n ");    
+			htmlPageFile.append("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>\r\n");
+			htmlPage.append("<meta name='viewport' content='width=device-width, initial-scale=1.0'>\r\n");  
+			htmlPageFile.append("<title>" + vo.getConNm() + "</title>\r\n");    
+			htmlPageFile.append("<script type='text/javascript' src='/js/jquery.min.js'></script>\r\n");
 			if (!vo.getConNextSeq().equals("0")  && !vo.getConFile().equals("N") ){
-				htmlPageFile.append("<script type='text/javascript'>");
-				htmlPageFile.append(" setTimeout function { location.href='./"+  contentMuti.selectContentFileInfo(vo.getConNextSeq()) +"'; }, " +  vo.getConTime() + "*1000 );");
-				htmlPageFile.append("</script>");
+				htmlPageFile.append("<script type='text/javascript'>\r\n");
+				htmlPageFile.append(" setTimeout function { location.href='./"+  contentMuti.selectContentFileInfo(vo.getConNextSeq()) +"'; }, " +  vo.getConTime() + "*1000 );\r\n");
+				htmlPageFile.append("</script>\r\n");
 			}			
 			htmlPageFile.append("<style>");
-			htmlPageFile.append("html,body{ min-height:100%; margin:0; padding:0; background: #fff;}   \r\n");
-			htmlPageFile.append("</style>   \r\n");
-			htmlPageFile.append("</head>    \r\n");						
-			htmlPageFile.append("<body>   \r\n");
+			htmlPageFile.append("html,body{ min-height:100%; margin:0; padding:0; background: #fff;}\r\n");
+			htmlPageFile.append("</style>\r\n");
+			htmlPageFile.append("</head>\r\n");						
+			htmlPageFile.append("<body>\r\n");
 			
 			if (vo.getConScreen().equals("H21") ){
 				for (int i=0; i < voLst.size(); i++){
@@ -894,7 +896,8 @@ public class ContentMutiManageController {
 		    htmlPage.append("<!DOCTYPE HTML>\r\n");
 			htmlPage.append("<html>\r\n");  
 			htmlPage.append("<head>\r\n");    
-			htmlPage.append("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>\r\n");    
+			htmlPage.append("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>\r\n");   
+			htmlPage.append("<meta name='viewport' content='width=device-width, initial-scale=1.0'>\r\n");
 			htmlPage.append("<title>" + vo_info.getConNm() + "</title>\r\n");    
 			if (playGubun.equals("L")){
 				htmlPage.append("<script type='text/javascript' src='./jquery-2.2.4.min.js'></script>\r\n");	

@@ -240,8 +240,8 @@
     	   $("form[name=regist]").attr("action", "/backoffice/sub/equiManage/didDeletel.do").submit();   
        }
        function view_DidTime(){
-    	   var url = "/backoffice/sub/popup/pop_sendLst.do?didId=${regist.didId}" ;	      
-           window.open(url,"전문현황", 'width=800,height=550,top=100,left=650,scrollbars=auto')
+    	   var url = "/backoffice/sub/popup/pop_sendLst.do?didId=${regist.didId}";
+           window.open(url,"전문현황", 'width=800,height=550,top=100,left=650,scrollbars=auto');
        }
        
        // 단말 전송 검증 안된 사항

@@ -13,6 +13,7 @@ public class CenterInfoVO extends  CenterInfo implements Serializable{
     private String searchCondition = "";    
     /** 검색Keyword */
     private String searchKeyword = "";    
+    private String selectRoleCode = "";
     /** 검색사용여부 */
     private String searchUseYn = "";    
     /** 현재페이지 */
@@ -27,6 +28,13 @@ public class CenterInfoVO extends  CenterInfo implements Serializable{
     
     
     
+    
+	public String getSelectRoleCode() {
+		return selectRoleCode;
+	}
+	public void setSelectRoleCode(String selectRoleCode) {
+		this.selectRoleCode = selectRoleCode;
+	}
 	public String getSearchCondition() {
 		return searchCondition;
 	}

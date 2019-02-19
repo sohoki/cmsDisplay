@@ -16,6 +16,8 @@ public interface GroupInfoManageService {
 	
 	public int  selectGroupInfoManageListTotCnt_S(GroupInfoVO searchVO);
 	
+	public String selectLastInsertGroup();
+	
 	public int  insertGroupInfoManage(GroupInfo vo);
 	
 	public int  updateGroupInfoManage(GroupInfo vo);
