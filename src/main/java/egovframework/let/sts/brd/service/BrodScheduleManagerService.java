@@ -23,7 +23,11 @@ public interface BrodScheduleManagerService {
 	BrodScheduleInfo selectBordScheduleCode(BrodScheduleInfo vo) throws Exception;
 	
 	BrodScheduleInfo selectBordScheduleCodeRedown(BrodScheduleInfo vo) throws Exception;
-	
+	//신규 부분 
+	BrodScheduleInfo selectBordScheduleCodeNew(BrodScheduleInfo vo) throws Exception;
+		
+	BrodScheduleInfo selectBordScheduleCodeRedownNew(BrodScheduleInfo vo) throws Exception;
+	//신규 부분 	
 	List<BrodScheduleInfo> selectBrodScheduleCreateCheckList (BrodScheduleInfo searchVO) throws Exception;
 	
 	int insertBrodSchedule(BrodScheduleInfo vo) throws Exception;

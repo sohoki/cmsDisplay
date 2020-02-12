@@ -29,7 +29,16 @@ public class BasciBrodFileInfoManageServiceImpl extends EgovAbstractServiceImpl 
 		// TODO Auto-generated method stub
 		return basicMapper.selectBasicBrodFileLst(basicCode);
 	}
-
+	
+	@Override
+	public List<BasciBrodFileInfoVO> selectBasicBrodSchFileLst(String basicCode)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return basicMapper.selectBasicBrodSchFileLst(basicCode);
+	}
+	
+	
+	
 	@Override
 	public int insertBasciBrodFile(BasciBrodFileInfo vo) throws Exception {
 		// TODO Auto-generated method stub

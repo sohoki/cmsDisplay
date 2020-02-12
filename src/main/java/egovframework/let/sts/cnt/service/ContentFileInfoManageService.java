@@ -16,7 +16,10 @@ public interface ContentFileInfoManageService {
 	List<ContentFileInfo> selectFileListCombo() throws Exception;
 	
     List<ContentFileInfoVO>  selectBasicFilePageListByPagination (ContentFileInfoVO  searchVO)throws Exception;
-	
+	//½Å±Ô
+    List<ContentFileInfoVO>  selectBasicFileDetailPageListByPagination (ContentFileInfoVO  searchVO)throws Exception;
+    
+    
 	int selectBasicFilePageListByPaginationTotCnt_S(ContentFileInfoVO  searchVO)throws Exception;
 	
 	int selectFilePageListByPaginationTotCnt_S (ContentFileInfoVO searchVO)throws Exception;

@@ -115,7 +115,7 @@ public class BrodContentInfoManageController {
 			
 	@RequestMapping ("/backoffice/sub/brodManage/brodContentList.do")	
 	public String selectBrodContentLst(@ModelAttribute("loginVO") LoginVO loginVO
-												 , BrodContentInfoVO searchVO
+												 , @ModelAttribute("searchVO") BrodContentInfoVO searchVO
 									             , HttpServletRequest request
 												 , BindingResult bindingResult
 											     , ModelMap model) throws Exception {

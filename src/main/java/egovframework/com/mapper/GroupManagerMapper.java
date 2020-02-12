@@ -15,7 +15,9 @@ public interface GroupManagerMapper {
 	public Group selectGroupManageDetail(String codeId);
 	
 	public int insertGroupManage(Group vo);
-	               
+	
+	public int insertGroupManageMhs(Group vo);
+	
 	public int updateGroupManage(Group vo);
 	
 	public int deleteGroupManage(String codeId);
@@ -23,6 +25,8 @@ public interface GroupManagerMapper {
 	public int selectGroupManageListTotCnt_S(GroupVo vo);
 	
 	public List<GroupVo> selectGroupManageCombo(GroupVo vo);
+	
+	public String selectMaxGroupId();
 	
 	
 }

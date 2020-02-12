@@ -6,6 +6,7 @@ public interface BasciBrodFileInfoManageService {
 	
 	List<BasciBrodFileInfoVO> selectBasicBrodFileLst(String basicCode) throws Exception;
 	
+	List<BasciBrodFileInfoVO> selectBasicBrodSchFileLst(String basicCode) throws Exception;                                                                                                                                                                                                                                         
 	
 	int insertBasciBrodFile(BasciBrodFileInfo vo)throws Exception;
 	

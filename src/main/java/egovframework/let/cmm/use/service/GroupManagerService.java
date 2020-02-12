@@ -10,9 +10,13 @@ public interface GroupManagerService {
 	
 	Group selectGroupManageDetail(String codeId) throws Exception;
 	
+	String selectMaxGroupId() throws Exception;
+	
 	int deleteGroupManage(String codeId) throws Exception;
 	
 	int insertGroupManage(Group vo) throws Exception;
+	
+	int insertGroupManageMhs(Group vo) throws Exception;
 	
 	int updateGroupManage(Group vo) throws Exception;
 	

@@ -82,9 +82,10 @@ public class BrodContentDetailManageController {
 		searchVO.setFirstIndex(0);
 		searchVO.setRecordCountPerPage(100);
 		
+		
 		ModelAndView model = new ModelAndView("jsonView");
 		if (searchVO.getNotConType() == null ) {  searchVO.setNotConType("");}
-		
+		if (searchVO.getFileGubun() == null) { searchVO.setFileGubun("");}
 		
 		return model.addObject("atchFileLst", conFileService.selectFilePageListByPagination(searchVO)); 
 	}

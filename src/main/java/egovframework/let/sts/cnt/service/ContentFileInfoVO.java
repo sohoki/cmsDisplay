@@ -24,17 +24,35 @@ public class ContentFileInfoVO extends  ContentFileInfo implements Serializable 
     private int lastIndex = 1;    
     private int recordCountPerPage = 10;
     
-    private String conType;
-    private String notConType;
-    private String basicCode;
+    private String conType = "";
+    private String notConType = "";
+    private String basicCode = "";
+    private String groupSeq = "";
+    private String connCount = "";
+    private String conNm = "";
+    private String rnum = "";
+    private String totalRecodCount = "";
     
-    private String connCount;
-    private String conNm;
     
     
-    
-    
-    
+	public String getTotalRecodCount() {
+		return totalRecodCount;
+	}
+	public void setTotalRecodCount(String totalRecodCount) {
+		this.totalRecodCount = totalRecodCount;
+	}
+	public String getRnum() {
+		return rnum;
+	}
+	public void setRnum(String rnum) {
+		this.rnum = rnum;
+	}
+	public String getGroupSeq() {
+		return groupSeq;
+	}
+	public void setGroupSeq(String groupSeq) {
+		this.groupSeq = groupSeq;
+	}
 	public String getConNm() {
 		return conNm;
 	}

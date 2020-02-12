@@ -20,6 +20,9 @@ public interface ContentFileManagerMapper {
 	public List<ContentFileInfo> selectFileListCombo();
 	
 	public List<ContentFileInfoVO>  selectBasicFilePageListByPagination (ContentFileInfoVO  searchVO);
+	//½Å±Ô
+	public List<ContentFileInfoVO>  selectBasicFileDetailPageListByPagination (ContentFileInfoVO  searchVO);
+	
 	
 	public int selectBasicFilePageListByPaginationTotCnt_S(ContentFileInfoVO  searchVO);
 		

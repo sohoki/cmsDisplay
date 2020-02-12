@@ -35,7 +35,11 @@ public interface BrodScheduleManagerMapper {
 	public BrodScheduleInfo selectBordScheduleCode(BrodScheduleInfo vo);
 	
 	public BrodScheduleInfo selectBordScheduleCodeRedown(BrodScheduleInfo vo);
-		
+	//신규 부분 
+    public BrodScheduleInfo selectBordScheduleCodeNew(BrodScheduleInfo vo);
+	
+	public BrodScheduleInfo selectBordScheduleCodeRedownNew(BrodScheduleInfo vo);
+	//신규 부분  끝 부분 		
 	public int insertBrodSchedule(BrodScheduleInfo vo);
 	
 	public int updateBrodSchedule(BrodScheduleInfo vo);

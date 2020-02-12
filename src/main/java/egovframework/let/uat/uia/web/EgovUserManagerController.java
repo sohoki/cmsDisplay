@@ -10,6 +10,9 @@ import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.service.Globals;
 import egovframework.let.uat.uia.service.GnrMber;
 import egovframework.let.uat.uia.service.GnrMberVO;
+import egovframework.let.sts.mhs.service.MhsCenterInfo;
+import egovframework.let.sts.mhs.service.MhsCenterInfoManageService;
+import egovframework.let.sts.mhs.service.MhsCenterInfoVO;
 import egovframework.let.sym.rnt.service.AuthorInfoManageService;
 import egovframework.let.sym.cnt.service.CenterInfoVO;
 import egovframework.let.sym.cnt.service.CenterInfoManageService;
@@ -19,15 +22,22 @@ import egovframework.let.sym.mnu.service.MenuInfoVO;
 import egovframework.let.sym.mnu.service.TMenuInfoVO;
 import egovframework.let.sym.mnu.service.MenuInfoManageService;
 import egovframework.let.sym.mnu.service.TMenuInfoManageService;
+import egovframework.let.cmm.use.service.Group;
 import egovframework.let.cmm.use.service.GroupManagerService;
 import egovframework.let.cmm.use.service.GroupVo;
 import egovframework.let.utl.fcc.service.EgovStringUtil;
 
 
+import egovframework.let.sym.ccm.cde.service.CmmnDetailCode;
 import egovframework.let.sym.ccm.cde.service.EgovCcmCmmnDetailCodeManageService;
 import egovframework.let.uat.uia.service.EgovUserManagerService;
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+
+
+
+
+
 
 
 
@@ -83,6 +93,8 @@ public class EgovUserManagerController {
     @Resource(name="CenterInfoManageService")
     private CenterInfoManageService centerInfoManageService;
     
+    @Resource(name="MhsCenterInfoManageService")
+    private MhsCenterInfoManageService mhsCenterInfoManageService;
     
     
     @Resource(name="egovMessageSource")
@@ -168,8 +180,18 @@ public class EgovUserManagerController {
                 CenterInfoVO centerInfoVO = new CenterInfoVO();
                 String cenSearchKeyword = request.getParameter("cenSearchKeyword") == null ? "" : request.getParameter("cenSearchKeyword");
                 centerInfoVO.setSearchKeyword(cenSearchKeyword);
-				 model.addAttribute("selectRole", roleInfoManageService.selectRoleIInfoAuthorManageCombo(vo.getAuthorCode())  );
-				 model.addAttribute("selectCenter", centerInfoManageService.selectCenterInfoManageCombo(centerInfoVO) );			     
+				model.addAttribute("selectRole", roleInfoManageService.selectRoleIInfoAuthorManageCombo(vo.getAuthorCode())  );
+				
+				Group group = new Group();
+			    group = groupManagerService.selectGroupManageDetail(vo.getGroupId());
+				//여기 부분 수정 
+			    if (group.getGroupId().equals("EMART_00000000000023") || group.getParentGroupId().equals("EMART_00000000000023")){
+			    	model.addAttribute("selectCenter", mhsCenterInfoManageService.selectMhsComboListMeber(vo.getGroupId()) );
+			    }else {
+			    	model.addAttribute("selectCenter", centerInfoManageService.selectCenterInfoManageCombo(centerInfoVO) );	
+			    }
+				
+							     
 			}
 			model.addAttribute("regist", vo);			
 		}				
@@ -245,6 +267,29 @@ public class EgovUserManagerController {
 		int IDCheck = userManagerService.selectUserMangerIDCheck(userID);		
 		return Integer.toString( IDCheck ) ;
 	}
+	
+	@RequestMapping(value="/backoffice/sub/basicManage/mhsBrandCombo.do")
+	@ResponseBody
+	public ModelAndView selectMhsBrandCombo(HttpServletRequest request) throws Exception {
+		ModelAndView model = new ModelAndView("jsonView");		
+		List<CmmnDetailCode> brandCombo = cmmnDetailCodeManageService.selectCmmnDetailCombo("MHS001");
+		model.addObject("selectBrand", brandCombo);
+		return model;
+	}
+	
+	
+	@RequestMapping(value="/backoffice/sub/basicManage/mhsCenterCombo.do")
+	@ResponseBody
+	public ModelAndView selectMhsCenterCombo(HttpServletRequest request) throws Exception {
+		String mhsBrandcd  = request.getParameter("mhsBrandcd") != null ? request.getParameter("mhsBrandcd") : "EMART_00000000000023";
+		ModelAndView model = new ModelAndView("jsonView");
+		MhsCenterInfoVO mhsCenterInfoVO = new MhsCenterInfoVO();
+		mhsCenterInfoVO.setMhsBrandcd(mhsBrandcd);
+		List<MhsCenterInfoVO> centerCombo = mhsCenterInfoManageService.selectMhsCenterList(mhsCenterInfoVO);
+		model.addObject("selectCenter", centerCombo);
+		return model;
+	}
+	
 	@RequestMapping(value="/backoffice/sub/basicManage/roleCombo.do")
 	public ModelAndView selectRollCombo(HttpServletRequest request) throws Exception {
 		
@@ -293,6 +338,10 @@ public class EgovUserManagerController {
 	@RequestMapping(value="/backoffice/inc/cms_header.do")
 	public String cmsHeader() throws Exception{		
 		return "/backoffice/inc/cms_header";
+	}
+	@RequestMapping(value="/backoffice/inc/mhs_header.do")
+	public String mhsHader() throws Exception{		
+		return "/backoffice/inc/mhs_header";
 	}
 	
 	@RequestMapping(value="/backoffice/inc/emart_treeMu.do")	

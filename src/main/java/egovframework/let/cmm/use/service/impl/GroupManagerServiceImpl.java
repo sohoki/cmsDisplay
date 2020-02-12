@@ -58,6 +58,18 @@ public class GroupManagerServiceImpl   extends EgovAbstractServiceImpl  implemen
 	public int selectGroupManageListTotCnt_S(GroupVo searchVO) throws Exception {
 		return groupManagerMapper.selectGroupManageListTotCnt_S(searchVO);
 	}
+
+	@Override
+	public int insertGroupManageMhs(Group vo) throws Exception {
+		// TODO Auto-generated method stub
+		return groupManagerMapper.insertGroupManageMhs(vo);
+	}
+
+	@Override
+	public String selectMaxGroupId() throws Exception {
+		// TODO Auto-generated method stub
+		return groupManagerMapper.selectMaxGroupId();
+	}
 	
 	
 	

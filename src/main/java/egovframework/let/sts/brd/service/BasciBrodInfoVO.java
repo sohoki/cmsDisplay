@@ -23,9 +23,17 @@ public class BasciBrodInfoVO extends BasciBrodInfo implements Serializable {
     private int lastIndex = 1;    
     private int recordCountPerPage = 10;
     
+    private String groupTimegubun = "";
     
     
     
+    
+	public String getGroupTimegubun() {
+		return groupTimegubun;
+	}
+	public void setGroupTimegubun(String groupTimegubun) {
+		this.groupTimegubun = groupTimegubun;
+	}
 	public String getSearchCondition() {
 		return searchCondition;
 	}

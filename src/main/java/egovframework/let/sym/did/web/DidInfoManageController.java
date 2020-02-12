@@ -3,6 +3,8 @@ package egovframework.let.sym.did.web;
 
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -490,9 +492,12 @@ public class DidInfoManageController {
 		     
 			 LoginVO user = (LoginVO) request.getSession().getAttribute("LoginVO");			    
 			 if (user != null ){
-			    	searchVO.setAuthor_Code(user.getAuthorCode());
-			    	searchVO.setGroupCode(user.getGroupId());
-			    	searchVO.setParentGroupId(user.getParentGroupId());
+				 if(user.getAuthorCode() != null && !user.getAuthorCode().equals("") && (user.getAuthorCode().equals("ROLE_MHS_ADMIN") || user.getAuthorCode().equals("ROLE_MHS_USER"))){
+					 return "redirect:/backoffice/sub/roomManage/monitorList.do";
+				 }
+				 searchVO.setAuthor_Code(user.getAuthorCode());
+				 searchVO.setGroupCode(user.getGroupId());
+				 searchVO.setParentGroupId(user.getParentGroupId());
 			 }else {
 			    	System.out.println("로그인 기록 없음");		    	
 			    	return "/backoffice/login";
@@ -523,7 +528,8 @@ public class DidInfoManageController {
 		  
 		  try{
 			  //model.addAttribute("resultList",   didInfoManageService.selectDidInfoManageListByPagination(searchVO) ); 
-			  
+			  System.out.println(searchVO.getSearchCondition());
+			  System.out.println(searchVO.getSearchKeyword());
 			  model.addAttribute("resultList",   didInfoManageService.selectIntegrateManageListByPagination(searchVO) ); 
 			  
 			  
@@ -1137,7 +1143,6 @@ public class DidInfoManageController {
 		model.addAttribute("selectComPort", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT013"));
 		model.addAttribute("selectMoniterCnt", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT014"));
 	 * */
-	
 	
 	
 }

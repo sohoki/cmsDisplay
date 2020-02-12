@@ -49,12 +49,26 @@ public class BasicBrodScheduleInfoManageServiceImpl extends EgovAbstractServiceI
 	}
 
 	@Override
-	public int deleteBasicBrodSchedule(String basicScheduleSeq)
+	public int deleteBasicBrodScheduleCenter(BasicBrodScheduleInfo vo)
 			throws Exception {
 		// TODO Auto-generated method stub
-		return scheduleMapper.deleteBasicBrodSchedule(basicScheduleSeq);
+		return scheduleMapper.deleteBasicBrodScheduleCenter(vo);
 	}
 
+	@Override
+	public int deleteBasicBrodSchedule(BasicBrodScheduleInfoVO vo)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return scheduleMapper.deleteBasicBrodSchedule(vo);
+	}
+	
+	@Override
+	public int deleteBasicBrodScheduleOther(BasicBrodScheduleInfoVO vo)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return scheduleMapper.deleteBasicBrodScheduleOther(vo);
+	}
+	
 	@Override
 	public List<BasicBrodScheduleInfoVO> selectBasicBrodScheduleCheckList(String centerGubun)
 			throws Exception {
@@ -81,6 +95,12 @@ public class BasicBrodScheduleInfoManageServiceImpl extends EgovAbstractServiceI
 			BasicBrodScheduleInfoVO vo) throws Exception {
 		// TODO Auto-generated method stub
 		return scheduleMapper.updateBasicBrodScheduleCenterStateChange(vo);
+	}
+	
+	@Override
+	public int updateBasicBrodScheduleState(String basicCode) throws Exception {
+		// TODO Auto-generated method stub
+		return scheduleMapper.updateBasicBrodScheduleState(basicCode);
 	}
 
 	@Override
@@ -115,6 +135,6 @@ public class BasicBrodScheduleInfoManageServiceImpl extends EgovAbstractServiceI
 		// TODO Auto-generated method stub
 		return scheduleMapper.updateBasicBrodScheduleCenterDownCheck(vo);
 	}
-	
 
+	
 }

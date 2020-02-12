@@ -25,11 +25,16 @@ public interface BasicBrodScheduleInfoManageService {
 	int updateBasicCodeCenterReset(String basicCode)throws Exception;
 	
 	int updateBasicBrodScheduleCenterE(BasicBrodScheduleInfoVO vo) throws Exception;
-	
+	//배치 파일 업데이트 
 	int updateBasicBrodScheduleCenterStateChange(BasicBrodScheduleInfoVO vo) throws Exception;
 	
-	int updateBasicBrodScheduleCenterDownCheck(BasicBrodScheduleInfoVO vo);
+	int updateBasicBrodScheduleState(String basicCode) throws Exception;
 	
-	int deleteBasicBrodSchedule(String basicScheduleSeq) throws Exception;
+	int updateBasicBrodScheduleCenterDownCheck(BasicBrodScheduleInfoVO vo) throws Exception;
+
+	int deleteBasicBrodScheduleCenter(BasicBrodScheduleInfo vo) throws Exception;
 	
+	int deleteBasicBrodSchedule(BasicBrodScheduleInfoVO vo) throws Exception;
+	
+	int deleteBasicBrodScheduleOther(BasicBrodScheduleInfoVO vo) throws Exception;
 }

@@ -1,9 +1,18 @@
 package egovframework.let.uat.uia.web;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.LoginVO;
+import egovframework.let.sym.did.service.DidInfoVO;
 import egovframework.let.sym.did.web.DidInfoManageController;
 import egovframework.let.sym.log.clg.service.EgovLoginLogService;
 import egovframework.let.sym.log.clg.service.LoginLog;
@@ -30,8 +39,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * 일반 로그인, 인증서 로그인을 처리하는 컨트롤러 클래스
@@ -171,7 +184,6 @@ public class EgovLoginController {
     	        // 1. Spring Security 사용자권한 처리
 		    	
 		    	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		    	
 		    	if(!isAuthenticated) {
 		    		model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
 		        	return "/backoffice/login";
@@ -198,6 +210,68 @@ public class EgovLoginController {
     	
     	return "redirect:/backoffice/login.do";
     }
+    
+    
+    @RequestMapping(value="/meetroom/{pageName}")
+	public String meetroomMove(@PathVariable("pageName")String pageName) throws Exception {
+    	return "/meetroom/"+pageName;
+    }
+    
+    
+    @RequestMapping(value="/meet/meetRoomDataCall.do")
+	@ResponseBody
+	public String meetRoomDataCall(HttpServletRequest request) throws Exception{
+		
+		ModelAndView model = new ModelAndView("jsonView");
+		String resData = "";
+    	try {
+    		
+    		String reqAction = request.getParameter("action") != null ? request.getParameter("action") : "";
+    		String reqParam = request.getParameter("param") != null ? request.getParameter("param") : "";
+    		
+			URL url = new URL("http://10.253.41.210:8050/WsRequestRoute_Apps_IF_01.asmx/WSRequest");
+			
+			Map<String,String> params = new LinkedHashMap<String, String>(); // 파라미터 세팅
+	        params.put("action", reqAction);
+	        params.put("param", reqParam);
+	        
+	        StringBuilder postData = new StringBuilder();
+	        for(Map.Entry<String,String> param : params.entrySet()) {
+	            if(postData.length() != 0) postData.append('&');
+		            postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+		            postData.append('=');
+		            postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+		    }
+	        byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+
+	        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+	        conn.setRequestMethod("POST");
+	        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+	        conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+	        conn.setConnectTimeout(1500);
+	        conn.setReadTimeout(1500);
+	        conn.setDoOutput(true);
+	        conn.getOutputStream().write(postDataBytes); // POST 호출
+	        
+	        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+	        
+	        String inputLine; 
+	        while((inputLine = in.readLine()) != null) { // response 출력
+	        	resData += inputLine;
+	        }
+	        // System.out.println(resData);
+	        
+	        model.addObject("data", resData);
+	        
+	        in.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return resData;
+	}
+    
 }
 
 class RequestWrapperForSecurity extends HttpServletRequestWrapper {

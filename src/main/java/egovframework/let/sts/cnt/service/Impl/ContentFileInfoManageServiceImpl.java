@@ -134,6 +134,13 @@ public class ContentFileInfoManageServiceImpl extends EgovAbstractServiceImpl im
 		return conFileManager.selectMediaConnList(atchFileId);
 	}
 
+	@Override
+	public List<ContentFileInfoVO> selectBasicFileDetailPageListByPagination(
+			ContentFileInfoVO searchVO) throws Exception {
+		// TODO Auto-generated method stub
+		return conFileManager.selectBasicFileDetailPageListByPagination(searchVO);
+	}
+
 	
 	
 	

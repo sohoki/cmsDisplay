@@ -34,9 +34,36 @@ public class ContentFileInfo {
 	private String fileRegdate;
 	private String groupId;
 	
+	private String fileAlbum = "";
+	private String singerNm = "";
+	//신규 수정 
+	private String realFileNm = "";
 	
 	
-	
+	public String getRealFileNm() {
+		return realFileNm;
+	}
+
+	public void setRealFileNm(String realFileNm) {
+		this.realFileNm = realFileNm;
+	}
+
+	public String getFileAlbum() {
+		return fileAlbum;
+	}
+
+	public void setFileAlbum(String fileAlbum) {
+		this.fileAlbum = fileAlbum;
+	}
+
+	public String getSingerNm() {
+		return singerNm;
+	}
+
+	public void setSingerNm(String singerNm) {
+		this.singerNm = singerNm;
+	}
+
 	public String getTimeInterval() {
 		return timeInterval;
 	}

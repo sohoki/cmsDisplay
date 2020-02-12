@@ -13,6 +13,9 @@ public class BasciBrodFileInfo {
 	private String lastUpdusrId;
 	private String mode;
 	private String fileGubun;
+	private String basicStartDay;
+	private String basicEndDay;
+	
 	
 	public String getFileGubun() {
 		return fileGubun;
@@ -80,10 +83,16 @@ public class BasciBrodFileInfo {
 	public void setMode(String mode) {
 		this.mode = mode;
 	}
-	
-	
-	
-	
-	
-	
+	public String getBasicStartDay() {
+		return basicStartDay;
+	}
+	public void setBasicStartDay(String basicStartDay) {
+		this.basicStartDay = basicStartDay;
+	}
+	public String getBasicEndDay() {
+		return basicEndDay;
+	}
+	public void setBasicEndDay(String basicEndDay) {
+		this.basicEndDay = basicEndDay;
+	}
 }

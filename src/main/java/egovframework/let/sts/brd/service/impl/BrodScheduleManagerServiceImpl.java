@@ -179,5 +179,19 @@ public class BrodScheduleManagerServiceImpl extends EgovAbstractServiceImpl impl
 		// TODO Auto-generated method stub
 		return brodSchedule.deleteBrodScheduleState(vo);
 	}
+    //신규 부분 
+	@Override
+	public BrodScheduleInfo selectBordScheduleCodeNew(BrodScheduleInfo vo)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return brodSchedule.selectBordScheduleCodeNew(vo);
+	}
 
+	@Override
+	public BrodScheduleInfo selectBordScheduleCodeRedownNew(BrodScheduleInfo vo)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return brodSchedule.selectBordScheduleCodeNew(vo);
+	}
+    //신규 부분  끝 끝 부분
 }

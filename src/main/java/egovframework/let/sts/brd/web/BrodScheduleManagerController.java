@@ -116,7 +116,7 @@ public class BrodScheduleManagerController {
 	 
 	 @RequestMapping(value="/backoffice/sub/brodManage/playSheduleStatus.do")
 	 public String selectplaySheduleStatus(@ModelAttribute("loginVO") LoginVO loginVO
-										   ,@ModelAttribute("BrodScheduleInfoVO")  BrodScheduleInfoVO searchVO
+										   ,@ModelAttribute("searchVO") BrodScheduleInfoVO searchVO
 							               , HttpServletRequest request
 										   , BindingResult bindingResult
 									       , ModelMap model) throws Exception {	

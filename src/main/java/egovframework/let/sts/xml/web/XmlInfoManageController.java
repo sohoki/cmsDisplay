@@ -5,6 +5,7 @@ import java.io.StringReader;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -18,6 +19,8 @@ import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.service.EgovFileMngUtil;
 import egovframework.com.cmm.service.Globals;
+import egovframework.com.mapper.GroupManagerMapper;
+import egovframework.let.cmm.use.service.Group;
 import egovframework.let.cmm.use.service.GroupManagerService;
 import egovframework.let.cmm.use.service.GroupVo;
 import egovframework.let.sts.xml.service.XmlInfo;
@@ -48,6 +51,12 @@ import egovframework.let.sym.did.service.DidInfo;
 import egovframework.let.sym.did.service.DidInfoManageService;
 
 
+import egovframework.let.sts.mhs.service.MhsCenterInfo;
+import egovframework.let.sts.mhs.service.MhsCenterInfoManageService;
+import egovframework.let.sts.mhs.service.MhsMonitorInfo;
+import egovframework.let.sts.mhs.service.MhsMonitorInfoManageService;
+import egovframework.let.sts.mhs.service.MhsViewConnInfoManageService;
+import egovframework.let.sts.mhs.service.MhsViewConnInfoVO;
 import egovframework.let.sts.pic.service.DidMoniterPicVO;
 import egovframework.let.sts.pic.service.DidMoniterPicService;
 import egovframework.let.sts.snd.service.SendMsgInfo;
@@ -71,6 +80,15 @@ import org.springmodules.validation.commons.DefaultBeanValidator;
 
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+
+
+
+
+
+
+
+
+
 
 
 
@@ -126,10 +144,23 @@ import javax.xml.xpath.XPathFactory;
 
 
 
+
+
+
+
+
+
+
+
+
 import egovframework.let.sts.brd.service.BasciBrodFileInfoManageService;
 import egovframework.let.sts.brd.service.BasciBrodFileInfoVO;
+import egovframework.let.sts.brd.service.BasicBrodFileIntervalInfoManageService;
+import egovframework.let.sts.brd.service.BasicBrodFileIntervalInfoVO;
 import egovframework.let.sts.brd.service.BasicBrodScheduleInfoManageService;
 import egovframework.let.sts.brd.service.BasicBrodScheduleInfoVO;
+import egovframework.let.sts.brd.service.BasicFileGroupPlayInfoManageService;
+import egovframework.let.sts.brd.service.BasicFileGroupPlayInfoVO;
 import egovframework.let.sts.brd.service.BrodContentDetail;
 import egovframework.let.sts.brd.service.BrodContentDetailManagerService;
 import egovframework.let.sts.brd.service.BrodOrganization;
@@ -215,8 +246,14 @@ public class XmlInfoManageController {
     @Resource(name="BasciBrodFileInfoManageService")
     private BasciBrodFileInfoManageService basicFileService;
     
+    @Resource(name="MhsCenterInfoManageService")
+	private MhsCenterInfoManageService mhsCenterInfoManageService;
     
+	@Resource(name="MhsViewConnInfoManageService")
+	private MhsViewConnInfoManageService viewConn;
     
+    @Resource(name="MhsMonitorInfoManageService")
+	private MhsMonitorInfoManageService moniterService;
     /**
      * JSON DATA 통신 관련
      * */
@@ -233,7 +270,14 @@ public class XmlInfoManageController {
 	@Resource(name="UserManagerService")
 	private EgovUserManagerService userManagerService;
 	
-    
+	//신규 기초 음원 코드
+	@Resource(name="BasicBrodFileIntervalInfoManageService")
+	private BasicBrodFileIntervalInfoManageService fileIntervalInfoManageService;
+	
+	@Resource(name="BasicFileGroupPlayInfoManageService")
+	private BasicFileGroupPlayInfoManageService groupPlayInfo;
+	
+	
     
     /** EgovPropertyService */
     @Resource(name = "propertiesService")
@@ -540,13 +584,14 @@ public class XmlInfoManageController {
 		String json =   request.getParameter("json") != null ? request.getParameter("json") : "";
 	    String jsonResult = "";
 	    
+	    
 	    json = json.replace("'", "\"");
 	    
 	    JSONParser  jsonparse = new JSONParser(); 		
-	    JSONObject jsonObject = (JSONObject) jsonparse.parse(json);						 
+	    JSONObject jsonObject = (JSONObject) jsonparse.parse(json);	
+	    
+	    
 		String commandType = jsonObject.get("command_type").toString();
-		
-			
 		
 		int ProcessCk = xmlInfoManageService.selectXmlProcessCount(commandType);
 		if (ProcessCk > 0){			
@@ -581,9 +626,15 @@ public class XmlInfoManageController {
 		JSONParser  jsonparse = new JSONParser();
 		String resultTxt = null; 
 		try {
-              JSONObject jsonObject = (JSONObject) jsonparse.parse(json);						 
+			
+			  System.out.println("json:" +json);
+			  
+              JSONObject jsonObject = (JSONObject) jsonparse.parse(json);	
+             
+              
 			  String commandType = jsonObject.get("command_type").toString();
 			  
+			  LOGGER.debug("commandType:" + commandType);
 			 
 			  JSONArray dataInfoArray = (JSONArray) jsonObject.get("command_data");			 
 			  JSONObject dataObject = (JSONObject) dataInfoArray.get(0);	
@@ -592,7 +643,8 @@ public class XmlInfoManageController {
 			  DidInfo didinfo = new DidInfo();				
 			  ContentMutiInfoVO conMutiInfo = new ContentMutiInfoVO();
 			  SendMsgInfo sminfo = new SendMsgInfo();
-			  
+			  MhsMonitorInfo moniter = new MhsMonitorInfo();
+			  MhsViewConnInfoVO searchVO = new MhsViewConnInfoVO();
 			  
 			  if (commandType.equals("SP_DIDAUTH")){
 				  
@@ -607,6 +659,78 @@ public class XmlInfoManageController {
 					
 					resultTxt = "{'command_type':'"+commandType+"','result':'"+  sendRed( dataObject.get("DID_ID").toString(), commandType,  ret , "", dataObject.get("DID_MAC").toString()) +"'}";
 					
+			  }else if (commandType.equals("SP_MHSAUTH")){
+				    //문화센터 업데이트
+				    moniter.setMhsMonitorcd(dataObject.get("DID_ID").toString().trim());
+				    moniter.setMhsIpaddr(dataObject.get("DID_IP").toString().trim());
+				    moniter.setMhsMacaddr(dataObject.get("DID_MAC").toString().trim());
+				    moniter.setMhsMviewtype(dataObject.get("DID_TYPE").toString().trim());
+				    //상태 변화가 이전 일자 이면 모니터 초기화
+				    
+				    int ret = moniterService.updateMhsMonitorInfoIpMac(moniter);
+				    resultTxt = "{'command_type':'"+commandType+"','result':'"+  sendRed( dataObject.get("DID_ID").toString(), commandType,  ret , "", dataObject.get("DID_MAC").toString()) +"'}";
+					
+			  }else if (commandType.equals("SP_MHSSTATE")){
+				    //문화센터 상태 변화 
+				    int ret = viewConn.updateMoniterDidUpdateChange(dataObject.get("DID_ID").toString().trim());
+				    String result = "";
+				    if (ret > 0){
+				    	result = "O";
+				    }else {
+				    	result = "F";
+				    }
+					resultTxt = "{'command_type':'"+commandType+"','result':'"+ result +"'}";
+			  }else if (commandType.equals("SP_MONSCHJSON")){
+				    //문화센터 강의 정보 리스트
+				  
+				  SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMdd");
+				  Calendar time = Calendar.getInstance();
+				  String searchDay = format1.format(time.getTime());
+				  
+				  searchVO.setMhsMonitorcd(dataObject.get("DID_ID").toString().trim());
+				  searchVO.setSearchDay(searchDay);
+				  List<MhsViewConnInfoVO> resultFileLst = viewConn.selectViewMoniterClassInfo(searchVO);
+					
+				  JSONObject obj = new JSONObject();
+				  obj.put("command_type", commandType);
+				  JSONArray dataArray = new JSONArray();
+				    
+				   for (int i = 0; i < resultFileLst.size(); i++){
+					    JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
+						sObject.put(  "MHS_CONNSEQ", resultFileLst.get(i).getMhsConnSeq());
+						sObject.put(  "MHS_MONITERCD",  URLDecoder.decode(  resultFileLst.get(i).getMhsMonitorcd() , "UTF-8"));
+						sObject.put(  "MHS_CLASSNM", URLDecoder.decode(  resultFileLst.get(i).getMhsClassnm() , "UTF-8"));
+						sObject.put(  "MHS_TEACHERNM",  URLDecoder.decode(  resultFileLst.get(i).getMhsTeachernm() , "UTF-8"));
+						sObject.put(  "MHS_CLASSSTARTDAY", resultFileLst.get(i).getMhsClassstartday());
+						sObject.put(  "MHS_CLASSENDDAY", resultFileLst.get(i).getMhsClassendday());
+						sObject.put(  "MHS_CLASSDAYOFWEEK", resultFileLst.get(i).getMhsClassdayofweek());						
+						sObject.put(  "MHS_CLASSSTARTTIME", resultFileLst.get(i).getMhsClassstarttime());
+						sObject.put(  "MHS_CLASSENDTIME", resultFileLst.get(i).getMhsClassendtime());
+						sObject.put(  "MHS_CLASSINTRO", URLDecoder.decode(  resultFileLst.get(i).getMhsClassintro() , "UTF-8"));
+						dataArray.add(sObject);
+				   }			 	  
+				   obj.put("CONINFO", dataArray);				 
+				   resultTxt = obj.toJSONString();
+				   obj.clear();
+				   
+			  }else if (commandType.equals("SP_MONJSONUPDATE")){
+				    				    
+				    
+					int ret = viewConn.updateMoniterDidUpdateChange(dataObject.get("DID_ID").toString().trim());
+					
+					String result  ="";
+					if (ret > 0){ result = "O"; }else { result = "F"; }
+					resultTxt = "{'command_type':'"+commandType+"','result':'"+ result +"'}";
+					
+			  }else if (commandType.equals("SP_MONJSONUPDATERESET")){
+				    
+				    
+				    int ret = viewConn.updateMoniterDidUpdateChange(dataObject.get("DID_ID").toString().trim());
+				    
+				    String result  ="";
+					if (ret > 0){ result = "O";}else { result = "F";}
+					resultTxt = "{'command_type':'"+commandType+"','result':'"+ result +"'}";
+				
 			  }else if (commandType.equals("SP_BRODSTATE")){
 				    
 				    didinfo.setDidId( dataObject.get("DID_ID").toString().trim() );
@@ -786,7 +910,66 @@ public class XmlInfoManageController {
 				  resultTxt = obj.toJSONString();
 				  obj.clear();
 				  vo = null;
+				  //신규 시작 
+			  }else if (commandType.equals("SP_BRODSCHNEW")){
+				  BrodScheduleInfo vo = new BrodScheduleInfo();
+				  vo.setDidId(dataObject.get("DID_ID").toString() );
+				  vo.setDidMac(dataObject.get("DID_MAC").toString() );
 				  
+				  JSONObject obj = new JSONObject();
+				  obj.put("command_type", commandType);
+				  
+				  
+				  try
+				  {
+					  vo = brodSchedue.selectBordScheduleCodeNew(vo);
+					  JSONArray dataArray = new JSONArray();					  
+					  JSONObject sObject = new JSONObject();
+					  sObject.put("BROD_CODE", vo.getBrodCode());
+					  sObject.put("CENTER_STARTTIME", vo.getCenterStartTime());
+					  sObject.put("CENTER_ENDTIME", vo.getCenterEndTime());
+					  sObject.put("CENTER_ID", vo.getCenterId());
+					  dataArray.add(sObject);
+					  obj.put("BRODINFO", dataArray);  					  
+				  }
+				  catch (Exception e)
+				  {
+					  
+				  }
+				  				 
+				  resultTxt = obj.toJSONString();
+				  obj.clear();
+				  vo = null;
+				  
+			  }else if (commandType.equals("SP_REBRODSCHNEW")){
+				  BrodScheduleInfo vo = new BrodScheduleInfo();
+				  vo.setDidId(dataObject.get("DID_ID").toString() );
+				  vo.setDidMac(dataObject.get("DID_MAC").toString() );
+				  
+				  JSONObject obj = new JSONObject();
+				  obj.put("command_type", commandType);
+				  
+				  try
+				  {
+					  vo = brodSchedue.selectBordScheduleCodeRedownNew(vo);
+					  JSONArray dataArray = new JSONArray();					  
+					  JSONObject sObject = new JSONObject();
+					  sObject.put("BROD_CODE", vo.getBrodCode());
+					  sObject.put("CENTER_STARTTIME", vo.getCenterStartTime());
+					  sObject.put("CENTER_ENDTIME", vo.getCenterEndTime());			  
+					  sObject.put("CENTER_ID", vo.getCenterId());
+					  dataArray.add(sObject);
+					  obj.put("BRODINFO", dataArray);  					  
+				  }
+				  catch (Exception e)
+				  {
+					  
+				  }
+				  				 
+				  resultTxt = obj.toJSONString();
+				  obj.clear();
+				  vo = null;
+				 //신규 끝   
 			  }else if (commandType.equals("SP_REBRODSCH")){
 				  BrodScheduleInfo vo = new BrodScheduleInfo();
 				  vo.setDidId(dataObject.get("DID_ID").toString() );
@@ -859,6 +1042,103 @@ public class XmlInfoManageController {
 					sObject.put("ATCH_FILE_ID", resultContent.get(i).getAtchFileId());
 					sObject.put("FILESTRECOURS", resultContent.get(i).getFileStreCours());
 					sObject.put("STREFILENM", resultContent.get(i).getStreFileNm());					
+					dataArray.add(sObject);
+				  }			 					  
+				  obj.put("FILEINFO", dataArray);				 
+				  resultTxt = obj.toJSONString();
+				  obj.clear();
+				  
+			  }else if (commandType.equals("SP_BASICSCHLST_NEW")){
+				  //신규 기초 파일 리스트 
+				  BasicBrodScheduleInfoVO vo = new BasicBrodScheduleInfoVO();
+				  vo.setCenterId(dataObject.get("CENTER_ID").toString() );
+				  vo.setBasicCode(dataObject.get("BASIC_CODE").toString());
+				  vo.setDidDowncheck(dataObject.get("DID_DOWNCHECK").toString());
+				  //  				  
+				  int ret = schService.updateBasicBrodScheduleCenterDownCheck(vo);                
+				  
+				  
+				  //업데이트 확인 
+                  if (ret > 0){
+						
+						  List<BasicBrodFileIntervalInfoVO> fileIntervalInfo =  fileIntervalInfoManageService.selectAgentFileList(dataObject.get("BASIC_CODE").toString());
+						
+						  JSONObject obj = new JSONObject();
+						  obj.put("command_type", commandType);
+						  JSONArray dataArray = new JSONArray();
+						  			
+						  for (int i = 0; i < fileIntervalInfo.size(); i++){
+							JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
+							sObject.put("BROD_STARTDAY", fileIntervalInfo.get(i).getBrodStartday());
+							sObject.put("BROD_ENDDAY", fileIntervalInfo.get(i).getBrodEndday());
+							sObject.put("BROD_STARTTIME", fileIntervalInfo.get(i).getBrodStarttime());
+							sObject.put("BROD_ENDTIME", fileIntervalInfo.get(i).getBrodEndtime());
+							sObject.put("BASIC_CODE", fileIntervalInfo.get(i).getBasicCode());
+							sObject.put("GROUP_TIMEGUBUN", fileIntervalInfo.get(i).getGroupTimeGubun());
+							sObject.put("STREFILENM", fileIntervalInfo.get(i).getStreFileNm());
+							sObject.put("FILESTRECOURS", fileIntervalInfo.get(i).getFileStreCours());
+							sObject.put("ORIGNL_FILE_NM", fileIntervalInfo.get(i).getOrignlFileNm());					
+							dataArray.add(sObject);
+						  }			 					  
+						  obj.put("FILEINFO", dataArray);				 
+						  obj.put("command_type", commandType);
+						  obj.put("result", "O");
+						  resultTxt = obj.toJSONString();
+						  obj.clear();
+						  
+						  
+					}else {
+						resultTxt = "{'command_type':'"+commandType+"','result':'F'}";
+				  }					
+				  vo = null;
+				  
+				  
+				  
+			  }else if (commandType.equals("SP_BASICPLAYUPDATE")){
+				  //신규 기초 파일 리스트 
+				  
+				  
+				  BasicFileGroupPlayInfoVO vo = new BasicFileGroupPlayInfoVO();
+				  vo.setCenterId(dataObject.get("DID_ID").toString() );
+				  vo.setPlayDay(dataObject.get("PLAY_DAY").toString());
+				  vo.setFilePlayList(dataObject.get("FILEPLAYLIST").toString());
+				  
+				  String playInfo = "{\"playInfo\":"+ dataObject.get("playInfo").toString() +"}";
+				  
+				  JSONObject jsonPlay = (JSONObject) jsonparse.parse(playInfo);	
+				  JSONArray playArray = (JSONArray) jsonPlay.get("playInfo");			 
+				  
+				  for (int i =0; i < playArray.size(); i++){
+					  
+					  JSONObject playObject = (JSONObject) playArray.get(i);
+					  
+					  vo.setAtchFileId( playObject.get("playFile").toString().replace(".mp3", "") );
+					  vo.setPlayCnt(playObject.get("playCnt").toString());
+					  
+					  int ret = groupPlayInfo.updateFilePlay(vo);
+					  if (ret < 1){
+						  resultTxt = "{'command_type':'"+commandType+"','result':'F'}";
+						  break;
+					  }
+				  }
+				  resultTxt = "{'command_type':'"+commandType+"','result':'O'}";
+				  vo = null;
+				  
+				  
+			  }else if (commandType.equals("SP_BASICSCHLST_NEWFILEINFO")){
+				  //신규 기초 파일 리스트 
+				  List<BasicBrodFileIntervalInfoVO> fileIntervalInfo =  fileIntervalInfoManageService.selectAgentFileDownList(dataObject.get("BASIC_CODE").toString());
+					
+				  JSONObject obj = new JSONObject();
+				  obj.put("command_type", commandType);
+				  JSONArray dataArray = new JSONArray();
+				  			
+				  for (int i = 0; i < fileIntervalInfo.size(); i++){
+					JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
+					
+					sObject.put("STREFILENM", fileIntervalInfo.get(i).getStreFileNm());
+					sObject.put("FILESTRECOURS", fileIntervalInfo.get(i).getFileStreCours());
+					sObject.put("ORIGNL_FILE_NM", fileIntervalInfo.get(i).getOrignlFileNm());					
 					dataArray.add(sObject);
 				  }			 					  
 				  obj.put("FILEINFO", dataArray);				 
@@ -1404,8 +1684,34 @@ public class XmlInfoManageController {
 					}
 					xmlDoc.append("           </result>\r\n");
 					
-				}
-				else if (vo.getXmlProcessName().equals("SP_DIDSTATE")) {
+				}else if (vo.getXmlProcessName().equals("SP_MHSAUTH")) {
+					
+                    //이마트 문화센터 추가 					  
+					MhsMonitorInfo moniter = new MhsMonitorInfo();
+					moniter.setMhsMonitorcd(result[0].toString());
+					moniter.setMhsIpaddr(result[1].toString());
+					moniter.setMhsMacaddr(result[2].toString());
+					
+					int ret = moniterService.updateMhsMonitorInfoIpMac(moniter);		
+					
+                    resultTxt = sendRed( result[0].toString(),  vo.getXmlProcessName(),  ret , "", result[1].toString());
+					xmlDoc.append("           <result>"+resultTxt+"</result>\r\n");
+					
+					
+				}else if (vo.getXmlProcessName().equals("SP_MHSAUTH")) {
+					
+					
+					didinfo.setDidId(result[0].toString());
+					didinfo.setDidMac(result[1].toString());
+					didinfo.setDidSttus("Y");							
+					int ret = didInfoManageService.updateDidState(didinfo);					
+					
+					xmlDoc.append("           <result>\r\n");
+					xmlDoc.append("                    <SCH_CNT>"+scheduleDID(didinfo.getDidId(), didinfo.getDidMac())+"</SCH_CNT>\r\n");
+					xmlDoc.append("                    <ORD_CNT>"+orderCnt(didinfo.getDidId(), didinfo.getDidMac())+"</ORD_CNT>\r\n");
+					xmlDoc.append("                    <MSG_CNT>"+messageCnt(didinfo.getDidId(), didinfo.getDidMac())+"</MSG_CNT>\r\n");
+					xmlDoc.append("           </result>\r\n");
+				}else if (vo.getXmlProcessName().equals("SP_DIDSTATE")) {
 					
 					didinfo.setDidId(result[0].toString());
 					didinfo.setDidMac(result[1].toString());
@@ -1778,6 +2084,11 @@ public class XmlInfoManageController {
 	   int totalCnt = sendMsgInfoManageService.selectDIDScheduleCount(sendinfo);	   
 	   return Integer.toString(totalCnt);
    }
+   //문화센터 변경 확인
+   public String moniterDID(String didId) throws Exception
+   {
+	   return Integer.toString(viewConn.selectViewMoniterClassUpdateInfoChange(didId));
+   }
    public String orderCnt (String didId, String didMac) throws Exception
    {
 	   SendMsgInfo sendinfo = new SendMsgInfo();
@@ -1857,7 +2168,7 @@ public class XmlInfoManageController {
 		   if(request_type.equals("join-groupData") || request_type.equals("pwSearch-groupData")){ /* 01. 부서정보 호출, 요청 데이터 없음 */	
 			   String joinGroupId 		= resultObj.get("groupId").toString() != null 		? resultObj.get("groupId").toString() 		: "";
 			   String joinParentGroupId = resultObj.get("parentGroupId").toString() != null ? resultObj.get("parentGroupId").toString() : "";
-			   System.out.println(joinGroupId + ", " + joinParentGroupId);
+			   
 			   GroupVo groupVo = new GroupVo();
 			   groupVo.setSearchKeyword("");
 			   groupVo.setSearchCondition("");
@@ -1885,25 +2196,48 @@ public class XmlInfoManageController {
 			   String centerSearchGroupId = resultObj.get("roleCode").toString() != null ? resultObj.get("roleCode").toString() : "";
 			   
 			   
-			   CenterInfoVO centerInfoVO = new CenterInfoVO();
-			   centerInfoVO.setRoleCode(centerSearchGroupId);
+			   //if (centerSearchGroupId.)
+			   //rolecode 확인 필요
+			   Group group = new Group();
+			   group = groupManagerService.selectGroupManageDetail(centerSearchGroupId);
 			   
-			   List<CenterInfoVO> returnData = centerInfoManageService.selectGroupInCenterInfo(centerInfoVO);
-			   
-			   
-			   int returnLength = returnData.size();
-			   
-			   for(int i = 0; i < returnLength; i++){
+			   if (group.getGroupId().equals("EMART_00000000000023") || group.getParentGroupId().equals("EMART_00000000000023")){
+				   
+				   List<MhsCenterInfo>  centerInfo = mhsCenterInfoManageService.selectMhsComboList(centerSearchGroupId);
+				   
+                   int returnLength = centerInfo.size();
+				   
+				   for(int i = 0; i < returnLength; i++){
+					   nowData = new JSONObject();
+					   nowData.put("CENTER_ID", centerInfo.get(i).getMhsCentercd());
+					   nowData.put("CENTER_NM", centerInfo.get(i).getMhsCenternm());
+					   jsonData.add(nowData);
+				   }
 				   nowData = new JSONObject();
-				   nowData.put("CENTER_ID", returnData.get(i).getCenterId());
-				   nowData.put("CENTER_NM", returnData.get(i).getCenterNm());
-				   jsonData.add(nowData);
+				   nowData.put("req_type", request_type);
+				   nowData.put("length", returnLength);
+				   jsonRes.put("result", nowData);
+				   jsonRes.put("data", jsonData);
+				   
+			   }else {
+				   CenterInfoVO centerInfoVO = new CenterInfoVO();
+				   centerInfoVO.setRoleCode(centerSearchGroupId);
+				   List<CenterInfoVO> returnData = centerInfoManageService.selectGroupInCenterInfo(centerInfoVO);
+				   int returnLength = returnData.size();
+				   
+				   for(int i = 0; i < returnLength; i++){
+					   nowData = new JSONObject();
+					   nowData.put("CENTER_ID", returnData.get(i).getCenterId());
+					   nowData.put("CENTER_NM", returnData.get(i).getCenterNm());
+					   jsonData.add(nowData);
+				   }
+				   nowData = new JSONObject();
+				   nowData.put("req_type", request_type);
+				   nowData.put("length", returnLength);
+				   jsonRes.put("result", nowData);
+				   jsonRes.put("data", jsonData);
 			   }
-			   nowData = new JSONObject();
-			   nowData.put("req_type", request_type);
-			   nowData.put("length", returnLength);
-			   jsonRes.put("result", nowData);
-			   jsonRes.put("data", jsonData);
+			   
 
 			   
 		   } else if (request_type.equals("join-confirm")){ // 이용신청 정보 입력
@@ -1914,8 +2248,20 @@ public class XmlInfoManageController {
 			   String centerId = resultObj.get("centerId").toString() != null ? resultObj.get("centerId").toString() : null;
 			   
 			   
-			   String mberSttus = "STATE_02";
-			   String authorCode = "ROLE_USER_MEMBER";
+			   String mberSttus = "STATE_02";			   
+			   String authorCode =  "";
+			   Group group = new Group();
+			   group = groupManagerService.selectGroupManageDetail(groupId);
+			   
+			   if (group.getGroupId().equals("EMART_00000000000023") || group.getParentGroupId().equals("EMART_00000000000023")){
+				   if (group.getGroupId().equals("EMART_00000000000023")){
+					   authorCode = "ROLE_MHS_ADMIN";    
+				   }else {
+					   authorCode = "ROLE_MHS_USER";
+				   }
+			   }else {
+				   authorCode = "ROLE_USER_MEMBER";   
+			   }
 			   int resultVal = 0;
 			   if(password != null && !password.equals("")){
 				   // 비밀번호는 문제 없음
@@ -1932,6 +2278,7 @@ public class XmlInfoManageController {
 				   if(centerId != null && centerId.equals("")){
 					   gnrMberVO.setCenterId(centerId);
 				   }
+				   //여기 부분 관련 groupId 권한 변경 필요 
 				   
 				   resultVal = userManagerService.insertUserManage(gnrMberVO);
 				   

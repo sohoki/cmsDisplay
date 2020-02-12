@@ -39,8 +39,12 @@ public interface BasicBrodScheduleManagerMapper {
 	
 	public int updateBasicBrodScheduleCenterStateChange(BasicBrodScheduleInfoVO vo);
 	
-	public int deleteBasicBrodSchedule(String basicScheduleSeq);
-
+	public int updateBasicBrodScheduleState(String basicCode);
 	
+	public int deleteBasicBrodScheduleCenter(BasicBrodScheduleInfo vo);
+
+	public int deleteBasicBrodSchedule(BasicBrodScheduleInfo vo);
+	
+	public int deleteBasicBrodScheduleOther(BasicBrodScheduleInfo vo);
 	
 }

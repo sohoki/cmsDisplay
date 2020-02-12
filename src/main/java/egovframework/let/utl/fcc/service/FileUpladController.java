@@ -19,6 +19,11 @@ import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.mp3.MP3File;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.id3.AbstractID3v2Tag;
 import org.jcodec.api.FrameGrab;
 import org.jcodec.api.JCodecException;
 import org.jcodec.common.DemuxerTrack;
@@ -111,8 +116,10 @@ public class FileUpladController {
         String filePath = propertiesService.getString("Globals.fileStorePath") ;        
         String streFileNm = request.getParameter("orignlFileNm") != null ? request.getParameter("orignlFileNm") : "";
         String fileNm = request.getParameter("fileNm") != null ? request.getParameter("fileNm") : "";
+        /*String fileAlbum = request.getParameter("fileAlbum") != null ? request.getParameter("fileAlbum") : "";
+        String singerNm = request.getParameter("singerNm") != null ? request.getParameter("singerNm") : "";*/
         
-        System.out.println("fileNm:"+fileNm);
+       
         
         while (itr.hasNext()) { //받은 파일들을 모두 돌린다.
                         
@@ -145,15 +152,23 @@ public class FileUpladController {
                 vo.setAtchFileId(atchFileId);
         		//vo.setFileStreCours(filePath+"/"+inDate);
 				//20170204 수정
-                System.out.println("mp3duration:"+thumnail);
                 
                 if (thumnail != null && !thumnail.equals("F")){
                 	
                     String[] fileInfos = 	thumnail.split("/");
-                    System.out.println("mp3duration:"+fileInfos[1].toString());
-                    System.out.println("mp3duration:"+fileInfos[0].toString());
-                	vo.setFileThumnail(fileInfos[1].toString()  );
+                    vo.setFileThumnail(fileInfos[1].toString()  );
                 	vo.setPlayTime(fileInfos[0].toString());                	
+                	
+                }
+                String file_Info = mp3Info(file_s);
+                LOGGER.debug("fileInfo:" + file_Info);
+                if (file_Info != null && !file_Info.equals("F")){
+                	String[] fileInfos = 	file_Info.split("/");
+                	
+                	
+                    vo.setRealFileNm(fileInfos[0].toString()  );
+                    vo.setSingerNm(fileInfos[1].toString() );
+                	vo.setFileAlbum(fileInfos[2].toString());       
                 	
                 }
                 
@@ -231,10 +246,7 @@ public class FileUpladController {
                     if (thumnail != null && !thumnail.equals("F")){
                     	
                         String[] fileInfos = 	thumnail.split("/");
-                        System.out.println("mp3duration:"+fileInfos[1].toString());
-                        
-                        System.out.println("mp3duration:"+fileInfos[0].toString());
-                    	vo.setFileThumnail("no_image.png");
+                        vo.setFileThumnail("no_image.png");
                     	vo.setPlayTime(fileInfos[0].toString());                	
                     	nowConMusicPOP = true;
                     }
@@ -247,6 +259,18 @@ public class FileUpladController {
                     String[] fileInfos = 	thumnail.split(":");
                 	vo.setFileThumnail(fileInfos[0].toString()  );
                 	vo.setPlayTime(fileInfos[1].toString());        
+                }
+                
+                String file_Info = mp3Info(file_s);
+                LOGGER.debug("fileInfo:" + file_Info);
+                if (file_Info != null && !file_Info.equals("F")){
+                	String[] fileInfos = 	file_Info.split("/");
+                	
+                	
+                    vo.setRealFileNm(fileInfos[0].toString()  );
+                    vo.setSingerNm(fileInfos[1].toString() );
+                	vo.setFileAlbum(fileInfos[2].toString());       
+                	
                 }
                 
 				vo.setFileStreCours(filePath+inDate+"/");
@@ -443,6 +467,29 @@ public class FileUpladController {
 	    }catch (IOException ignored) {
 	      return false;
 	    }
+	}
+	//신규파일 정보 추가 
+	private String mp3Info(File file) throws IOException {
+		String fileInfo = "";
+		try{
+			MP3File mp3 = (MP3File) AudioFileIO.read(file);
+            AbstractID3v2Tag tag2 = mp3.getID3v2Tag();
+            
+            Tag tag = mp3.getTag();
+            String title = tag.getFirst(FieldKey.TITLE);
+            String artist = tag.getFirst(FieldKey.ARTIST);
+            String album = tag.getFirst(FieldKey.ALBUM);
+            String year = tag.getFirst(FieldKey.YEAR);
+            String genre = tag.getFirst(FieldKey.GENRE);
+            fileInfo = title+"/"+artist+"/"+album;
+            LOGGER.debug("fileInfo:" + fileInfo);
+           
+            
+
+		}catch(Exception e){
+			fileInfo = "F";
+		}
+		return fileInfo;
 	}
 	//mp3 재생시간 
 	private static String getDurationWithMp3Spi(File file) throws UnsupportedAudioFileException, IOException {
