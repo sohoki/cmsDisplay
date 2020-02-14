@@ -13,6 +13,8 @@ public interface BasicBrodFileManagerMapper {
 	
 	public List<BasciBrodFileInfoVO> selectBasicBrodFileLst(String basicCode) throws Exception;
 	
+	public List<BasciBrodFileInfoVO> selectBasicBrodSchFileLst(String basicCode) throws Exception;
+	
 	public int insertBasciBrodFile(BasciBrodFileInfo vo)throws Exception;
 	
 	public int insertBasciBrodFileCopy(BasciBrodFileInfoVO vo)throws Exception;

@@ -67,7 +67,8 @@
 									<option value="centerNm" <c:if test="${searchVO.searchCondition == 'centerNm' }"> selected="selected" </c:if>>지점명</option>
 								</select>									
 								<input type="text"  name="searchKeyword" id="searchKeyword" value="${searchVO.searchKeyword}">
-								<a href="javascript:search_form()" class="yellowBtn">검색</a>
+								
+								<a href="javascript:search_form('/backoffice/sub/basicManage/centerList.do')" class="yellowBtn">검색</a>
 								<div class="footerBox">
 									<a href="javascript:view_Center('Ins','0')" class="yellowBtn">등록</a>
 									<a href="javascript:excel_Center();" class="grayBtn">excel upload</a>			
@@ -151,10 +152,7 @@
 		  $('#centerId').val(code);
 		  $("form[name=regist]").attr("action", "/backoffice/sub/brodManage/playCenterInfo.do").submit();			  
 	  }
-	  //검색
-	  function search_form(){		  
-		  $("form[name=regist]").attr("action", "/backoffice/sub/basicManage/centerList.do").submit();		  
-	  }
+	 
 	</script>
  </div>	
 </form:form> 

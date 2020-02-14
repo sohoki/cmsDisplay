@@ -26,6 +26,7 @@
 							</otherwise>
 						</choose>
 				</if>       
+				and MHSYN = 'N'
 			START WITH PARENT_GROUP_ID = '0'
 			CONNECT BY PRIOR GROUP_ID = PARENT_GROUP_ID		        		       		     		        
 	        ) TB )             
@@ -35,16 +36,20 @@
                select NVL(count(*),0)
                 FROM    LETTNAUTHORGROUPINFO
 		        WHERE 1=1
+		        and MHSYN = 'N'
 		        <if test="searchKeyword != ''">
 						<choose>
 							<when test="searchCondition == 'GROUP_ID'">
-								GROUP_ID LIKE '%' || #{searchKeyword} || '%'
+								and GROUP_ID LIKE '%' || #{searchKeyword} || '%'
 							</when>
 							<otherwise>
-								GROUP_NM LIKE '%' || #{searchKeyword} || '%'
+								and GROUP_NM LIKE '%' || #{searchKeyword} || '%'
 							</otherwise>
 						</choose>
 				</if>
+   </select>
+   <select id="selectMaxGroupId" resultType="java.lang.String">
+           select Max(GROUP_ID) from LETTNAUTHORGROUPINFO
    </select>
    
     <select id="selectGroupManageCombo" resultType="GroupVO">
@@ -73,6 +78,10 @@
    <insert id="insertGroupManage" >
         insert into LETTNAUTHORGROUPINFO(GROUP_ID, GROUP_NM,  GROUP_CREAT_DE, GROUP_DC, PARENT_GROUP_ID, USEYN)
         values ( EMARTCMS.fn_GROUPCODE , #{groupNm}, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), #{groupDc}, #{parentGroupId}  , #{useYn})
+   </insert>
+   <insert id="insertGroupManageMhs" >
+        insert into LETTNAUTHORGROUPINFO(GROUP_ID, GROUP_NM,  GROUP_CREAT_DE, GROUP_DC, PARENT_GROUP_ID, USEYN, MHSYN)
+        values ( EMARTCMS.fn_GROUPCODE , #{groupNm}, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), #{groupDc}, #{parentGroupId}  , 'Y', 'Y')
    </insert>
    <update id="updateGroupManage">
           update LETTNAUTHORGROUPINFO set GROUP_NM =  #{groupNm}, 

@@ -90,8 +90,8 @@
 										<td style="text-align:left"><A href="javascript:view_Xml( 'Viw', '${xmlinfo.xmlSeq  }' )">  ${xmlinfo.codeNm  }</A></td>
 										<td style="text-align:left"><A href="javascript:view_Xml( 'Viw', '${xmlinfo.xmlSeq  }' )"  title="<c:out value="${  xmlinfo.xmlProcessName }" /> ">  <c:out value="${ fn:substring( xmlinfo.xmlProcessName, 0, 20) }" /> </A></td>
 										<td style="text-align:left"><c:out value="${ fn:substring( xmlinfo.processRemark, 0, 15) }" /> </td>
-										<td class="md_btn"><a href="javascript:open_JsonView('I',' ${xmlinfo.xmlSeq  }' )" class="brownBtn">미리보기</a></td>							
-										<td class="md_btn"><a href="javascript:open_JsonView('O',' ${xmlinfo.xmlSeq  }' )" class="brownBtn">미리보기</a></td>
+										<td class="md_btn"><a href="javascript:open_JsonView('I','${xmlinfo.xmlSeq  }' )" class="brownBtn">미리보기</a></td>							
+										<td class="md_btn"><a href="javascript:open_JsonView('O','${xmlinfo.xmlSeq  }' )" class="brownBtn">미리보기</a></td>
 										<td>
 										<c:choose>
 										   <c:when test="${xmlinfo.testOk eq 'Y' }">확인</c:when>
@@ -139,7 +139,8 @@
        
      //검색 
      function search_form(){
-    	   $("form[name=regist]").attr("action", "/backoffice/sub/operManage/xmlList.do").submit();
+    	 $(":hidden[name=pageIndex]").val("1");
+         $("form[name=regist]").attr("action", "/backoffice/sub/operManage/xmlList.do").submit();
      }   
   	 function linkPage(pageNo) {
  		$(":hidden[name=pageIndex]").val(pageNo);		

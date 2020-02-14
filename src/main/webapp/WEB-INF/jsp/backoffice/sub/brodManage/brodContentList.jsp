@@ -44,6 +44,7 @@
 						<li><a href="/backoffice/sub/basicManage/centerList.do" class="playCenter">지점 관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/playContentList.do" class="playMedia">음원파일관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/brodBasic.do" class="playMedia">기본음원관리</a></li>
+						<li><a href="/backoffice/sub/brodManage/brodPlayInfo.do" class="playShedule">기본음원재생현황</a></li>
 						<li class="active"><a href="/backoffice/sub/brodManage/brodContentList.do" class="playContents">음원콘텐츠관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/brodContentPlayList.do" class="playContents">스케줄음원관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/playShedule.do" class="playShedule">음원콘텐츠배포</a></li>
@@ -56,8 +57,6 @@
 						<div class="con_title whiteBox ">
 							<h2><img src="/img/list.png"> 총 등록된 콘텐츠 리스트입니다..</h2>	
 							<div class="searchBox">
-							       
-							       
 									<span>총 : ${totalCnt }개</span>
 									<select name="pageUnit" id="pageUnit" class="blan">								
 										<option value="10" <c:if test="${searchVO.pageUnit == '10' }"> selected="selected" </c:if>>10개씩 보기</option>
@@ -80,12 +79,12 @@
   									    <%-- <option value="centerId" <c:if test="${searchVO.searchCondition == 'centerId' }"> selected="selected" </c:if>>기본음원</option> --%>
 									</select>
 									<input type="text"  name="searchKeyword" id="searchKeyword" value="${searchVO.searchKeyword}">
-									<a href="javascript:search_form()" class="yellowBtn">검색</a>
-								<div class="footerBox">
-								<a href="javascript:brodReg('Ins','0')" class="yellowBtn">등록</a>			
-								<a href="javascript:delContent()" class="grayBtn">삭제</a>	
-								<div class="clear"></div>			
-							</div>
+									<a href="javascript:search_form('/backoffice/sub/brodManage/brodContentList.do')" class="yellowBtn">검색</a>
+									<div class="footerBox">
+										<a href="javascript:brodReg('Ins','0')" class="yellowBtn">등록</a>			
+										<a href="javascript:delContent()" class="grayBtn">삭제</a>	
+									<div class="clear"></div>			
+								</div>
 							</div>
 							<!--테이블시작-->
 							<table>
@@ -173,10 +172,7 @@
 		$(":hidden[name=pageIndex]").val(pageNo);				
 		$("form[name=regist]").submit();
 	}   
-    function search_form(){
-    	$("form[name=regist]").submit();
-    	$("form[name=regist]").attr("action", "/backoffice/sub/brodManage/brodContentList.do").submit();
-    }
+    
     function copy_Content(code){
     	var url = "/backoffice/sub/brodManage/brodContentCopy.do?brodCode="+code;	      
 	    window.open(url,"contentSpReg", 'width=800,height=550,top=100,left=650,scrollbars=auto');

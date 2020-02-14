@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.MhsClassManageMapper">	
+	
+    <select id="selectMhsClassList"  resultType="MhsClassInfoVO">
+		SELECT * FROM ( SELECT rownum RNUM, TB.* FROM 
+				(
+				select
+					a.MHS_BRANDCD, a.MHS_CENTERCD, a.MHS_CLASSCD, a.MHS_CLASSROOMNM, a.MHS_CLASSNM, a.MHS_TEACHERNM,
+                    a.MHS_CLASSSTARTDAY, a.MHS_CLASSENDDAY, a.MHS_CLASSDAYOFWEEK, a.MHS_CLASSSTARTTIME, a.MHS_CLASSENDTIME,
+                    a.MHS_REGID, a.MHS_REGDATE, a.MHS_UPDATEID, a.MHS_UPDATEDATE, a.MHS_CLASSSTATUS,
+                    c.GROUP_NM mhsBrandnm , b.MHS_CENTERNM ,d.MHS_MONITORNM
+				FROM
+					TB_MHSCLASSINFO a, TB_MHSCENTERINFO b, LETTNAUTHORGROUPINFO c ,TB_MHSMONITORINFO d
+				where a.MHS_CENTERCD = b.MHS_CENTERCD
+				      and a.MHS_BRANDCD = c.GROUP_ID
+				      and a.MHS_CLASSROOMNM = d.MHS_MONITORCD
+				      and a.MHS_CENTERCD = #{mhsCentercd}
+				<!-- <if test="authorCode == 'ROLE_MHS_USER'">
+				<if test= 'mhsCentercd != null and mhsCentercd != "" '>
+					and a.MHS_CENTERCD = #{mhsCentercd}
+				</if> -->
+				<if test="searchMhsBramdCd != '' and searchMhsCenterCd != null">
+				      and a.MHS_BRANDCD = #{searchMhsBramdCd}
+				</if>
+				<if test="searchMhsCenterCd != '' and searchMhsCenterCd != null">
+				      and a.MHS_CENTERCD = #{searchMhsCenterCd}
+				</if>
+				<choose>
+					<when test="searchCondition == 'a.MHS_CLASSROOMNM' and searchKeyword != ''">
+						and a.MHS_CLASSROOMNM LIKE '%' || #{searchKeyword} || '%'
+					</when>
+					<when test="searchCondition == 'a.MHS_CLASSNM' and searchKeyword != ''">
+						and a.MHS_CLASSNM LIKE '%' || #{searchKeyword} || '%'
+					</when>					
+					<when test="searchCondition == 'a.MHS_TEACHERNM' and searchKeyword != ''">
+						and a.MHS_TEACHERNM LIKE '%' || #{searchKeyword} || '%'
+					</when>
+				</choose>
+				
+				ORDER BY MHS_REGDATE DESC, MHS_CLASSCD desc
+				) 
+			TB) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+	</select>
+	
+	<select id="selectMhsMoniterClassList"  resultType="MhsClassInfo">
+	   <![CDATA[
+		   select a.MHS_BRANDCD, a.MHS_CENTERCD, a.MHS_CLASSCD, a.MHS_CLASSROOMNM, a.MHS_CLASSNM, a.MHS_TEACHERNM,
+	              a.MHS_CLASSSTARTDAY, a.MHS_CLASSENDDAY, a.MHS_CLASSDAYOFWEEK, a.MHS_CLASSSTARTTIME, a.MHS_CLASSENDTIME,
+	              a.MHS_REGID, a.MHS_REGDATE, a.MHS_UPDATEID, a.MHS_UPDATEDATE, a.MHS_CLASSSTATUS,
+	              c.GROUP_NM mhsBrandnm , b.MHS_CENTERNM , d.MHS_MONITORNM
+		   from TB_MHSCLASSINFO a, TB_MHSCENTERINFO b, LETTNAUTHORGROUPINFO c , TB_MHSMONITORINFO d
+		   where a.MHS_CENTERCD = b.MHS_CENTERCD
+			     and a.MHS_BRANDCD = c.GROUP_ID
+			     and a.MHS_BRANDCD = #{mhsBrandcd} 
+			     and a.MHS_CENTERCD = #{mhsCentercd}
+			     and a.MHS_CLASSROOMNM = d.MHS_MONITORCD
+			     and a.MHS_CLASSENDDAY >= to_char(sysdate, 'YYYYMMDD')		     
+		]]>
+	</select>
+	
+	<select id="selectMhsClassListCnt"  resultType="java.lang.Integer">
+		 
+			SELECT NVL(count(*), 0) 
+			FROM TB_MHSCLASSINFO a, TB_MHSCENTERINFO b, LETTNAUTHORGROUPINFO c
+			WHERE a.MHS_CENTERCD = b.MHS_CENTERCD
+				  and a.MHS_BRANDCD = c.GROUP_ID
+				 <if test="searchMhsBramdCd != '' and searchMhsCenterCd != null">
+				      and a.MHS_BRANDCD = #{searchMhsBramdCd}
+				 </if>
+				 <if test="searchMhsCenterCd != '' and searchMhsCenterCd != null">
+				      and a.MHS_CENTERCD = #{searchMhsCenterCd}
+				 </if>
+				 <choose>
+					<when test="searchCondition == 'a.MHS_CLASSROOMNM' and searchKeyword != ''">
+						and a.MHS_CLASSROOMNM LIKE '%' || #{searchKeyword} || '%'
+					</when>
+					<when test="searchCondition == 'a.MHS_CLASSNM' and searchKeyword != ''">
+						and a.MHS_CLASSNM LIKE '%' || #{searchKeyword} || '%'
+					</when>					
+					<when test="searchCondition == 'a.MHS_TEACHERNM' and searchKeyword != ''">
+						and a.MHS_TEACHERNM LIKE '%' || #{searchKeyword} || '%'
+					</when>
+				</choose>		
+	</select>
+	
+	<select id="selectMhsClassInfo" resultType="MhsClassInfoVO">
+	     select MHS_BRANDCD, MHS_CENTERCD, MHS_CLASSCD, MHS_CLASSROOMNM, MHS_CLASSNM, MHS_TEACHERNM,
+                MHS_CLASSSTARTDAY, MHS_CLASSENDDAY, MHS_CLASSDAYOFWEEK, MHS_CLASSSTARTTIME, MHS_CLASSENDTIME,
+                MHS_REGID, MHS_REGDATE, MHS_UPDATEID, MHS_UPDATEDATE, MHS_CLASSSTATUS, MHS_CLASSINTRO
+         from   TB_MHSCLASSINFO
+         where  MHS_CLASSCD = #{mhsClasscd}
+	</select>
+	
+	<insert id="insertMhsClassInfo">
+	   insert into TB_MHSCLASSINFO (MHS_BRANDCD, MHS_CENTERCD, MHS_CLASSCD, MHS_CLASSROOMNM, MHS_CLASSNM, MHS_TEACHERNM,
+                                    MHS_CLASSSTARTDAY, MHS_CLASSENDDAY, MHS_CLASSDAYOFWEEK, MHS_CLASSSTARTTIME, MHS_CLASSENDTIME,
+                                    MHS_REGID, MHS_REGDATE, MHS_UPDATEID, MHS_UPDATEDATE, MHS_CLASSSTATUS, MHS_CLASSINTRO)
+       values (#{mhsBrandcd},#{mhsCentercd}, #{mhsClasscd},#{mhsClassroomnm},#{mhsClassnm},#{mhsTeachernm},
+               #{mhsClassstartday},#{mhsClassendday},#{mhsClassdayofweek},#{mhsClassstarttime},#{mhsClassendtime},
+               #{mhsRegid, jdbcType=VARCHAR}, sysdate, #{mhsRegid, jdbcType=VARCHAR}, sysdate, #{mhsClassstatus}, #{mhsClassintro})                                    
+	</insert>
+	
+	<update id="updateMhsClassInfo">
+	   update TB_MHSCLASSINFO set  MHS_BRANDCD = #{mhsBrandcd},
+								   MHS_CENTERCD = #{mhsCentercd},
+								   MHS_CLASSROOMNM = #{mhsClassroomnm},
+								   MHS_CLASSNM = #{mhsClassnm},
+								   MHS_TEACHERNM = #{mhsTeachernm},
+								   MHS_CLASSSTARTDAY = #{mhsClassstartday},
+								   MHS_CLASSENDDAY = #{mhsClassendday},
+								   MHS_CLASSDAYOFWEEK = #{mhsClassdayofweek, jdbcType=VARCHAR},
+								   MHS_CLASSSTARTTIME = #{mhsClassstarttime, jdbcType=VARCHAR},
+								   MHS_CLASSENDTIME = #{mhsClassendtime, jdbcType=VARCHAR},
+								   MHS_UPDATEID = #{mhsUpdateid, jdbcType=VARCHAR},
+								   <if test="mhsClassintro != '' and mhsClassintro != null">
+								   MHS_CLASSINTRO = #{mhsClassintro},
+								   </if>
+								   MHS_UPDATEDATE = sysdate,
+								   MHS_CLASSSTATUS = #{mhsClassstatus, jdbcType=VARCHAR}
+								    
+	   where MHS_CLASSCD = #{mhsClasscd} 
+	</update>
+	
+	<delete id="deleteMhsClassInfo">
+	   delete from TB_MHSCLASSINFO where MHS_CLASSCD = #{mhsClasscd}
+	</delete>
+	
+</mapper>

@@ -10,7 +10,8 @@
 			     , AUTHOR_CODE AS authorCode
 			     , GROUP_ID AS groupId			     
 			     , MBER_STTUS  AS mberSttus		
-			     , (SELECT parent_group_id FROM   LETTNAUTHORGROUPINFO b WHERE LETTNGNRLMBER.GROUP_ID = b.GROUP_ID)AS parentGroupId  
+			     , (SELECT parent_group_id FROM   LETTNAUTHORGROUPINFO b WHERE LETTNGNRLMBER.GROUP_ID = b.GROUP_ID)AS parentGroupId
+			     , CENTER_ID as centerId
 			  FROM LETTNGNRLMBER
 			 WHERE mber_id = #{mberId}
 			   AND password = #{password}

@@ -3,19 +3,16 @@
 <mapper namespace="egovframework.com.mapper.BasicBrodScheduleManagerMapper">
 
   <select id="selectBasciBrodScheduleLst" resultType="BasicBrodScheduleInfoVO">
-
-     
      SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
 	     select a.BASIC_SCHEDULE_SEQ , a.CENTER_ID,
 	            b.CENTER_NM ,   a.BASIC_CODE , c.BASIC_GROUP_NM,
-	            a.CREATE_CHECK, a.CREATE_REGDATE, a.DID_DOWNCHECK, a.DID_DOWNLOADDATE
+	            a.CREATE_CHECK, CASE a.CREATE_CHECK
+		         WHEN 'N' THEN '00000000'
+		         ELSE  TO_CHAR(a.CREATE_REGDATE,'YYYY-MM-DD HH24:MI:SS')
+		       END AS CREATE_REGDATE, a.DID_DOWNCHECK, a.DID_DOWNLOADDATE
 	     from  TB_BASICSCHEDULE a, TB_CENTERINFO b, TB_BRODBASICGROUP c
 	     where a.CENTER_ID = b.CENTER_ID 
 	           and a.BASIC_CODE = c.BASIC_CODE
-	           and b.BROD_CODE = a.BASIC_CODE
-	           <if test="centerId != ''">          
-	           and b.CENTER_ID = #{centerId}
-	           </if>
 	           <if test="basicCode != ''">
 	           and a.BASIC_CODE = #{basicCode}
 	           </if>
@@ -25,7 +22,7 @@
 	           <if test="didDowncheck != ''">
 	           and a.DID_DOWNCHECK = #{didDowncheck}
 	           </if>
-	     order by CENTER_nm asc 
+	     order by a.BASIC_SCHEDULE_SEQ desc 
 	   ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
   </select>
   <select id="selectBasciBrodScheduleLstCnt" resultType="java.lang.Integer">
@@ -33,10 +30,6 @@
       from  TB_BASICSCHEDULE a, TB_CENTERINFO b, TB_BRODBASICGROUP c 
 	     where a.CENTER_ID = b.CENTER_ID 
 	           and a.BASIC_CODE = c.BASIC_CODE
-	           and b.BROD_CODE = a.BASIC_CODE
-	           <if test="centerId != ''">          
-	           and b.CENTER_ID = #{centerId}
-	           </if>
 	           <if test="basicCode != ''">
 	           and a.BASIC_CODE = #{basicCode}
 	           </if>
@@ -81,13 +74,17 @@
   <update id="updateBasicBrodScheduleCenterStateChange">
      update TB_BASICSCHEDULE set CREATE_CHECK = #{createCheck}
      where BASIC_CODE = #{basicCode} and CREATE_CHECK = #{preCreateCheck}
-  </update>  
+  </update> 
+  <update id="updateBasicBrodScheduleState">
+   	update TB_BASICSCHEDULE set CREATE_CHECK='E',CREATE_REGDATE='',DID_DOWNCHECK='N',DID_DOWNLOADDATE=''
+	where BASIC_CODE=#{basicCode}
+   </update>
   <update id="updateBasicBrodScheduleCenterE">
      update TB_BASICSCHEDULE set CREATE_CHECK = #{createCheck}
      where CENTER_ID = #{centerId} and CREATE_CHECK ='Y'
   </update>
   <update id="updateBasicBrodScheduleCenterDownCheck">
-     update TB_BASICSCHEDULE set DID_DOWNCHECK = #{didDowncheck}
+     update TB_BASICSCHEDULE set DID_DOWNCHECK = #{didDowncheck} ,DID_DOWNLOADDATE=SYSDATE
      where CENTER_ID = #{centerId} and BASIC_CODE = #{basicCode} and CREATE_CHECK ='Y'
   </update>
   <update id="updateBasicBrodSchedule">
@@ -102,8 +99,15 @@
     update TB_CENTERINFO set BROD_CODE = ''
     where BROD_CODE = #{basicCode}     
   </update>
+  <delete id="deleteBasicBrodScheduleCenter">
+    delete from TB_BASICSCHEDULE
+    where BASIC_CODE = #{basicCode} and  CENTER_ID = #{centerId} 
+  </delete>
   <delete id="deleteBasicBrodSchedule">
     delete from TB_BASICSCHEDULE
-    where BASIC_SCHEDULE_SEQ = #{basicScheduleSeq}
+    where BASIC_CODE = #{basicCode} and CREATE_CHECK = #{createCheck}
+  </delete>
+  <delete id="deleteBasicBrodScheduleOther">
+    delete FROM TB_BASICSCHEDULE where BASIC_CODE != #{basicCode} and CENTER_ID = #{centerId}
   </delete>
 </mapper>

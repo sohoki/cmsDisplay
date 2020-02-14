@@ -66,9 +66,9 @@
 										<option value="conFile" <c:if test="${searchVO.searchCondition == 'conFile' }"> selected="selected" </c:if>>파일명</option>
 									</select>
                                      <input type="text"  name="searchKeyword" id="searchKeyword" value="${searchVO.searchKeyword}">
-									<a href="javascript:search_form()" class="yellowBtn">검색</a>
+									<a href="javascript:search_form('/backoffice/sub/conManage/conMutiList.do')" class="yellowBtn">검색</a>
 								<div class="footerBox">
-									<a href="javascript:view_Con('Ins','0')" class="yellowBtn">편성 등록</a></a>			
+									<a href="javascript:view_Con('Ins','0')" class="yellowBtn">편성 등록</a>		
 								</div>
 								<div class="clear"></div>
 							</div>
@@ -150,11 +150,9 @@
 				$("form[name=regist]").attr("action", "/backoffice/sub/conManage/conMutiView_back.do").submit();
 			}
 		}
-		function search_form(){
-			$("form[name=regist]").attr("action", "/backoffice/sub/conManage/conMutiList.do").submit();		 
-		}
+		
 		function con_View(code){
-			 // ?
+			 //?
 		}
 	</script>
 </body>

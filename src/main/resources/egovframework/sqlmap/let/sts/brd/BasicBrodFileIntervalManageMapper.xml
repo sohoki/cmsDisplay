@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.BasicBrodFileIntervalManageMapper">
+   <select id="selectBasicBrodIntervalFileLst" resultType="BasicBrodFileIntervalInfoVO">
+     SELECT 
+     	a.BROD_FILESEQ, 
+     	a.BASIC_CODE, 
+     	a.BROD_STARTDAY, 
+     	a.BROD_ENDDAY, 
+     	a.BROD_STARTTIME, 
+     	a.BROD_ENDTIME,
+     	a.ATCH_FILE_ID, 
+     	a.USEYN, 
+     	a.BASIC_ORDER,
+        b.ORIGNL_FILE_NM, 
+        b.STRE_FILE_NM, 
+        a.BROD_PALYCNT,
+        substr(b.FILE_STRE_COURS,INSTR(b.FILE_STRE_COURS,'/',-2)) as fileStreCours
+     FROM TB_BRODBASICFILE_IVL a, LETTNFILEDETAIL b
+     WHERE a.ATCH_FILE_ID = b.ATCH_FILE_ID
+           AND  a.BASIC_CODE = #{basicCode} 
+           AND a.GROUP_SEQ = #{groupSeq}
+           AND a.BROD_ENDDAY >= TO_CHAR(SYSDATE, 'yyyyMMdd')
+     ORDER BY a.BROD_STARTDAY asc        
+   </select>
+   <select id="selectAgentFileList" resultType="BasicBrodFileIntervalInfoVO">
+   <![CDATA[
+	   SELECT c.BROD_STARTDAY, c.BROD_ENDDAY, c.BROD_STARTTIME, c.BROD_ENDTIME, c.BASIC_CODE, c.ATCH_FILE_ID,
+	       b.GROUP_TIMEGUBUN, STRE_FILE_NM, ORIGNL_FILE_NM, d.FILE_STRE_COURS
+	   FROM TB_BRODBASICGROUP a, TB_BASICFILEGROUP b, TB_BRODBASICFILE_IVL c, LETTNFILEDETAIL d
+	   WHERE a.BASIC_CODE = b.BASIC_CODE AND b.GROUP_SEQ = c.GROUP_SEQ 
+	         AND a.BASIC_CODE = #{basicCode} AND  TO_CHAR(SYSDATE, 'yyyyMMdd') between  c.BROD_STARTDAY AND c.BROD_ENDDAY 
+	         AND c.ATCH_FILE_ID = d.ATCH_FILE_ID
+     ]]>
+   </select>
+   <select id="selectAgentFileDownList" resultType="BasicBrodFileIntervalInfoVO">
+   <![CDATA[
+	   SELECT c.ATCH_FILE_ID, d.STRE_FILE_NM, d.ORIGNL_FILE_NM, substr(d.FILE_STRE_COURS,INSTR(d.FILE_STRE_COURS,'/',-2)) as fileStreCours 
+	   FROM TB_BRODBASICGROUP a, TB_BASICFILEGROUP b, TB_BRODBASICFILE_IVL c, LETTNFILEDETAIL d
+	   WHERE a.BASIC_CODE = b.BASIC_CODE AND b.GROUP_SEQ = c.GROUP_SEQ 
+	         AND a.BASIC_CODE = #{basicCode} AND TO_CHAR(SYSDATE, 'yyyyMMdd') between  c.BROD_STARTDAY AND c.BROD_ENDDAY                 
+	         AND c.ATCH_FILE_ID = d.ATCH_FILE_ID
+	   GROUP BY c.ATCH_FILE_ID, d.STRE_FILE_NM, d.ORIGNL_FILE_NM, d.FILE_STRE_COURS
+     ]]>
+   </select>
+   <select id="selectBasicBrodIntervalFileDetail" resultType="BasicBrodFileIntervalInfoVO">
+      SELECT BROD_FILESEQ, BROD_STARTDAY, BROD_ENDDAY, BROD_STARTTIME, BROD_ENDTIME, 
+             BASIC_CODE, ATCH_FILE_ID, USEYN, BASIC_ORDER, 
+             FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID, 
+             BROD_PALYCNT
+      FROM TB_BRODBASICFILE_IVL
+      WHERE BROD_FILESEQ = #{brodFileseq}
+   </select>
+   
+   
+   <insert id="insertBasciBrodIntervalFile">
+   	    INSERT INTO TB_BRODBASICFILE_IVL(BROD_FILESEQ, BROD_STARTDAY, BROD_ENDDAY, BROD_STARTTIME, BROD_ENDTIME, 
+   	                                     BASIC_CODE, ATCH_FILE_ID, USEYN, BASIC_ORDER, 
+   	                                     FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID, GROUP_SEQ)
+   	    values (BASICBRODINTERVALFILE_SEQ.NEXTVAL , #{brodStartday}, #{brodEndday}, #{brodStarttime}, #{brodEndtime},
+   	             #{basicCode}, #{atchFileId}, 'Y',#{basicOrder}  
+   	            ,sysdate, #{userId, jdbcType=VARCHAR}, sysdate, #{userId, jdbcType=VARCHAR},#{groupSeq}
+   	            )          
+   </insert>
+   <update id="updateBasciBrodIntervalFile">
+   	    UPDATE TB_BRODBASICFILE_IVL set BROD_STARTDAY = #{brodStartday}, 
+   	                                    BROD_ENDDAY = #{brodEndday}, 
+   	                                    BROD_STARTTIME = #{brodStarttime}, 
+   	                                    BROD_ENDTIME = #{brodEndtime}, 
+   	                                    ATCH_FILE_ID = #{atchFileId},
+   	                                    USEYN = #{useyn}, 
+   	                                    BASIC_ORDER = #{basicOrder, jdbcType=VARCHAR}, 
+   	                                    LAST_UPDT_PNTTM = sysdate, 
+   	                                    LAST_UPDUSR_ID = #{userId, jdbcType=VARCHAR}, 
+   	                                    BROD_PALYCNT = #{brodPlaycnt}
+        WHERE BROD_FILESEQ = #{brodFileseq}
+   	              
+   </update>
+   <insert id="insertBasciBrodIntervalFileCopy">
+      INSERT INTO TB_BRODBASICFILE_IVL(BROD_FILESEQ, BROD_STARTDAY, BROD_ENDDAY, BROD_STARTTIME, BROD_ENDTIME, 
+      ATCH_FILE_ID,  USEYN, BASIC_ORDER, FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID, 
+      BROD_PALYCNT, BASIC_CODE, GROUP_SEQ)
+      select   BASICBRODINTERVALFILE_SEQ.NEXTVAL , BROD_STARTDAY, BROD_ENDDAY, #{brodStarttime}, #{brodEndtime}, 
+      ATCH_FILE_ID , USEYN, BASIC_ORDER,       sysdate, #{userId, jdbcType=VARCHAR}, sysdate, #{userId, jdbcType=VARCHAR},
+      BROD_PALYCNT, #{basicCode}, #{groupSeq}
+      from TB_BRODBASICFILE_IVL where  GROUP_SEQ =#{cp_copyGroupSeq}                               
+   </insert>   
+   <delete id="deleteBasciBrodIntervalFile">
+        DELETE FROM TB_BRODBASICFILE_IVL where BROD_FILESEQ = #{brodFileseq}   
+   </delete>
+   <delete id="deleteBasciBrodIntervalGroupFile">
+        DELETE FROM TB_BRODBASICFILE_IVL where GROUP_SEQ = #{groupSeq}   
+   </delete>
+   <delete id="deleteBasciBrodBasicCodeInterval">
+        DELETE FROM TB_BRODBASICFILE_IVL where BASIC_CODE = #{basicCode}
+   </delete>
+</mapper>

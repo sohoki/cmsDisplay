@@ -90,7 +90,7 @@
 						<div class="btnBox">
 							<input type="submit" value="로그인" class="loginBtn loginPageBtn"/>
 							<a data-needpopup-show="#pw_search_pop" class="idSearchBtn loginPageBtn">비밀번호 초기화</a>
-							<a data-needpopup-show="#join_pop" class="joinBtn loginPageBtn">이용신청</a>
+							<a data-needpopup-show="#join_pop" id="join_modal_call_btn" class="joinBtn loginPageBtn">이용신청</a>
 						</div>
 					</div>
 				</div>

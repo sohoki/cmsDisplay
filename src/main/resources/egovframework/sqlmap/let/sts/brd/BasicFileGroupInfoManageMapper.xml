@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.BasicFileGroupInfoManageMapper">
+   <select id="selectBasicGroupInfoLst" resultType="BasicFileGroupInfoVO">
+     SELECT * FROM(
+           SELECT rownum RNUM, TB.*  FROM(      
+		           SELECT a.GROUP_SEQ, a.BASIC_CODE, a.GROUP_STARTTIME, a.GROUP_ENDTIME, a.GROUP_TITLE,
+		                  a.LAST_UPDT_PNTTM, a.LAST_UPDUSR_ID , 
+		                  (SELECT NVL(count(*), 0) FROM TB_BRODBASICFILE_IVL b
+		                   WHERE a.GROUP_SEQ  = b.GROUP_SEQ 
+		                         AND to_char(sysdate, 'yyyyMMdd') between b.BROD_STARTDAY and b.BROD_ENDDAY
+		                    ) as fileCnt	
+		           FROM TB_BASICFILEGROUP a
+		           where 1=1 and trim(a.BASIC_CODE) = #{basicCode}
+		           ORDER BY a.GROUP_STARTTIME asc  
+           ) TB
+      )  WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+   </select>
+                    
+   <select id="selectMaxGroupSeq" resultType="java.lang.String">
+      SELECT MAX(GROUP_SEQ) 
+      FROM TB_BASICFILEGROUP
+   </select>
+   <select id="selectBasicGroupInfoDetail" resultType="BasicFileGroupInfoVO">
+      SELECT a.GROUP_SEQ, a.BASIC_CODE, a.GROUP_STARTTIME, a.GROUP_ENDTIME, a.GROUP_TITLE,
+             a.LAST_UPDT_PNTTM, a.LAST_UPDUSR_ID  , GROUP_TIMEGUBUN
+      FROM TB_BASICFILEGROUP a
+      WHERE a.GROUP_SEQ = #{groupSeq}
+   </select>
+   <select id="selectBasicGroupInfoCombo" resultType="BasicFileGroupInfoVO">
+      SELECT GROUP_SEQ, GROUP_TITLE
+      FROM TB_BASICFILEGROUP
+   </select>
+   <select id="selectBasicGroupPreCheck" resultType="BasicFileGroupInfoVO">
+   SELECT 
+  	( SELECT NVL(COUNT(*),0)
+	  FROM TB_BASICFILEGROUP
+	  WHERE BASIC_CODE =  #{basicCode} AND GROUP_TIMEGUBUN = 'TIME_INPUT_2' and 
+	       (TO_CHAR(TO_DATE(GROUP_STARTTIME, 'HH24:MI') + 1/(24*60), 'HH24MI') BETWEEN #{groupStarttime} AND #{groupEndtime} 
+           or TO_CHAR(TO_DATE(GROUP_ENDTIME, 'HH24:MI') - 1/(24*60), 'HH24MI')  BETWEEN #{groupStarttime} AND #{groupEndtime}) ) AS timeCnt,
+	(SELECT NVL(COUNT(*),0)
+	FROM TB_BASICFILEGROUP 
+	WHERE BASIC_CODE =  #{basicCode} AND GROUP_TIMEGUBUN = 'TIME_INPUT_1') AS inutCnt
+	FROM dual
+   </select>
+   
+   
+   
+   
+   <insert id="insertBasicGroupInfo">
+   	    INSERT INTO TB_BASICFILEGROUP(GROUP_SEQ, BASIC_CODE, GROUP_STARTTIME, GROUP_ENDTIME, GROUP_TITLE, 
+   	                                  FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID, FILE_CNT,
+   	                                  GROUP_TIMEGUBUN
+   	                                  )
+   	    values (BASICGROUP_SEQ.NEXTVAL , #{basicCode}, #{groupStarttime}, #{groupEndtime}, #{groupTitle}
+   	            ,sysdate, #{userId, jdbcType=VARCHAR}, sysdate, #{userId, jdbcType=VARCHAR}, 0,
+   	            #{groupTimegubun , jdbcType=VARCHAR})          
+   </insert>
+   <update id="updateBasicGroupInfo">
+   	    UPDATE TB_BASICFILEGROUP set GROUP_STARTTIME = #{groupStarttime}, 
+   	                                 GROUP_ENDTIME = #{groupEndtime}, 
+   	                                 GROUP_TITLE = #{groupTitle}, 
+  	                                 LAST_UPDT_PNTTM = sysdate, 
+  	                                 LAST_UPDUSR_ID = #{userId, jdbcType=VARCHAR},
+  	                                 GROUP_TIMEGUBUN = #{groupTimegubun , jdbcType=VARCHAR}
+        WHERE GROUP_SEQ = #{groupSeq}
+   	              
+   </update>
+   <insert id="insertBasicGroupCopy">
+      INSERT INTO TB_BASICFILEGROUP(BROD_FILESEQ, BASIC_CODE, GROUP_STARTTIME, GROUP_ENDTIME, GROUP_TITLE, 
+      FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID, GROUP_TIMEGUBUN, FILE_CNT)
+      select   BASICGROUP_SEQ.NEXTVAL , #{basicCode}, #{groupStarttime}, #{groupEndtime}, #{groupTitle},
+      sysdate, #{userId, jdbcType=VARCHAR}, sysdate, #{userId, jdbcType=VARCHAR}, #{groupTimegubun , jdbcType=VARCHAR},
+      FILE_CNT
+      from TB_BASICFILEGROUP where   GROUP_SEQ =#{cp_copyGroupSeq}                               
+   </insert>   
+   <update id="updateGroupFileCnt">
+      update TB_BASICFILEGROUP set GROUP_TITLE = GROUP_TITLE
+             <if test="filePls != ''">
+                , FILE_CNT = FILE_CNT + 1 
+             </if>
+             <if test="fileMin != ''">
+             , FILE_CNT = FILE_CNT - 1
+             </if>
+      where GROUP_SEQ = #{groupSeq}
+   </update>
+   
+   <delete id="deleteBasicGroup">
+        DELETE FROM TB_BASICFILEGROUP where GROUP_SEQ = #{groupSeq}   
+   </delete>
+   <delete id="deleteBasicGroupBrodCode">
+        DELETE FROM TB_BASICFILEGROUP where BASIC_CODE = #{basicCode}
+   </delete>
+</mapper>

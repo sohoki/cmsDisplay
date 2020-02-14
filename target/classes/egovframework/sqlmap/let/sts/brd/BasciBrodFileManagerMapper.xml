@@ -9,20 +9,40 @@
      	a.USEYN, 
      	a.BASIC_ORDER,
         b.ORIGNL_FILE_NM, 
-        b.STRE_FILE_NM, 
+        b.STRE_FILE_NM,
+        a.BASIC_STARTDAY,
+        a.BASIC_ENDDAY,
         substr(b.FILE_STRE_COURS,INSTR(b.FILE_STRE_COURS,'/',-2)) as fileStreCours
      FROM TB_BRODBASICFILE a, LETTNFILEDETAIL b
      WHERE a.ATCH_FILE_ID = b.ATCH_FILE_ID
            AND  a.BASIC_CODE = #{basicCode} 
-     ORDER BY   a.BASIC_ORDER ASC     
+     ORDER BY   a.BASIC_SEQ DESC     
    </select>
-   
+      <select id="selectBasicBrodSchFileLst" resultType="BasciBrodFileInfoVO">
+     SELECT 
+     	a.BASIC_SEQ, 
+     	a.BASIC_CODE, 
+     	a.ATCH_FILE_ID, 
+     	a.USEYN, 
+     	a.BASIC_ORDER,
+        b.ORIGNL_FILE_NM, 
+        b.STRE_FILE_NM,
+        a.BASIC_STARTDAY,
+        a.BASIC_ENDDAY,
+        substr(b.FILE_STRE_COURS,INSTR(b.FILE_STRE_COURS,'/',-2)) as fileStreCours
+     FROM TB_BRODBASICFILE a, LETTNFILEDETAIL b
+     WHERE a.ATCH_FILE_ID = b.ATCH_FILE_ID
+           AND a.BASIC_CODE = #{basicCode}
+           AND TO_CHAR(SYSDATE,'YYYYMMDD') BETWEEN a.BASIC_STARTDAY AND a.BASIC_ENDDAY 
+     ORDER BY   a.BASIC_SEQ DESC     
+   </select>
    
    <insert id="insertBasciBrodFile">
    	    INSERT INTO TB_BRODBASICFILE(BASIC_SEQ, BASIC_CODE, ATCH_FILE_ID, USEYN, BASIC_ORDER,
-                                     FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID)
+                                     FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID,
+                                     BASIC_STARTDAY, BASIC_ENDDAY)
    	    values (BASICBRODFILE_SEQ.NEXTVAL , #{basicCode}, #{atchFileId}, 'Y',#{basicOrder}  
-   	            ,sysdate, #{frstRegisterId, jdbcType=VARCHAR}, sysdate, #{frstRegisterId, jdbcType=VARCHAR})          
+   	            ,sysdate, #{frstRegisterId, jdbcType=VARCHAR}, sysdate, #{frstRegisterId, jdbcType=VARCHAR},#{basicStartDay},#{basicEndDay})          
    </insert>
    <insert id="insertBasciBrodFileCopy">
       INSERT INTO TB_BRODBASICFILE(BASIC_SEQ, BASIC_CODE, ATCH_FILE_ID, USEYN, BASIC_ORDER,

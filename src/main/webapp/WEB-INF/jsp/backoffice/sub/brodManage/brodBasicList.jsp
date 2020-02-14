@@ -38,7 +38,8 @@
 					<ul class="topMenu" >
 						<li><a href="/backoffice/sub/basicManage/centerList.do" class="playCenter">지점 관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/playContentList.do" class="playMedia">음원파일관리</a></li>
-						<li class="active"><a href="/backoffice/sub/brodManage/brodBasic.do" class="playMedia">기본음원관리</a></li>						
+						<li class="active"><a href="/backoffice/sub/brodManage/brodBasic.do" class="playMedia">기본음원관리</a></li>
+						<li><a href="/backoffice/sub/brodManage/brodPlayInfo.do" class="playShedule">기본음원재생현황</a></li>						
 						<li><a href="/backoffice/sub/brodManage/brodContentList.do" class="playContents">음원콘텐츠관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/brodContentPlayList.do" class="playContents">스케줄음원관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/playShedule.do" class="playShedule">음원콘텐츠배포</a></li>
@@ -74,10 +75,11 @@
 							<!--테이블시작-->
 							<table id="basicGroupList">
 								<thead>
-									<tr>							
+									<tr>
+										<th>기본음원관리</th>							
 										<th>기본음원명</th>
 										<th>연결지점수</th>
-										<th>수정일자</th>
+										<th>등록일자</th>
 										<th>음원상세리스트</th>
 										<th>배포현황</th>										
 										<!--<th>기초음원복사</th>-->
@@ -88,8 +90,11 @@
 								  <c:forEach items="${resultList}" var="brodBasicInfo" varStatus="status">
 									<tr>
 										<td>
+											<a href="javascript:brodBasicReg('Edt_N','${brodBasicInfo.basicCode}')" class="yellowBtn">신규음원관리</a>
+										</td>	
+										<td>
 											<a href="javascript:brodBasicReg('Edt','${brodBasicInfo.basicCode}')">${brodBasicInfo.basicGroupNm}</a>
-										</td>										
+										</td>								
 										<td>
 										    <a href="javascript:brodBasicList('Cnt','${brodBasicInfo.basicCode}')">${brodBasicInfo.basicGroupCnt}</a>
 										</td>
@@ -282,7 +287,10 @@
 	   if (code == "Ins"){
 		   $("#spTitle").html("기본음원 등록");
 		   $("#spInputTitle").html("기본음원명");
-	   }else {
+	   }else if (code == "Edt_N"){
+		   $("#basicCode").val(code1);		   
+		   $("form[name=regist]").attr("action", "/backoffice/sub/brodManage/brodBasicTimeDetail.do").submit();
+	   } else {
 		   $("#basicCode").val(code1);		   
 		   $("form[name=regist]").attr("action", "/backoffice/sub/brodManage/brodBasicDetail.do").submit();
 	   }

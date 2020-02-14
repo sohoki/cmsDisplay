@@ -1,3 +1,12 @@
+//엔터키이벤트
+$(document).ready(function(){
+    $("input[name=searchKeyword]").keydown(function (key) {
+        if(key.keyCode == 13){//키가 13이면 실행 (엔터는 13)
+        	search_form();
+        }
+    });
+});
+
 //우편번호 
 function zipCode(){
 	 window.open("/common/zipcode.jsp", "zip_code", "width=500, height=400, toolbar=no, menubar=no, scrollbars=no, resizable=auto" );	
@@ -146,14 +155,95 @@ function any_empt_line_id(frm_nm, alert_message){
 	 var form_nm = eval("document.getElementById('"+frm_nm+"')");
 	 if (form_nm.value.length < 1)
 	 {
-		  alert(alert_message);
-		  form_nm.focus();
-		  return false;
+		 alert(alert_message);
+		 form_nm.focus();
+		 return false;
 	 }else{
          return true;
 	 }
 }
-function search_form(){
-	$(":hidden[name=pageIndex]").val(1);	
-	$("form[name=regist]").submit();
+function search_form(url){
+	$(":hidden[name=pageIndex]").val("1");	
+	$("form[name=regist]").attr("action",url).submit();
 }
+function checkbox_value(ckbok_name){
+	var ckValue ="";
+	 $("input:checkbox[name='"+ckbok_name+"']").each(function() {
+	      if(this.checked == true){//checked 처리된 항목의 값
+	    	  ckValue += this.value +",";
+	      }
+	 });
+	 if (ckValue.length > 0){
+		 ckValue = ckValue.substring(0, ckValue.length-1);
+	 }
+	 return ckValue;
+}
+function value_checkbox(ckbok_name, value){
+	var ckValue = null;	
+	if (value.length > 0){
+		 var splitValue =  value.split(",");
+		 $("input:checkbox[name='"+ckbok_name+"']").each(function() {
+		      for (var i =0; i < splitValue.length; i++){
+		    	  if(this.value == splitValue[i]){ //값 비교
+			            this.checked = true; //checked 처리
+			      } 
+		      }
+		      
+		 });	 
+	}else {
+		
+		$("input:checkbox[name='"+ckbok_name+"']").each(function() {
+			 this.checked = false; //checked 처리
+		 });	
+	}
+}
+
+function fn_emptyReplace(ckValue, replaceValue){
+	return  (ckValue == "" || ckValue == undefined ) ? replaceValue : ckValue;
+}
+
+
+function uniAjax(url, param, done_callback, fail_callback){
+	var jxFax =  $.ajax({
+		        type : 'POST',
+		        url : url,
+		        contentType : "application/json; charset=utf-8",
+		        data : JSON.stringify(param)
+		    }).done(done_callback).fail(fail_callback);
+	
+    return jxFax;
+}
+function fn_timeSplit(timeInfo){
+	return (timeInfo.length == 4) ?  timeInfo.substring(0,2)+":" + timeInfo.substring(2,4) : timeInfo;
+}
+function uniAjaxSerial(url, param, done_callback, fail_callback){
+	var jxFax =  $.ajax({
+		        type : 'POST',
+		        url : url,
+		        contentType : "application/json; charset=utf-8",
+		        data : param,
+		    }).done(done_callback).fail(fail_callback);
+	
+    return jxFax;
+}
+
+
+jQuery.fn.serializeObject = function() {
+    var obj = null;
+    try {
+        //if (this[0].tagName && this[0].tagName.toUpperCase() == "FORM") {
+            var arr = this.serializeArray();
+            if (arr) {
+                obj = {};
+                jQuery.each(arr, function() {
+                    obj[this.name] = this.value;
+                });
+            }//if ( arr ) {
+        //}
+    } catch (e) {
+        alert(e.message);
+    } finally {
+    }
+ 
+    return obj;
+};

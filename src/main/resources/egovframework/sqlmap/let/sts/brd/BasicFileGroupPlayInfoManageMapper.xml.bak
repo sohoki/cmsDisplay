@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.BasicFileGroupPlayInfoManageMapper">
+   <select id="selectPlayListInfo"  resultType="BasicFileGroupPlayInfoVO">  
+      SELECT c.CENTER_NM, a.PLAY_DAY, b.ORIGNL_FILE_NM, b.FILE_ALBUM, b.SINGER_NM,
+             a.PLAY_CNT
+      FROM TB_BASICFILEGROUP_PLAYINFO a , LETTNFILEDETAIL b, TB_CENTERINFO c
+      WHERE a.ATCH_FILE_ID = b.ATCH_FILE_ID
+            AND a.CENTER_ID = c.CENTER_ID 
+            <if test="searchStartDay != ''">
+            AND a.PLAY_DAY between #{searchStartDay} and #{searchEndDay}
+            </if>
+            <if test="searchCenterId != null">
+             AND  a.CENTER_ID in 
+                <foreach collection="searchCenterId" item="item" index="index" open="(" separator="," close=")">
+                 #{item}
+                </foreach>
+            </if>
+       order by c.CENTER_NM asc , a.PLAY_DAY asc
+   </select>
+   <select id="selectFileInserCheck"  resultType="java.lang.Integer">  
+     SELECT NVL(COUNT(*),0)
+     FROM TB_BASICFILEGROUP_PLAYINFO
+     WHERE CENTER_ID = #{centerId} and PLAY_DAY = #{playDay} and ATCH_FILE_ID = #{atchFileId} 
+   </select>
+   <insert id="insertFilePlay" >
+      INSERT INTO TB_BASICFILEGROUP_PLAYINFO (CENTER_ID, PLAY_DAY, ATCH_FILE_ID,PLAY_CNT)
+      VALUES (#{centerId},  #{playDay}, #{atchFileId}, #{playCnt})
+   </insert>
+   <update id="updateFilePlay" >
+      UPDATE TB_BASICFILEGROUP_PLAYINFO set PLAY_CNT = #{playCnt}
+      WHERE CENTER_ID = #{centerId} and PLAY_DAY = #{playDay} and ATCH_FILE_ID = #{atchFileId} 
+   </update>
+   <delete id="deleteFilePlay">
+      DELETE FROM TB_BASICFILEGROUP_PLAYINFO
+      WHERE CENTER_ID = #{centerId} and  PLAY_DAY = #{playDay}
+   </delete>
+
+
+</mapper>

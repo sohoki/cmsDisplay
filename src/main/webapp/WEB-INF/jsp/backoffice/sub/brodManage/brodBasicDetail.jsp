@@ -8,10 +8,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	 <title>DID운영관리</title>
+	<title>DID운영관리</title>
 	<link href="<c:url value='/'/>css/layout.css" rel="stylesheet" type="text/css" >
 	<link href="<c:url value='/'/>css/paragraph.css" rel="stylesheet" type="text/css" >
 	<link href="<c:url value='/'/>css/reset.css" rel="stylesheet" type="text/css" >
+	
+	<!-- popup -->
+	<link rel="stylesheet" href="/new/css/needpopup.css">
+	
 	<script type="text/javascript" src="/js/jquery-1.11.0.min.js"></script>
 	<script type="text/javascript" src="/js/common.js"></script>
 	<script type="text/javascript" src="/js/popup.js"></script>
@@ -50,6 +54,7 @@
 						<li><a href="/backoffice/sub/basicManage/centerList.do" class="playCenter">지점 관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/playContentList.do" class="playMedia">음원파일관리</a></li>
 						<li class="active"><a href="/backoffice/sub/brodManage/brodBasic.do" class="playMedia">기본음원관리</a></li>
+						<li><a href="/backoffice/sub/brodManage/brodPlayInfo.do" class="playShedule">기본음원재생현황</a></li>
 						<li><a href="/backoffice/sub/brodManage/brodContentList.do" class="playContents">음원콘텐츠관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/brodContentPlayList.do" class="playContents">스케줄음원관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/playShedule.do" class="playShedule">음원콘텐츠배포</a></li>
@@ -93,7 +98,7 @@
 										</select>
 										<input type="text"  name="searchKeyword" id="searchKeyword" value="${searchVO.searchKeyword}">
 										<a href="javascript:search_form()" class="yellowBtn">검색</a>	
-										<a href="javascript:left_del()" class="yellowBtn" style="float:right;">선택추가</a>
+										<a href="javascript:basicDayInput('','')" class="yellowBtn" style="float:right;">선택추가</a>
 									</div>	
 									<!--테이블시작-->
 									<table id="leftInfo">
@@ -110,7 +115,7 @@
 										    <c:forEach items="${resultList}" var="conFile" varStatus="status">
 											<tr class="selectTable" id="${conFile.atchFileId}">
 												<td>${conFile.orignlFileNm}</td>
-												<td>${conFile.fileThumnail}</a></td>
+												<td>${conFile.fileThumnail}</td>
 												<td style="display:none;">
 												  <% 
 													  String[] orderLsts = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"};
@@ -123,7 +128,7 @@
 												  </select>
 												</td>
 												<!-- -->
-												<td><a class="blueBtn" href="javascript:basicFileIn('${conFile.atchFileId}','R')" >추가</a></td>
+												<td><a class="blueBtn" href="javascript:basicDayInput('${conFile.atchFileId}','R')">추가</a></td>
 												<td><input type="checkbox" name="ck_fileId" value="${conFile.atchFileId}" ></td>
 											</tr>
 											</c:forEach>
@@ -149,7 +154,8 @@
 											<!--줄시작-->
 											<tr>
 												<th>콘텐츠명</th>
-												<!-- <th>정렬순서</th> -->
+												<th>시작일</th>
+												<th>종료일</th>
 												<th>송출제외</th>
 												<th><input type="checkbox" name="checkAll" id="checkAll" onChange="javascript:allCheck('R');"></th>	
 											</tr>
@@ -157,8 +163,10 @@
 										<tbody>
 										  <c:forEach items="${resultListBasic}" var="conFile" varStatus="status">
 										    <tr>
-												<td>${conFile.orignlFileNm}</td>
+												<td>${conFile.orignlFileNm}_${conFile.basicStartDay}</td>
 												<!-- <td>${conFile.basicOrder}</td> -->
+												<td>${conFile.basicStartDay}</td>
+												<td>${conFile.basicEndDay}</td>
 												<td><a class="redBtn" onClick="javascript:basicFileIn('${conFile.basicSeq}','L')">제외</a></td>
 												<td><input type="checkbox" name="ck_basicSeq" id="ck_${conFile.basicSeq}" value="${conFile.basicSeq}"></td>
 										    </tr>
@@ -195,7 +203,7 @@
                             </div>
                             <div class="con_title whiteBox " id="view_03" style="display:none" >
                                <div class="searchBox">
-										<span id="schCnt">총 : ${totalCnt }건</span>
+										<span id="schCnt"></span>
 										<select name="schPageSize" id="schPageSize">								
 											<option value="10">10개씩 보기</option>
 											<option value="20">20개</option>
@@ -204,10 +212,12 @@
 											<option value="50">50개</option>							
 										</select>	
 										<select id="schCreateCheck" name="schCreateCheck" class="blan">
-											<option value="Y">배포</option>
-											<option value="E">배포완료</option>
+											<option value="">배포선택</option>
+											<option value="E">미배포</option>
+											<option value="Y">배포완료</option>
 										</select>
 										<select id="schDidDownCheck" name="schCreateCheck" class="blan">
+											<option value="">다운선택</option>
 											<option value="Y">다운완료</option>
 											<option value="N">미완료</option>
 										</select>
@@ -216,7 +226,7 @@
                                <table id="basicScheduleInfo">	
                                  <thead>
                                    <tr>
-                                     <th>지점명</th><th>기본음원</th><th>생성일자</th><th>다운로드확인</th><th>다운로드일자</th>
+                                     <th>지점명</th><th>기본음원</th><th>배포여부</th><th>배포생성일자</th><th>다운로드여부</th><th>다운로드일자</th>
                                    </tr>
                                  </thead>
                                  <tbody>
@@ -235,16 +245,27 @@
 			</div>
 		</div>	
 	</div>
+	
 	<input type="hidden" name="schPageIndex" id="schPageIndex" />
-	<input type="hidden" name="schCenterId" id="schCenterId" />		
+	<input type="hidden" name="schCenterId" id="schCenterId" />
+	<input type="hidden" name="basicAtchFileId" id="basicAtchFileId" />
+	<input type="hidden" name="code" id="code" />		
  </form:form>
  <script type="text/javascript">
 	 $(document).ready(function() {
-			//시작시 넣을 파일
+		 needPopup.config.custom = {
+			'removerPlace': 'outside',
+			'closeOnOutside': true,
+			onShow: function() {},
+			onHide: function() {}
+		};
+		needPopup.init();
+		//시작시 넣을 파일
  		conView("M");
 		$("#schPageSize").val("10");
 		$("#schPageIndex").val("1");
-		$("#schCreateCheck").val("Y");		
+		$("#schCreateCheck").val("");	//20191003 JDH	
+		$("#schDidDownCheck").val("");
 		$("#centerGubun").val("BRANCH01");		
 		basciCenterList(); 			
 		
@@ -263,10 +284,10 @@
 				},
 				null,				
 				function(result) {
-										
+					
 					if (result.resultMap.schList != null){
-						
 						$("#basicScheduleInfo").find('tbody').empty();
+						$("#schCnt").html("총 : " + result.resultMap.schTotCnt +" 건"); //20191003 JDH
 						timeHtml = "";
 						for (var i=0; i< result.resultMap.schList.length; i++) {
 							
@@ -274,9 +295,16 @@
 							
 							timeHtml += "<tr style='width:100%'><td style='text-align:center'>"+ obj.centerNm+"</td>";
 							timeHtml += "<td style='text-align:center'>"+ obj.basicGroupNm+"</td>";
-							timeHtml += "<td style='text-align:center'>"+ obj.createRegdate+"</td>";
+							if (obj.createCheck == "E"){
+								timeHtml += "<td style='text-align:center'>미배포</td>";
+								timeHtml += "<td style='text-align:center'></td>";
+							}else{
+								timeHtml += "<td style='text-align:center'>배포완료</td>";
+								timeHtml += "<td style='text-align:center'>"+ obj.createRegdate+"</td>";
+							}
+							
 							if (obj.didDowncheck == "N"){
-								timeHtml += "<td style='text-align:center'>대기중</td>";
+								timeHtml += "<td style='text-align:center'>&nbsp;</td>";
 								timeHtml += "<td style='text-align:center'>&nbsp;</td>";
 							}else {
 								timeHtml += "<td style='text-align:center'>다운로드완료</td>";
@@ -305,12 +333,13 @@
 		$("form[name=regist]").submit();
 	    $("form[name=regist]").attr("action", "/backoffice/sub/brodManage/brodBasicDetail.do").submit();
 	 }
-	 function left_del(){
+	 function left_del(startDay,endDay){
 		 var cnt = $("input[name=ck_fileId]:checkbox:checked").length;
-		 var del_atch = "";			
+		 var del_atch = "";
 		 if (cnt < 1) {
 				alert("하나 이상의 체크를 선택 하셔야 합니다");
 		 } else {
+			   
 			   for (var i = 0; i < document.getElementsByName("ck_fileId").length; i++) {
 					if (document.getElementsByName("ck_fileId")[i].checked == true) {						
 						del_atch = del_atch + "," + document.getElementsByName("ck_fileId")[i].value;						
@@ -324,9 +353,11 @@
 					"/backoffice/sub/brodManage/brodBasicFileCheckUpdate.do",
 					{
 						basicCode : $("#basicCode").val(),
-						delBasciSeq : $("#delBasciSeq").val().substring(1)		,
+						delBasciSeq : $("#delBasciSeq").val().substring(1),
+						basicStartDay : startDay,
+						basicEndDay : endDay,
 						pageIndex : $("#pageIndex").val(),
-						pageSize : $("#pageUnit").val(), 
+						pageSize : $("#pageUnit").val(),
 						searchCondition : $("#searchCondition").val() ,
 						searchKeyword :  $("#searchKeyword").val()
 					},
@@ -335,6 +366,7 @@
 						loadingFinish();
 						if (result != null){
 							basciSchedule(result);
+							alter("등록 성공");
 						}else {
 							alert("처리 도중 문제가 발생 하였습니다.");
 						}					
@@ -363,7 +395,8 @@
 					function(result) {		
 						loadingFinish();
 						if (result == "T") {
-							alert("정상적으로 배포 되었습니다.");							
+							alert("정상적으로 배포 되었습니다.");	
+							scheduleList();
 						}else{
 							alert("데이터 처리 도중 문제가 발생 하였습니다.");							
 						}							
@@ -467,7 +500,7 @@
 		 	}
 	 }
 	 function basciCenterList(){
-		 if (any_empt_line_id("centerGubun", "검색할 지검 구분값을 선택 하지 않았습니다.") == false) return;
+		 if (any_empt_line_id("centerGubun", "검색할 지점 구분값을 선택 하지 않았습니다.") == false) return;
 		 loadingStart();
 		 apiExecute(
 					"POST", 
@@ -486,22 +519,25 @@
 							var j = 0;
 							for (var i=0; i<result.centerInfo.length; i++) {
 								var obj = result.centerInfo[i];
-								
+								if(obj.centerNm.indexOf("[전문일렉]") == -1){
 								if (j > 5 ){
 									j = 0;
 									timeHtml += "</tr><tr>";		
 								}
+								
 								timeHtml += "<td>"+ obj.centerNm;
 								if (obj.basicGroupNm != null){
 									timeHtml += ":<Br /> [기초음원]" + 	obj.basicGroupNm;
 								}
 								timeHtml += "</td>";
+								
 								if (obj.basicCode == $("#basicCode").val()){
 									timeHtml += "<td><input type='checkbox' name='ck_center' value='"+obj.centerId+"' id='ck_"+obj.centerId+"' onClick='javascript:chang_basicCode(&#39;"+obj.centerId+"&#39;)' checked> </td>";	
 								} else {
 									timeHtml += "<td><input type='checkbox' name='ck_center' value='"+obj.centerId+"' id='ck_"+obj.centerId+"' onClick='javascript:chang_basicCode(&#39;"+obj.centerId+"&#39;)'> </td>";
 								}
-		                        j = j +1;																						
+		                        j = j +1;	
+								}
 							}							
 							timeHtml += "</tr>";
 							$("#basicCenterInfo").find('tbody').append(timeHtml);		  
@@ -585,7 +621,7 @@
 							timeHtml += "<option value='"+a+"'>"+a+"</option>";	
 						}
 						timeHtml += "</select></td>";
-						timeHtml += "<td style='text-align:center'><a class='blueBtn' href='javascript:basicFileIn(&#39;"+obj.atchFileId+"&#39;,&#39;R&#39;)'>추가</a></td>";
+						timeHtml += "<td style='text-align:center'><a class='blueBtn' href='javascript:basicDayInput(&#39;"+obj.atchFileId+"&#39;,&#39;R&#39;)'>추가</a></td>";
 						timeHtml += "<td><input type='checkbox' name='ck_fileId' value='"+ obj.atchFileId+"' ></td>";
 						timeHtml += "</tr>";
 					}						
@@ -596,7 +632,10 @@
 					$("#rightInfo").find('tbody').empty();
 					for (var i=0; i<result.resultMap.atchFileLst.length; i++) {
 						var obj = result.resultMap.atchFileLst[i];								
-						timeHtml += "<tr style='width:100%'><td>"+ obj.orignlFileNm+"</td>";							
+						timeHtml += "<tr style='width:100%'><td>"+ obj.orignlFileNm+"_"+ obj.basicStartDay+"</td>";
+						timeHtml += "<td>"+ obj.basicStartDay+"</td>";
+						timeHtml += "<td>"+ obj.basicEndDay+"</td>";
+						timeHtml += "<td style='display:none;'><select id='order_"+obj.atchFileId+"'><option value='1'>1</option>";
 						// timeHtml += "<td style='text-align:center'>"+ obj.basicOrder+"</td>";
 						timeHtml += "<td><a class='redBtn' onClick='javascript:basicFileIn(&#39;"+obj.basicSeq+"&#39;,&#39;L&#39;)'>제외</a></td>";
 						timeHtml += "<td><input type='checkbox' name='ck_basicSeq' id='ck_"+obj.basicSeq+"' value='"+obj.basicSeq+"'></td>";
@@ -656,14 +695,15 @@
 		   $("#checkAll").prop("checked", false);
 		 
 	 }
-	 function basicFileIn(code, code1){
+	 function basicFileIn(code,code1,startDay,endDay){
 		 
 		 if (code1 == "R"){
 			 if ($("#order_"+code).val() == ""){
 				 alert("정렬 순서를 선택 하지 않았습니다");
 				 return ;
 			 }
-			 params = "basicOrder="+$("#order_"+code).val() + "&"+ $("#basicCode").serialize() +"&atchFileId="+code+"&fileGubun=R";	 
+			 params = "basicOrder="+$("#order_"+code).val() + "&"+ $("#basicCode").serialize() +"&atchFileId="+code+
+					  "&fileGubun=R&basicStartDay="+startDay+"&basicEndDay="+endDay;	 
 		 }else {
 			 params = $("#basicCode").serialize() +"&basicSeq="+code+"&fileGubun=L";
 		 }
@@ -678,7 +718,8 @@
 			success : function(result) {
 				loadingFinish();
 				if (result != null) {
-					basciSchedule(result);										
+					basciSchedule(result);
+					alert("등록 성공");
 				}else {
 					alert("처리 도중 문제가 발생 하였습니다.");
 				}
@@ -690,8 +731,43 @@
 			}
 		});	 	 
 	 }
-	 
+	 function basicDayInput(code, code1){
+		 var nWidth = "550";
+		 var nHeight = "180";
+		   
+		 // 듀얼 모니터 고려한 윈도우 띄우기
+		 var curX = window.screenLeft;
+		 var curY = window.screenTop;    
+		 var curWidth = document.body.clientWidth;
+		 var curHeight = document.body.clientHeight;
+		   
+		 var nLeft = curX + (curWidth / 2) - (nWidth / 2);
+		 var nTop = curY + (curHeight / 2) - (nHeight / 2);
 
- </script>
+		 var strOption = "";
+		 strOption += "left=" + nLeft + "px,";
+		 strOption += "top=" + nTop + "px,";
+		 strOption += "width=" + nWidth + "px,";
+		 strOption += "height=" + nHeight + "px,";
+		 strOption += "toolbar=no,menubar=no,location=no,";
+		 strOption += "resizable=yes,status=yes";
+		 
+		 var url = "/backoffice/sub/brodManage/basicDayInput.do?atchFileId="+code+"&mode="+code1;
+		 
+		 window.open(url,"basicDayInput", strOption);
+		 /* var url = "/backoffice/sub/brodManage/basicDayInput.do?atchFileId="+code+"&mode="+code1;
+		 var left = (document.body.offsetWidth / 2) - (500 / 2);
+		 var top = (document.body.offsetHeight / 2) - (180 / 2);
+		 window.open(url,"basicDayInput", 'width=500,height=180,top=200,left=' + left +',top=' + top+ ',scrollbars=no'); */
+		 
+	}
+</script>
+
+ 
+ 
+ <!-- 191008 JDH -->
+	<script src="/new/js/needpopup.js"></script> 
+	<script src="/new/js/datepipck.js"></script>
+	<script src="/new/js/jquery-ui.js"></script>
 </body>
 </html>

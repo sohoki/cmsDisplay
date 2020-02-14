@@ -25,7 +25,7 @@
 <body>
 <noscript>자바스크립트를 지원하지 않는 브라우저에서는 일부 기능을 사용하실 수 없습니다.</noscript>
 <span id="backgroundgif"></span>
-	  	   <form:form name="regist" commandName="regist" method="post" action="/backoffice/sub/equiManage/schList.do">	   	   
+	  	<form:form name="regist" commandName="regist" method="post" action="/backoffice/sub/equiManage/schList.do">	   	   
         <input type="hidden" name="pageIndex" id="pageIndex" value="${searchVO.pageIndex }">
         <input type="hidden" name="mode" id="mode" >
         <input type="hidden" name="schCode" id="schCode" >    
@@ -62,7 +62,7 @@
 										<option value="schCode" <c:if test="${searchVO.searchCondition == 'schCode' }"> selected="selected" </c:if>>스케줄코드</option>
 									</select>
 									<input type="text"  name="searchKeyword" id="searchKeyword" value="${searchVO.searchKeyword}">
-									<a href="javascript:search_form();" class="yellowBtn">검색</a>
+									<a href="javascript:search_form('/backoffice/sub/equiManage/schList.do')" class="yellowBtn">검색</a>
 								<div class="footerBox">
 									<a href="javascript:view_Sch('Ins','0');" class="yellowBtn">등록</a>
 									<a href="javascript:check_del();" class="redBtn">삭제</a>
@@ -219,11 +219,8 @@
   		$(":hidden[name=pageIndex]").val(pageNo);				
   		$("form[name=regist]").submit();
   	   }      
-      function search_form(){
-    	  
-    	  $(":hidden[name=pageIndex]").val("1");	
-    	  $("form[name=regist]").attr("action", "/backoffice/sub/equiManage/schList.do").submit();
-      }
+      
+      
 		function check_del(){
 			loadingStart();
 			// 로딩화면 표출

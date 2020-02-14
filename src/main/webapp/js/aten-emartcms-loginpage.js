@@ -1,6 +1,11 @@
 
     
 	$(document).ready(function() {
+		
+		$(".login_input_id_display").on("click",function(){
+			$("#join_modal_call_btn").click();
+		});
+		
 		groupInfoSetting();
 		$("body").on('click','#pw_search_pop .needpopup_remover', function() {
 			// 비밀번호 초기화 작업 취소
@@ -234,10 +239,7 @@
 			});
 	}
    	
-	function groupInfoSetting (){
-		
-		
-		
+	function groupInfoSetting (){				
 		var callData = "{'request_type':'join-groupData', 'request_data':{'groupId':'', 'parentGroupId':'EMART_00000000000001'}}";
    	   	$.ajax({
 				url : '/backoffice/sub/operManage/jsonRequest.do',

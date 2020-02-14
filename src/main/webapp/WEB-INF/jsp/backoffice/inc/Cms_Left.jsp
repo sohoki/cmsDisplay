@@ -5,12 +5,25 @@
   
 <div id="sidebar">
 	<ul>
+		<c:if test="${authorCode eq 'ROLE_ADMIN' || authorCode eq 'ROLE_USER_MEMBER' || authorCode eq 'ROLE_MHS_ADMIN' || authorCode eq 'ROLE_MHS_USER'}">
+		<li>
+			<div>
+				<a class="leftMenuTxt" href="/backoffice/sub/roomManage/monitorList.do">문화센터 강의알림</a>
+				<a class="leftMenuImg" onclick="menuOpen('dash')"><img class="leftMenuImg_dash" src="/img/list_open_icon.png"/></a>
+			</div>
+		</li>
+		</c:if>
+			<ol class="leftMenu_dash leftChildMenu"><a href="/backoffice/sub/roomManage/monitorList.do">&nbsp;&nbsp;>&nbsp;&nbsp;모니터정보</a></ol>
+			<ol class="leftMenu_dash leftChildMenu"><a href="/backoffice/sub/roomManage/dashboardState2.do">&nbsp;&nbsp;>&nbsp;&nbsp;강의정보</a></ol>
+			<ol class="leftMenu_dash leftChildMenu"><a href="/backoffice/sub/roomManage/dashboardState2.do">&nbsp;&nbsp;>&nbsp;&nbsp;조직/점포관리</a></ol>
+		<c:if test="${authorCode eq 'ROLE_ADMIN' }">
 		<li>
 			<div>
 				<a class="leftMenuTxt" href="/backoffice/sub/equiManage/dashboardState.do">모니터링</a>
 				<a class="leftMenuImg" onclick="menuOpen('dash')"><img class="leftMenuImg_dash" src="/img/list_open_icon.png"/></a>
 			</div>
 		</li>
+		</c:if>
 			<ol class="leftMenu_dash leftChildMenu"><a href="/backoffice/sub/equiManage/dashboardState.do">&nbsp;&nbsp;>&nbsp;&nbsp;통합 모니터링</a></ol>
 			<ol class="leftMenu_dash leftChildMenu"><a href="/backoffice/sub/equiManage/dashboardState1.do">&nbsp;&nbsp;>&nbsp;&nbsp;단말기 모니터링</a></ol>
 			<ol class="leftMenu_dash leftChildMenu"><a href="/backoffice/sub/equiManage/dashboardState2.do">&nbsp;&nbsp;>&nbsp;&nbsp;음원방송 모니터링</a></ol>
@@ -21,10 +34,12 @@
 			</div>
 		</li>
 			<ol class="leftMenu_device leftChildMenu"><a href="/backoffice/sub/equiManage/didList.do">&nbsp;&nbsp;>&nbsp;&nbsp;단말기 관리</a></ol>
+			<c:if test="${authorCode eq 'ROLE_ADMIN' }">
 			<ol class="leftMenu_device leftChildMenu"><a href="/backoffice/sub/equiManage/did_groupList.do">&nbsp;&nbsp;>&nbsp;&nbsp;그룹 관리</a></ol>
 			<ol class="leftMenu_device leftChildMenu"><a href="/backoffice/sub/equiManage/didSendMessage.do">&nbsp;&nbsp;>&nbsp;&nbsp;메시지 관리</a></ol>
 			<ol class="leftMenu_device leftChildMenu"><a href="/backoffice/sub/equiManage/didSendMessageLst.do">&nbsp;&nbsp;>&nbsp;&nbsp;메시지 현황</a></ol>
-		<%-- <c:if test="${authorCode eq 'ROLE_ADMIN' &&  groupCode ne 'EMART_00000000000009' }"> --%>
+			</c:if>
+		<c:if test="${authorCode eq 'ROLE_ADMIN' &&  groupCode ne 'EMART_00000000000009' }">
 		<li><div><a class="leftMenuTxt" href="/backoffice/sub/conManage/conMutiList.do">콘텐츠관리</a><a class="leftMenuImg" onclick="menuOpen('content')"><img class="leftMenuImg_content" src="/img/list_open_icon.png"/></a></div></li>
 			<ol class="leftMenu_content leftChildMenu"><a href="/backoffice/sub/conManage/mediaLst.do">&nbsp;&nbsp;>&nbsp;&nbsp;미디어 관리</a></ol>
 			<ol class="leftMenu_content leftChildMenu"><a href="/backoffice/sub/conManage/conMutiList.do">&nbsp;&nbsp;>&nbsp;&nbsp;화면 구성</a></ol>
@@ -33,17 +48,20 @@
 			<ol class="leftMenu_music leftChildMenu"><a href="/backoffice/sub/basicManage/centerList.do">&nbsp;&nbsp;>&nbsp;&nbsp;지점 관리</a></ol>
 			<ol class="leftMenu_music leftChildMenu"><a href="/backoffice/sub/brodManage/playContentList.do">&nbsp;&nbsp;>&nbsp;&nbsp;음원파일관리</a></ol>
 			<ol class="leftMenu_music leftChildMenu"><a href="/backoffice/sub/brodManage/brodBasic.do">&nbsp;&nbsp;>&nbsp;&nbsp;기본음원관리</a></ol>
+			<ol class="leftMenu_music leftChildMenu"><a href="/backoffice/sub/brodManage/brodPlayInfo.do">&nbsp;&nbsp;>&nbsp;&nbsp;기본음원재생현황</a></ol>
 			<ol class="leftMenu_music leftChildMenu"><a href="/backoffice/sub/brodManage/brodContentList.do">&nbsp;&nbsp;>&nbsp;&nbsp;음원콘텐츠관리</a></ol>
 			<ol class="leftMenu_music leftChildMenu"><a href="/backoffice/sub/brodManage/brodContentPlayList.do">&nbsp;&nbsp;>&nbsp;&nbsp;스케줄음원관리</a></ol>
 			<ol class="leftMenu_music leftChildMenu"><a href="/backoffice/sub/brodManage/playShedule.do">&nbsp;&nbsp;>&nbsp;&nbsp;음원콘텐츠배포</a></ol>
 			<ol class="leftMenu_music leftChildMenu"><a href="/backoffice/sub/brodManage/playSheduleStatus.do">&nbsp;&nbsp;>&nbsp;&nbsp;콘텐츠배포현황</a></ol>	
-		<%-- </c:if> --%>
+		</c:if>
+		<c:if test="${authorCode eq 'ROLE_ADMIN' }">
 		<li><div><a class="leftMenuTxt" href="/backoffice/sub/operManage/sendResultList.do" >전문통신관리</a><a class="leftMenuImg" onclick="menuOpen('network')"><img class="leftMenuImg_network" src="/img/list_open_icon.png"/></a></div></li>
 			<ol class="leftMenu_send leftChildMenu"><a href="/backoffice/sub/operManage/xmlList.do">&nbsp;>&nbsp;&nbsp;전문관리</a></ol>
-			<ol class="leftMenu_send leftChildMenu"><a href="/backoffice/sub/operManage/sendResultList.do">&nbsp;>&nbsp;&nbsp;전문통신현황</a></ol>	
-        <%-- <c:if test="${authorCode eq 'ROLE_ADMIN' }"> --%>
+			<ol class="leftMenu_send leftChildMenu"><a href="/backoffice/sub/operManage/sendResultList.do">&nbsp;>&nbsp;&nbsp;전문통신현황</a></ol>
+		</c:if>	
+        <c:if test="${authorCode eq 'ROLE_ADMIN' }">
 		<li><div><a class="leftMenuTxt" href="/backoffice/sub/basicManage/manageList.do" >설정</a><a class="leftMenuImg" onclick="menuOpen('setting')"><img class="leftMenuImg_setting" src="/img/list_open_icon.png"/></a></div></li>
 		<ol class="leftMenu_setting leftChildMenu"><a href="/backoffice/sub/basicManage/centerList.do">&nbsp;>&nbsp;&nbsp;지점관리</a></ol>
-		<%-- </c:if> --%>
+		</c:if>
 	</ul>
 </div>

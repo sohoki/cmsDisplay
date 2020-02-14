@@ -14,7 +14,7 @@
            // buttonText: '달력--선택하세요--', //버튼 텍스트 표시
             //buttonImage: '/images/calendar.gif', //이미지주소
             showOn: "both", //엘리먼트와 이미지 동시 사용(both,button)
-            yearRange: '1970:2030' //1990년부터 2020년까지
+            yearRange: '1970:2099' //1990년부터 2020년까지
         };        
         $("#schStartDay").datepicker(clareCalendar);
         $("#schEndDay").datepicker(clareCalendar);

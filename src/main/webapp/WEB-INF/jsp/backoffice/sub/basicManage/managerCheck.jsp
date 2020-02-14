@@ -54,97 +54,97 @@
 			            <div class="con">			
 				          <div class="tableBox">		
 					          <div class="con_title whiteBox ">
-					                            <div class="header">
-													<h2>관리자 등록</h2>
-												</div>	
-												                           
-					              				<table>
-													<tbody>
-														<tr>
-															<th>*아이디</th>
-															<td style="text-align:left">
-															<form:input  path="mberId" size="10" maxlength="20" id="mberId"   value="${regist.mberId }" />
-															<span id="uniCheck" ></span>
-															</td>
-															<th>*관리자명</th>
-															<td style="text-align:left"><form:input path="mberNm" title="회원이름"    maxlength="20" size="20"  value="${regist.mberNm }" /></td>
-														</tr>
-														<tr>
-															<th>*비밀번호</th>
-															<td style="text-align:left"><form:password path="password" id="password" title="비밀번호" size="20" maxlength="20" /></td>
-															<th>*비밀번호 확인</th>
-															<td style="text-align:left"><input name="password2" id="password2" title="비밀번호확인" type="password" size="20" maxlength="20" /></td>
-														</tr>
-														
-														<!-- 
-														<tr>
-															<th>*이메일</th>
-															<td><form:input path="mberEmailAdres" title="이메일"    maxlength="60" size="40"   value="${regist.mberEmailAdres }"/></td>
-														</tr>
-														 -->
-														<tr>
-															<th>*부서</th>
-															<td style="text-align:left">
-															<form:select path="groupId" id="groupId" title="소속">
-															         <form:option value="" label="--선택하세요--"/>
-											                        <form:options items="${selectGroup}" itemValue="groupId" itemLabel="groupNm"/>
-															</form:select>								
-															</td>
-															<th>*Author</th>
-															<td style="text-align:left">
-															   <form:select path="authorCode" id="authorCode" title="소속"  onChange="javascript:ViewRole();">
-															         <form:option value="" label="--선택하세요--"/>
-											                        <form:options items="${selectAuthor}" itemValue="authorCode" itemLabel="authorNm"/>
-															   </form:select>											
-															</td>
-														</tr>
-														<tr>
-														    <!-- 
-															<th>Role</th>
-															<td style="text-align:left">
-															   <form:select path="roleCode" id="roleCode" title="소속">
-															         <form:option value="" label="--선택하세요--"/>
-											                        <form:options items="${selectRole}" itemValue="roleCode" itemLabel="roleNm"/>
-															   </form:select>											
-															</td>
-															 -->
-															<th>지점 선택</th>
-															<td style="text-align:left">
-															   <form:select path="centerId" id="centerId" title="소속">
-															         <form:option value="" label="--선택하세요--"/>
-											                        <form:options items="${selectCenter}" itemValue="centerId" itemLabel="centerNm"/>
-															   </form:select>											
-															</td>
-															<th>상태</th>
-															<td colspan="3" style="text-align:left">
-															  <form:select path="mberSttus" id="mberSttus" title="소속">
-															         <form:option value="" label="--선택하세요--"/>
-											                        <form:options items="${selectState}" itemValue="code" itemLabel="codeNm"/>
-															  </form:select>										
-															</td>
-														</tr>	
-																
-															
-														<!-- 
-														<tr>
-															<th>*연락처</th>
-															<td class="textBoxs">
-															<form:input path="mbtlnum1" title="연락처"    maxlength="3" size="3"  />-
-															<form:input path="mbtlnum2" title="연락처"    maxlength="4" size="4" />-
-															<form:input path="mbtlnum3" title="연락처"    maxlength="4" size="4" />
-															</td>
-														</tr>
-														 -->						
-													</tbody>
-												</table>
+		                            <div class="header">
+										<h2>관리자 등록</h2>
+									</div>	
+									                           
+		              				<table>
+										<tbody>
+											<tr>
+												<th>*아이디</th>
+												<td style="text-align:left">
+												<form:input  path="mberId" size="10" maxlength="20" id="mberId"   value="${regist.mberId }" />
+												<span id="uniCheck" ></span>
+												</td>
+												<th>*관리자명</th>
+												<td style="text-align:left"><form:input path="mberNm" title="회원이름"    maxlength="20" size="20"  value="${regist.mberNm }" /></td>
+											</tr>
+											<tr>
+												<th>*비밀번호</th>
+												<td style="text-align:left"><form:password path="password" id="password" title="비밀번호" size="20" maxlength="20" /></td>
+												<th>*비밀번호 확인</th>
+												<td style="text-align:left"><input name="password2" id="password2" title="비밀번호확인" type="password" size="20" maxlength="20" /></td>
+											</tr>
+											
+											<!-- 
+											<tr>
+												<th>*이메일</th>
+												<td><form:input path="mberEmailAdres" title="이메일"    maxlength="60" size="40"   value="${regist.mberEmailAdres }"/></td>
+											</tr>
+											 -->
+											<tr>
+												<th>*권한정보</th>
+												<td style="text-align:left">
+												   <form:select path="authorCode" id="authorCode" title="소속">
+												         <form:option value="" label="--선택하세요--"/>
+								                        <form:options items="${selectAuthor}" itemValue="authorCode" itemLabel="authorNm"/>
+												   </form:select>											
+												</td>
+												<th>*조직</th>
+												<td style="text-align:left">
+												<form:select path="groupId" id="groupId" title="소속" onChange="javascript:ViewCenter()">
+													<form:option value="" label="--선택하세요--"/>
+							                        <form:options items="${selectGroup}" itemValue="groupId" itemLabel="groupNm"/>
+												</form:select>								
+												</td>
+											</tr>
+											<tr>
+											    <!-- 
+												<th>Role</th>
+												<td style="text-align:left">
+												   <form:select path="roleCode" id="roleCode" title="소속">
+												         <form:option value="" label="--선택하세요--"/>
+								                        <form:options items="${selectRole}" itemValue="roleCode" itemLabel="roleNm"/>
+												   </form:select>											
+												</td>
+												 -->
+												<th>점포 선택</th>
+												<td style="text-align:left">
+													<form:select path="centerId" id="centerId" title="소속">
+														<form:option value="" label="--선택하세요--"/>
+								                		<form:options items="${selectCenter}" itemValue="centerId" itemLabel="centerNm"/>
+												   </form:select>											
+												</td>
+												<th>상태</th>
+												<td colspan="3" style="text-align:left">
+												  <form:select path="mberSttus" id="mberSttus" title="소속">
+												         <form:option value="" label="--선택하세요--"/>
+								                        <form:options items="${selectState}" itemValue="code" itemLabel="codeNm"/>
+												  </form:select>										
+												</td>
+											</tr>	
+													
 												
-												<div class="footerBox">
-													<a href="javascript:listPage('regist','/backoffice/sub/basicManage/manageList.do' )" class="yellowBtn">목록</a>
-													<a href="javascript:check_form()" class="yellowBtn" id="btnBt">입력</a>
-													<c:if test = "${regist.mode != 'Ins' }">	
-													<a href="javascript:del_form()" class="grayBtn">삭제</a>
-													</c:if>			
-					                            </div> 												
+											<!-- 
+											<tr>
+												<th>*연락처</th>
+												<td class="textBoxs">
+												<form:input path="mbtlnum1" title="연락처"    maxlength="3" size="3"  />-
+												<form:input path="mbtlnum2" title="연락처"    maxlength="4" size="4" />-
+												<form:input path="mbtlnum3" title="연락처"    maxlength="4" size="4" />
+												</td>
+											</tr>
+											 -->						
+										</tbody>
+									</table>
+									
+									<div class="footerBox">
+										<a href="javascript:listPage('regist','/backoffice/sub/basicManage/manageList.do' )" class="yellowBtn">목록</a>
+										<a href="javascript:check_form()" class="yellowBtn" id="btnBt">입력</a>
+										<c:if test = "${regist.mode != 'Ins' }">	
+										<a href="javascript:del_form()" class="grayBtn">삭제</a>
+										</c:if>			
+		                            </div> 												
 					          
 				              </div>
 				              
@@ -176,10 +176,14 @@
 	 		$("form[name=regist]").append("<input type='hidden'  id='idCheck' name='idCheck' />");	 		
 	 		$("#uniCheck").html("<a href='javascript:check_id();' class='reCheck'>중복검사</a>");	 		
 	 		$("input[name=centerId]").attr("disabled", true);
-	    }	else {
-	   	 $("#uniCheck").html();
-	   	$("input[name=mberId]").attr("readOnly", true);
+	    } else {
+			$("#uniCheck").html();
+			$("input[name=mberId]").attr("readOnly", true);
 	    }
+	    
+	    
+	    
+	    
 	});
 	function linkPage(pageNo) {
 		$(":hidden[name=pageIndex]").val(pageNo);		
@@ -275,40 +279,87 @@
 		 }
 		 return true;
 	}
+	/*
 	function ViewRole(){
-		  if ( $("#authorCode").val() !=  "ROLE_ADMIN "  ){
-			  
-			  apiExecute(
-						"POST", 
-						"/backoffice/sub/basicManage/roleCombo.do",
-						{
-							authorCode : $("#authorCode").val()
-						},
-						null,				
-						function(result) {				
-							if (result.centerCombo != null) {
-								$("#centerId").empty();
-								$("#centerId").append("<option value=''>--선택하세요--</option>");						
-								for (var i=0; i<result.centerCombo.length; i++) {
-									var obj = result.centerCombo[i];
-									$("<option value='"+ obj.centerId +"'>"+ obj.centerNm +"</option>").appendTo("#centerId");
-								}						
-							}
-							/* if (result.roleCombo != null) {
-								$("#roleCode").empty();
-								$("#roleCode").append("<option value=''>--선택하세요--</option>");						
-								for (var i=0; i<result.roleCombo.length; i++) {
-									var obj = result.roleCombo[i];
-									$("<option value='"+ obj.roleCode +"'>"+ obj.roleNm +"</option>").appendTo("#roleCode");
-								}
-								
-							} */
-						},
-						null,
-						null
-					);		  
-		  }
-	   }
+		if($("#authorCode").val() == "ROLE_MHS_ADMIN" || $("#authorCode").val() == "ROLE_MHS_USER"){
+			$.ajax({
+				url : '/backoffice/sub/basicManage/mhsBrandCombo.do',
+				type : 'POST',
+				dataType : 'json',
+				success : function(result) {
+					console.log(result);
+					if(result.selectBrand.length > 0){
+						$("#groupId").empty();						
+						for (var i=0; i<result.selectBrand.length; i++) {
+							var obj = result.selectBrand[i];
+							$("<option value='"+ obj.code +"'>"+ obj.codeNm +"</option>").appendTo("#groupId");
+						}		
+					}
+				},
+				error : function(e) {
+					console.log(e);
+				}
+			});
+		} else if ( $("#authorCode").val() !=  "ROLE_ADMIN "  ){
+			apiExecute(
+				"POST", 
+				"/backoffice/sub/basicManage/roleCombo.do",
+				{
+					authorCode : $("#authorCode").val()
+				},
+				null,				
+				function(result) {				
+					if (result.centerCombo != null) {
+						$("#centerId").empty();
+						$("#centerId").append("<option value=''>--선택하세요--</option>");						
+						for (var i=0; i<result.centerCombo.length; i++) {
+							var obj = result.centerCombo[i];
+							$("<option value='"+ obj.centerId +"'>"+ obj.centerNm +"</option>").appendTo("#centerId");
+						}						
+					}
+					// if (result.roleCombo != null) {
+					//	$("#roleCode").empty();
+					//	$("#roleCode").append("<option value=''>--선택하세요--</option>");						
+					//	for (var i=0; i<result.roleCombo.length; i++) {
+					//		var obj = result.roleCombo[i];
+					//		$("<option value='"+ obj.roleCode +"'>"+ obj.roleNm +"</option>").appendTo("#roleCode");
+					//	}
+							
+					//} 
+				},
+				null,
+				null
+			);		  
+		}
+	}
+	*/
+	function ViewCenter(){
+		if($("#authorCode").val() == "ROLE_MHS_ADMIN" || $("#authorCode").val() == "ROLE_MHS_USER"){
+			$.ajax({
+				url : '/backoffice/sub/basicManage/mhsCenterCombo.do',
+				type : 'POST',
+				data : {
+					mhsBrandcd : $("#groupId").val()
+				},
+				dataType : 'json',
+				success : function(result) {
+					console.log(result);
+					if(result.selectCenter.length > 0){
+						$("#centerId").empty();				
+						for (var i=0; i<result.selectCenter.length; i++) {
+							var obj = result.selectCenter[i];
+							$("<option value='"+ obj.mhsCentercd +"'>"+ obj.mhsCenternm +"</option>").appendTo("#centerId");
+						}		
+					}
+				},
+				error : function(e) {
+					console.log(e);
+				}
+			});
+		} else {
+			// 사이니지, 음원방송 점포 정보  TB_CENTERINFO
+		}
+	}
 </script>
 
 

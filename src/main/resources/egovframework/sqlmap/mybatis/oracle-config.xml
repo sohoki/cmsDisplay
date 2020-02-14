@@ -38,12 +38,10 @@
 		<package name="egovframework.let.sym.log.clg"/>
 		
 		<package name="egovframework.let.sts.pic.service"/>
-		
 		<package name="egovframework.let.sts.brd.service"/>
-		
 		<package name="egovframework.let.utl.fcc.service"/>
-		
 		<package name="egovframework.let.sym.dbd.service"/>
+		<package name="egovframework.let.sts.mhs.service"/>
 		
 		
 	</typeAliases>
@@ -113,8 +111,15 @@
 		<mapper resource="egovframework/sqlmap/let/sts/brd/BasciBrodFileManagerMapper.xml"/>
 		<mapper resource="egovframework/sqlmap/let/sts/brd/BasicBrodScheduleManageMapper.xml"/>
 		
+		<mapper resource="egovframework/sqlmap/let/sts/brd/BasicBrodFileIntervalManageMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/brd/BasicFileGroupInfoManageMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/brd/BasicFileGroupPlayInfoManageMapper.xml"/>
 		
-		
+		<!-- 문화센터 강의알림 -->
+		<mapper resource="egovframework/sqlmap/let/sts/mhs/MhsCenterManageMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/mhs/MhsMonitorManageMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/mhs/MhsClassManageMapper.xml"/>
+		<mapper resource="egovframework/sqlmap/let/sts/mhs/MhsViewConnInfoManageMapper.xml"/>
 		
 		<!--  기초 코드 -->
 		<mapper resource="egovframework/sqlmap/let/utl/UniTableManagerMapper.xml"/>

@@ -43,6 +43,7 @@
 						<li><a href="/backoffice/sub/basicManage/centerList.do" class="playCenter">지점 관리</a></li>
 						<li class="active"><a href="/backoffice/sub/brodManage/playContentList.do" class="playMedia">음원파일관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/brodBasic.do" class="playMedia">기본음원관리</a></li>
+						<li><a href="/backoffice/sub/brodManage/brodPlayInfo.do" class="playShedule">기본음원재생현황</a></li>
 						<li><a href="/backoffice/sub/brodManage/brodContentList.do" class="playContents">음원콘텐츠관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/brodContentPlayList.do" class="playContents">스케줄음원관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/playShedule.do" class="playShedule">음원콘텐츠배포</a></li>
@@ -74,7 +75,7 @@
   									    <option value="streFileNm" <c:if test="${searchVO.searchCondition == 'streFileNm' }"> selected="selected" </c:if>>실파일명</option>
 									</select>	
 									<input type="text"  name="searchKeyword" id="searchKeyword" value="${searchVO.searchKeyword}">
-									<a href="javascript:search_form()" class="yellowBtn">검색</a>
+									<a href="javascript:search_form('/backoffice/sub/brodManage/playContentList.do')" class="yellowBtn">검색</a>
 								<div class="footerBox">
 								<a href="javascript:mp3Upload('Ins','0')" class="yellowBtn">등록</a></a>
 								<a href="javascript:fileState('Y')" class="grayBtn">사용</a></a>
@@ -217,10 +218,7 @@
     	var url = "/backoffice/sub/agentManage/mp3Detail.do?mode="+code+"&atchFileId="+fileId;	      
         window.open(url,"mp3Form", 'width=800,height=550,top=100,left=650,scrollbars=auto')
     }
-	  //검색
-	function search_form(){		  
-		  $("form[name=regist]").attr("action", "/backoffice/sub/brodManage/playContentList.do").submit();		  
-	}
+	
 	//전체 선택 및 
 	function ch_all(){
 		if ($("#checkAll").prop("checked")){

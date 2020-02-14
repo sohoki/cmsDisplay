@@ -41,6 +41,7 @@
 						<li><a href="/backoffice/sub/basicManage/centerList.do" class="playCenter">지점 관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/playContentList.do" class="playMedia">음원파일관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/brodBasic.do" class="playMedia">기본음원관리</a></li>
+						<li><a href="/backoffice/sub/brodManage/brodPlayInfo.do" class="playShedule">기본음원재생현황</a></li>
 						<li><a href="/backoffice/sub/brodManage/brodContentList.do" class="playContents">음원콘텐츠관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/brodContentPlayList.do" class="playContents">스케줄음원관리</a></li>
 						<li><a href="/backoffice/sub/brodManage/playShedule.do" class="playShedule">음원콘텐츠배포</a></li>
@@ -70,7 +71,7 @@
 									</select>		
 									<input type="text"  name="searchKeyword" id="searchKeyword" value="${searchVO.searchKeyword}">
 
-									<a href="javascript:search_form()" class="yellowBtn">검색</a>
+									<a href="javascript:search_form('/backoffice/sub/brodManage/playSheduleStatus.do')" class="yellowBtn">검색</a>
 								<div class="footerBox">								
 								<div class="clear"></div>			
 							</div>
@@ -152,10 +153,7 @@
 	</div>
 </form:form>
     <script type="text/javascript">
-    function search_form(){
-    	$("form[name=regist]").submit();
-    	$("form[name=regist]").attr("action", "/backoffice/sub/brodManage/playSheduleStatus.do").submit();
-    }
+   
     function linkPage(pageNo) {
 		$(":hidden[name=pageIndex]").val(pageNo);				
 		$("form[name=regist]").submit();

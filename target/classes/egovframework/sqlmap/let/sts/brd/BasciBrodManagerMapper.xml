@@ -87,7 +87,7 @@
    </update>
    <update id="updateBasciBrodCnt">
           update TB_BRODBASICGROUP 
-          set BASIC_GROUP_CNT = (SELECT NVL(COUNT(*),0) FROM TB_BASICSCHEDULE b WHERE b.CREATE_CHECK = 'Y' AND b.BASIC_CODE = TB_BRODBASICGROUP.BASIC_CODE)          
+          set BASIC_GROUP_CNT = (SELECT NVL(COUNT(*),0) FROM TB_BASICSCHEDULE b WHERE  b.BASIC_CODE = TB_BRODBASICGROUP.BASIC_CODE)          
    </update>
    <update id="updateBasciBrodCntPlus">
           update TB_BRODBASICGROUP set BASIC_GROUP_CNT = BASIC_GROUP_CNT + 1

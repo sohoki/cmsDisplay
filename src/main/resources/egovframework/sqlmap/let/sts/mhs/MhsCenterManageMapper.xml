@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.mapper.MhsCenterManageMapper">	
+
+    <select id="selectMhsBrandList"  resultType="egovframework.let.sts.mhs.service.MhsCenterInfoVO">
+    	<if test="authorCode == 'ROLE_MHS_USER'">
+		SELECT 
+			'1' as mhsBrandlv, group_nm as mhsBrandnm, GROUP_ID as mhsBrandcd, parent_group_id as mhsParentbrandcd 
+		FROM LETTNAUTHORGROUPINFO 
+		WHERE 
+			MHSYN = 'Y' AND GROUP_ID = #{groupId}
+		UNION
+    	</if>
+		SELECT 
+			<choose>
+			<when test="authorCode == 'ROLE_MHS_USER'">
+			TO_CHAR(LEVEL+1)
+			</when>
+			<otherwise>
+			TO_CHAR(LEVEL)
+			</otherwise>
+			</choose>
+			as mhsBrandlv, 
+			group_nm as mhsBrandnm, GROUP_ID as mhsBrandcd, parent_group_id as mhsParentbrandcd
+		FROM 
+			LETTNAUTHORGROUPINFO
+		WHERE
+		    MHSYN = 'Y'
+		<choose>
+		<when test="authorCode != 'ROLE_MHS_USER'">
+		START WITH parent_group_id = 'EMART_00000000000001'
+		</when>
+		<otherwise>
+		START WITH parent_group_id = #{groupId} <!-- parent id 넣어야 됨 -->
+		</otherwise>
+		</choose>
+		CONNECT BY PRIOR GROUP_ID = parent_group_id	 	
+	</select>
+	<select id="selectMhsComboList" parameterType="String" resultType="MhsCenterInfo">
+	    SELECT mhs_centerCd, mhs_centerNm  FROM TB_MHSCENTERINFO
+		WHERE 1=1  
+		<if test="!_parameter.equals('EMART_00000000000023')">
+		  and mhs_brandCd = #{_parameter}
+		</if>
+		START WITH mhs_parentCenterCd = '0'
+		CONNECT BY PRIOR mhs_centerCd = mhs_parentCenterCd
+	
+	</select>
+	<select id="selectMhsComboListMeber" parameterType="String" resultType="MhsCenterInfo">
+	    SELECT mhs_centerCd centerId, mhs_centerNm centerNm  FROM TB_MHSCENTERINFO
+		WHERE 1=1  
+		<if test="!_parameter.equals('EMART_00000000000023')">
+		  and mhs_brandCd = #{_parameter}
+		</if>
+		START WITH mhs_parentCenterCd = '0'
+		CONNECT BY PRIOR mhs_centerCd = mhs_parentCenterCd
+	
+	</select>
+    <select id="selectMhsCenterList"  resultType="egovframework.let.sts.mhs.service.MhsCenterInfoVO">
+		SELECT
+			a.MHS_BRANDCD as mhsBrandcd, a.MHS_CENTERCD as mhsCentercd, a.MHS_CENTERNM  as mhsCenternm, 
+			(select b.MHS_CENTERNM from TB_MHSCENTERINFO b where b.MHS_CENTERCD = a.MHS_PARENTCENTERCD) mhsParentcenterNm,
+			case MHS_CENTERSTATUS when 'Y' then '사용'
+			    else '미사용'
+			end mhsCenterstatusTxt, a.MHS_CENTERSTATUS, 
+			a.MHS_PARENTCENTERCD as mhsParentcentercd 
+		FROM
+			TB_MHSCENTERINFO a
+		WHERE a.MHS_BRANDCD = #{mhsBrandcd}
+		<if test="mhsCentercd != '' and mhsCentercd != null">
+		     and a.MHS_CENTERCD = #{mhsCentercd}
+		</if>
+		and MHS_PARENTCENTERCD != '0'
+		ORDER BY a.MHS_CENTERCD ASC , a.MHS_CENTERNM ASC 
+	</select>
+	<select id="selectMhsCenterInfo"  resultType="egovframework.let.sts.mhs.service.MhsCenterInfoVO">
+		SELECT
+			a.MHS_BRANDCD as mhsBrandcd, a.MHS_CENTERCD as mhsCentercd, a.MHS_CENTERNM  as mhsCenternm, 			
+			a.MHS_CENTERSTATUS, 
+			a.MHS_PARENTCENTERCD as mhsParentcentercd 
+		FROM
+			TB_MHSCENTERINFO a
+		WHERE a.MHS_CENTERCD = #{mhsCentercd}
+		
+	</select>
+	
+	<insert id="insertMhsCenter">
+	   insert into TB_MHSCENTERINFO (MHS_BRANDCD, MHS_CENTERCD, MHS_CENTERNM, MHS_CENTERREGID, MHS_CENTERREGDATE,
+                                     MHS_CENTERUPDATEID, MHS_CENTERUPDATEDATE, MHS_CENTERSTATUS, MHS_PARENTCENTERCD)
+	   values (#{mhsBrandcd} , EMARTCMS.FN_MHSCENTERID(), #{mhsCenternm}, #{mhsCenterregid , jdbcType=VARCHAR}, sysdate, 
+	           #{mhsCenterregid , jdbcType=VARCHAR}, sysdate, #{mhsCenterstatus}, #{mhsParentcentercd, jdbcType=VARCHAR})
+	</insert>
+	<update id="updateMhsCenter">
+	   update TB_MHSCENTERINFO set MHS_BRANDCD = #{mhsBrandcd}, 
+	                               MHS_CENTERNM = #{mhsCenternm},
+	                               MHS_CENTERUPDATEID = #{mhsCenterupdateid},
+	                               MHS_CENTERUPDATEDATE = sysdate,
+	                               MHS_CENTERSTATUS = #{mhsCenterstatus},
+	                               MHS_PARENTCENTERCD = #{mhsParentcentercd}
+	   where MHS_CENTERCD = #{mhsCentercd}
+	</update>
+	<delete id="deleteMhsCenter">
+	   delete from TB_MHSCENTERINFO where MHS_CENTERCD = #{mhsCentercd}
+	</delete>
+</mapper>

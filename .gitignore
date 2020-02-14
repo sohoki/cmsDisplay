@@ -1,2 +1,3 @@
 ﻿emart_cms.war
 /src/main/webapp/upload/*
+/target

@@ -3,20 +3,20 @@
 /*webfont*/
 @font-face {
     font-family:NotoSansKR;
-    src: url('../font/NotoSansKR-Regular-Hestia.eot');
-    src: local(※), url('../font/NotoSansKR-Regular-Hestia.woff') format('woff');
+    src: url('/font/NotoSansKR-Regular-Hestia.eot');
+    src: local(※), url('/font/NotoSansKR-Regular-Hestia.woff') format('woff');
     font-weight: 300;
     }
 @font-face {
     font-family:NotoSansKR;
-    src: url('../font/NotoSansKR-Medium-Hestia.eot');
-    src: local(※), url('../font/NotoSansKR-Medium-Hestia.woff') format('woff');
+    src: url('/font/NotoSansKR-Medium-Hestia.eot');
+    src: local(※), url('/font/NotoSansKR-Medium-Hestia.woff') format('woff');
     font-weight: 500;
     }
 @font-face {
     font-family:NotoSansKR;
-    src: url('../font/NotoSansKR-Bold-Hestia.eot');
-    src: local(※), url('../font/NotoSansKR-Bold-Hestia.woff') format('woff');
+    src: url('/font/NotoSansKR-Bold-Hestia.eot');
+    src: local(※), url('/font/NotoSansKR-Bold-Hestia.woff') format('woff');
     font-weight: 700;
     }
 /* All */

@@ -3,11 +3,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>egov</groupId>
-	<artifactId>egovTest</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0</version>
-	<name>emart_cms</name>
+	<version>1.0.1</version>
+	<name>emart_cms1.6</name>
 	<url>http://www.egovframe.go.kr</url>
+	<artifactId>atensystem</artifactId>
 
 	<licenses>
 		<license>
@@ -19,6 +19,9 @@
 	<properties>
 	    <spring.maven.artifact.version>3.2.9.RELEASE</spring.maven.artifact.version>
 		<egovframework.rte.version>3.1.0</egovframework.rte.version>
+		<webapp.lib>${basedir}/src/main/webapp/WEB-INF/lib</webapp.lib>
+		
+		
 	</properties>
 
 	<repositories>
@@ -34,7 +37,7 @@
 		</repository>
 		<repository>
 			<id>egovframe</id>
-			<url>http://www.egovframe.go.kr/maven/</url>
+			<url>http://maven.egovframe.kr:8080/maven/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -144,13 +147,13 @@
 			<version>1.9.13</version>
 		</dependency>
 		
-		<dependency>
+		<!-- <dependency>
             <groupId>ojdbc</groupId>
             <artifactId>ojdbc</artifactId>
             <version>14</version>
             <scope>system</scope>
-            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/ojdbc-14.jar</systemPath>
-        </dependency>	
+            <systemPath>${basedir}/WEB-INF/lib/ojdbc-14.jar</systemPath>
+        </dependency> -->	
         
         <!-- Jcodec 이용해서 비디오파일 썸네일   -->
         <dependency>
@@ -245,7 +248,7 @@
 	        <artifactId>xuggle-xuggler</artifactId>
 	        <version>5.2</version>
 	        <scope>system</scope>
-            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/xuggle-xuggler-5.4.jar</systemPath>
+            <systemPath>${webapp.lib}/xuggle-xuggler-5.4.jar</systemPath>
 	    </dependency>
 	    
 	    <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
@@ -266,7 +269,7 @@
             <artifactId>ojdbc</artifactId>
             <version>14</version>
             <scope>system</scope>
-            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/ojdbc-14.jar</systemPath>
+            <systemPath>${webapp.lib}/ojdbc-14.jar</systemPath>
         </dependency>
   	
 		<dependency>
@@ -300,7 +303,7 @@
 		</dependency>
 				
 
-		<!-- quartz -->
+		<!-- quartz
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz-weblogic</artifactId>
@@ -311,7 +314,7 @@
 			<artifactId>quartz-jboss</artifactId>
 			<version>2.1.7</version>
 		</dependency>
-
+         -->
 	</dependencies>
 
     <build>
@@ -336,8 +339,8 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
-                        <source>1.7</source>
-                        <target>1.7</target>
+                        <source>1.6</source>
+                        <target>1.6</target>
                         <encoding>UTF-8</encoding>
                     </configuration>
                 </plugin>
@@ -397,6 +400,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>emma-maven-plugin</artifactId>
                 <inherited>true</inherited>
+                <!-- <version>1.0-alpha-3</version> -->
             </plugin>
             <!-- JavaDoc -->
             <plugin>
@@ -433,10 +437,12 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>emma-maven-plugin</artifactId>
                 <inherited>true</inherited>
+                <version>1.0-alpha-3</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>surefire-report-maven-plugin</artifactId>
+                <version>2.0-beta-1</version>
                 <inherited>true</inherited>
                 <reportSets>
                     <reportSet>
@@ -450,6 +456,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <!-- <version>2.9.1</version> -->
                 <configuration>
                     <minmemory>128m</minmemory>
                     <maxmemory>512m</maxmemory>
@@ -462,6 +469,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
+                <version>2.3</version>
                 <configuration>
                     <inputEncoding>${encoding}</inputEncoding>
                     <outputEncoding>${encoding}</outputEncoding>
@@ -471,4 +479,5 @@
             </plugin>
         </plugins>
     </reporting>
+    
 </project>

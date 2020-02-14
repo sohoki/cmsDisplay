@@ -84,7 +84,7 @@
 											<option value="ORIGNL_FILE_NM" <c:if test="${searchVO.searchCondition == 'ORIGNL_FILE_NM' }"> selected="selected" </c:if>>업로드파일명</option>
 										</select>																	
 										<input type="text"  name="searchKeyword" id="searchKeyword" value="${searchVO.searchKeyword}">
-										<a href="javascript:search_form()" class="yellowBtn">검색</a>
+										<a href="javascript:search_form('/backoffice/sub/conManage/mediaLst.do')" class="yellowBtn">검색</a>
 									    <div class="footerBox">
 									    <a href="javascript:open_pop()" class="yellowBtn">미디어 파일 등록</a>
 									    </div>

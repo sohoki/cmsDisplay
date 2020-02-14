@@ -29,7 +29,6 @@
 <input type="hidden" name="menuGubun" id="menuGubun" value="${searchVO.menuGubun }" >
 <div id="wrap">
 <c:import url="/backoffice/inc/emart_header.do" />
-
 <input type="hidden" name="author_Code" id="author_Code"  value="${authorCode}">
 <input type="hidden" name="groupCode" id="groupCode"  value="${groupCode }">
 <input type="hidden" name="parentGroupId" id="parentGroupId"  value="${parentGroupId }">
@@ -76,7 +75,7 @@
 					
 						
 				       <input type="text"  name="searchKeyword" id="searchKeyword" value="${searchVO.searchKeyword}">
-				       <a href="javascript:search_form()" class="blueBtn">검색</a>
+				       <a href="javascript:search_form('/backoffice/sub/equiManage/didList.do')" class="blueBtn">검색</a>
 				       <div class="footerBox">
 				            <a href="javascript:view_Did('Ins','0')" class="yellowBtn">단말기 등록</a>
 				            <a href="javascript:Restart_Did('REDOWN')" class="grayBtn">콘텐츠재전송</a>
@@ -173,10 +172,8 @@
 		  }else {
 			  $("form[name=regist]").attr("action", "/backoffice/sub/equiManage/didView.do").submit();			  
 		  }		  
-	  }
-	 function search_form(){
-		 $("form[name=regist]").attr("action", "/backoffice/sub/equiManage/didList.do").submit();		 
 	 }
+	 
 	 function ch_all(){
 			if ($("#checkAll").prop("checked")){
 				$("input[type=checkbox]").prop("checked", true);
@@ -230,7 +227,7 @@
 	 }
 		$(document).ready(function() {
 			$('#author_Code').val(  $('#authorCode').val() );
-			$('#role_Code').val($('#roleCode').val())
+			$('#role_Code').val($('#roleCode').val());
 			
 		});	  	 
 	</script>
