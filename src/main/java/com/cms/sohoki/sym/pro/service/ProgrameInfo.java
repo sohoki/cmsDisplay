@@ -17,11 +17,19 @@ public class ProgrameInfo implements Serializable {
     private String mode = "";
     private String userId = "";
     private String progOstype= "";
+    private String progVersion = "";
     
     
     
     
     
+    
+	public String getProgVersion() {
+		return progVersion;
+	}
+	public void setProgVersion(String progVersion) {
+		this.progVersion = progVersion;
+	}
 	public String getProgOstype() {
 		return progOstype;
 	}
