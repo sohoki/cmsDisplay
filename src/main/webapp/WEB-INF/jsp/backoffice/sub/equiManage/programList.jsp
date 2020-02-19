@@ -25,13 +25,10 @@
         
 <input type="hidden" name="pageIndex" id="pageIndex" value="${searchVO.pageIndex }">
 <input type="hidden" name="mode" id="mode" >
-<input type="hidden" name="didId" id="didId" >           
+<input type="hidden" name="progCode" id="progCode" >           
 <input type="hidden" name="menuGubun" id="menuGubun" value="${searchVO.menuGubun }" >
 <div id="wrap">
 <c:import url="/backoffice/inc/emart_header.do" />
-<input type="hidden" name="author_Code" id="author_Code"  value="${authorCode}">
-<input type="hidden" name="groupCode" id="groupCode"  value="${groupCode }">
-<input type="hidden" name="parentGroupId" id="parentGroupId"  value="${parentGroupId }">
 
 <div class="left-contain">
 	<c:import url="/backoffice/inc/cms_left.do" />
@@ -69,17 +66,16 @@
                         <form:options items="${selectCenter}" itemValue="centerId" itemLabel="centerNm"/>
 				   </form:select>
 					<select name="searchCondition"  id="searchCondition">
-						<option value="didNm" <c:if test="${searchVO.searchCondition == 'didNm' }"> selected="selected" </c:if>>단말기명</option>
-						<option value="didId" <c:if test="${searchVO.searchCondition == 'didId' }"> selected="selected" </c:if>>단말기ID</option>
+						<option value="progTitle" <c:if test="${searchVO.searchCondition == 'progTitle' }"> selected="selected" </c:if>>제목</option>
+						<option value="fileInfo" <c:if test="${searchVO.searchCondition == 'fileInfo' }"> selected="selected" </c:if>>파일명</option>
 					</select>
 					
 						
 				       <input type="text"  name="searchKeyword" id="searchKeyword" value="${searchVO.searchKeyword}">
 				       <a href="javascript:search_form()" class="blueBtn">검색</a>
 				       <div class="footerBox">
-				            <a href="javascript:view_Did('Ins','0')" class="yellowBtn">단말기 등록</a>
-				            <a href="javascript:Restart_Did('REDOWN')" class="grayBtn">콘텐츠재전송</a>
-							<a href="javascript:Restart_Did('RESTART')" class="grayBtn">재부팅</a>
+				            <a href="javascript:fn_Porg('Ins','0')" class="yellowBtn">프로그램 등록</a>
+				           
 						</div>
 						<div class="clear"> </div>
 					</div>			
@@ -164,17 +160,12 @@
     
     </form:form>		
 	<script type="text/javascript">
-	  function view_Did(code, code1){	  
-		  $('#mode').val(code);
-		  $('#didId').val(code1);
-		  if (code == "Ins"){			   
-			  $("form[name=regist]").attr("action", "/backoffice/sub/equiManage/didDetail.do").submit();		       
-		  }else {
-			  $("form[name=regist]").attr("action", "/backoffice/sub/equiManage/didView.do").submit();			  
-		  }		  
-	  }
+	 function fn_Porg(code, code1){	  
+		 	  
+	 }
 	 function search_form(){
-		 $("form[name=regist]").attr("action", "/backoffice/sub/equiManage/didList.do").submit();		 
+		 $(":hidden[name=pageIndex]").val("1");	
+		 $("form[name=regist]").attr("action", "/backoffice/sub/equiManage/progList.do").submit();		 
 	 }
 	 function ch_all(){
 			if ($("#checkAll").prop("checked")){
@@ -185,53 +176,13 @@
 	 }
 	 function linkPage(pageNo) {
 		$(":hidden[name=pageIndex]").val(pageNo);		
-		$("form[name=regist]").attr("action", "/backoffice/sub/equiManage/didList.do").submit();
+		$("form[name=regist]").attr("action", "/backoffice/sub/equiManage/progList.do").submit();
 	 }	 
 	 //reset
 	 
-	 function Restart_Did(code){
-		    var cnt = $("input[name=didCheck]:checkbox:checked").length;
-	    	var del_atch = "";
-	    	if (cnt< 1){
-	    		alert("하나 이상의 체크를 선택 하셔야 합니다");
-	    	}else {
-	    		for (var i= 0; i < document.getElementsByName("didCheck").length; i++){
-	    			if (document.getElementsByName("didCheck")[i].checked == true){
-	    				del_atch = del_atch+","+document.getElementsByName("didCheck")[i].value;	
-	    			}    			
-	    		} 
-	    		
-	    			
-	    		apiExecute(
-	  				   "POST", 
-	  				   "/backoffice/sub/equiManage/RestartDidInfo.do",
-	   					{
-	  					   xmlProceNm : code,
-	  					   RestartDidInfo : del_atch
-	   					},
-	   					null,				
-	   					function(result) {							
-	    						if (result != null) {	         							
-	    							if (result == "O"){
-	    								alert("정삭적으로 재부팅 요청 하였습니다.");
-	    								document.location.reload();
-	    							}else {
-	    								alert("재부팅 요청시 문제가 생겼습니다.");
-	    								document.location.reload();
-	    							}
-	    						}
-	    					},
-	   					null,
-	   					null
-	 				);	    		
-	    		
-	    	}
-	 }
-		$(document).ready(function() {
-			$('#author_Code').val(  $('#authorCode').val() );
-			$('#role_Code').val($('#roleCode').val())
-			
-		});	  	 
+	 $(document).ready(function() {
+		 
+	 });	  	 
 	</script>
 </body>
 </html>		
