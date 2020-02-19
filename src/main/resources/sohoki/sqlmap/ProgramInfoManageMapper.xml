@@ -5,7 +5,7 @@
 	<select id="selectProgramPageListInfo" resultType="ProgrameInfoVO">  
 
 	   
-	   SELECT * FROM ( SELECT rownum RNUM, TB.* FROM (
+	   SELECT * FROM ( SELECT rownum RNUM, SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, TB.* FROM (
 	     SELECT a.PROG_CODE, a.PROG_TITLE, a.FILE_INFO, a.PROG_OSTYPE ,
              a.FRST_REGIST_PNTTM, a.FRST_REGISTER_ID, a.LAST_UPDT_PNTTM, a.LAST_UPDUSR_ID,
              FN_DETAILCODENM(a.PROG_OSTYPE) progOstypeTxt
