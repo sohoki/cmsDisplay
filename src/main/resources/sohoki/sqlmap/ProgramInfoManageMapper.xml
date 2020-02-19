@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cms.sohoki.mapper.ProgrameInfoManageMapper">
+
+	<select id="selectProgramPageListInfo" resultType="ProgrameInfoVO">  
+	  SELECT c.CENTER_NM, a.PLAY_DAY, b.REAL_FILE_NM as orignlFileNm, b.FILE_ALBUM, b.SINGER_NM,
+             a.PLAY_CNT
+      FROM TB_BASICFILEGROUP_PLAYINFO a , LETTNFILEDETAIL b, TB_CENTERINFO c
+      WHERE a.ATCH_FILE_ID = b.ATCH_FILE_ID
+            AND a.CENTER_ID = c.CENTER_ID 
+            <if test="searchStartDay != ''">
+            AND a.PLAY_DAY between #{searchStartDay} and #{searchEndDay}
+            </if>
+            <if test="searchCenterId != null">
+             AND  a.CENTER_ID in 
+                <foreach collection="searchCenterId" item="item" index="index" open="(" separator="," close=")">
+                 #{item}
+                </foreach>
+            </if>
+       order by c.CENTER_NM asc , a.PLAY_DAY asc
+	
+	</select>
+	<select id="selectProgramPageInfoDetail" resultType="ProgrameInfoVO">  
+	   SELECT PROG_CODE, PROG_TITLE, FILE_INFO, PROG_OSTYPE ,
+              FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID
+	   FROM TB_PROGRAMUPDATEINFO 
+	   WHERE PROG_CODE = #{progCode}
+	</select>
+    <insert id="insertProgrameInfo" >
+       INSERT INTO TB_PROGRAMUPDATEINFO (PROG_CODE, PROG_TITLE, FILE_INFO, PROG_OSTYPE ,
+                                        FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID)
+       VALUES (#{progCode},#{progTitle},#{fileInfo},#{progOstype} 
+               sysdate, #{userId}, sysdate, #{userId})
+    </insert>
+    <update id="updateProgrameInfo">
+       UPDATE TB_PROGRAMUPDATEINFO set PROG_TITLE = #{progTitle}, FILE_INFO = #{fileInfo},
+                                       PROG_OSTYPE = #{progOstype},
+                                       LAST_UPDT_PNTTM = sysdate,
+                                       LAST_UPDUSR_ID = #{userId}
+       WHERE PROG_CODE = #{progCode}
+    </update>
+    <delete id="deleteProgrameInfo">
+      DELETE FROM TB_PROGRAMUPDATEINFO WHERE PROG_CODE = #{progCode}
+    </delete>
+
+</mapper>

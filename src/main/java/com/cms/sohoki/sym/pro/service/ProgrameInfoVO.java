@@ -24,9 +24,17 @@ public class ProgrameInfoVO extends ProgrameInfo implements Serializable {
     private int recordCountPerPage = 10;
     private int totalRecordCount = 0;
     private String codeNm;
+    private String osTypeTxt = "";
     
     
     
+    
+	public String getOsTypeTxt() {
+		return osTypeTxt;
+	}
+	public void setOsTypeTxt(String osTypeTxt) {
+		this.osTypeTxt = osTypeTxt;
+	}
 	public String getSearchCondition() {
 		return searchCondition;
 	}
