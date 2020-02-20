@@ -17,11 +17,17 @@ public class ProgrameInfo implements Serializable {
     private String mode = "";
     private String userId = "";
     private String progOstype= "";
+    private String progRemark = "";
     
     
     
     
-    
+	public String getProgRemark() {
+		return progRemark;
+	}
+	public void setProgRemark(String progRemark) {
+		this.progRemark = progRemark;
+	}
 	public String getProgOstype() {
 		return progOstype;
 	}

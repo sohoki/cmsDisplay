@@ -17,6 +17,8 @@
 <script type="text/javascript" src="/js/common.js"></script>
 <script type="text/javascript" src="/js/popup.js"></script>
 <script type="text/javascript" src="/js/leftMenu.js"></script>
+
+<link rel="stylesheet" href="/new/css/needpopup.css">
 </head>
 <body>
 <noscript>자바스크립트를 지원하지 않는 브라우저에서는 일부 기능을 사용하실 수 없습니다.</noscript>
@@ -74,22 +76,18 @@
 				       <input type="text"  name="searchKeyword" id="searchKeyword" value="${searchVO.searchKeyword}">
 				       <a href="javascript:search_form()" class="blueBtn">검색</a>
 				       <div class="footerBox">
-				            <a href="javascript:fn_Porg('Ins','0')" class="yellowBtn">프로그램 등록</a>
-				           
+				            <a href="javascript:fn_Porg('Ins','0')" class="yellowBtn" data-needpopup-show="#small-popup-reg">프로그램 등록</a>
 						</div>
 						<div class="clear"> </div>
 					</div>			
 				<table>
 					<thead>
 						<tr>
-							<th>부서명</th>							
-							<th>지점명</th>
-							<th>단말기명</th>
-							<th>IP</th>
-							<th>DID스케줄</th>							
-							<th>ON/OFF 현황</th>
-							<th>OS구분</th>
-							<th>사용유무</th>
+							<th>프로그램</th>							
+							<th>OS 구분</th>
+							<th>업데이트내용</th>
+							<th>등록일</th>
+							<th>등록자</th>							
 							<th><input type="checkbox" id="checkAll" onClick="javascript:ch_all();"></th>				
 						</tr>
 					</thead>
@@ -158,14 +156,72 @@
         <!--내용끝-->
 	</div>    
     
-    </form:form>		
+    </form:form>	
+    
+    <div id='small-popup-reg' class="needpopup">
+	   
+	   <div class="contents">
+			<div class="header">
+				<h2><span id="spTitle" style="color: #fff;font-size: 20px;">프로그램 등록</span></h2>				
+			</div>
+			<div class="textT">
+				<!--테이블시작-->	    
+					<table>
+						<!--내용시작-->
+						<tbody class="text_left" style="background-color:#fff;">
+							<tr>
+								<th>프로그램 버전</th>
+								<td colspan="3"><input type="text" id="progTitle" name="progTitle" max="200" size="80" title="내용"></td>
+							</tr>
+							<tr>
+								<th>OS Type</th>
+								<td>
+								   <form:select path="groupTimegubun" id="groupTimegubun" title="기본음원선택">
+										         <form:option value="" label="--선택하세요--"/>
+						                        <form:options items="${groupTimegubun}" itemValue="code" itemLabel="codeNm"/>
+								    </form:select>
+								</td>
+								<th>업데이트 프로그램</th>
+								<td>
+								  <span id="fileInfoTxt"></span>
+								  <input type="hidden" id="fileInfo" />
+								</td>
+							</tr>
+							<tr>
+								<th>업데이트 내역</th>
+								<td colspan="3"><input type="text" id="progRemark" name="progRemark" max="2000" size="80" title="내용"></td>
+							</tr>
+							<tr>
+							  <td colspan="4" style="text-align:center">
+							  <a href="javascript:fn_CheckForm();" class="yellowBtn" id="btn_Update">등록</a>
+							  </td>
+							</tr>
+						</tbody>
+					</table>
+			</div>
+		</div>
+	</div>
+		
+    <script type="text/javascript" src="/js/needpopup.min.js"></script>
 	<script type="text/javascript">
-	 function fn_Porg(code, code1){	  
-		 	  
+	 function fn_Porg(mode, progCode){	  
+		 if (mode == "Ins"){
+			 $("#spTitle").html("프로그램 등록");
+			 $("#btn_Update").text = "등록";
+		 }else{
+			 $("#progCode").val(progCode);
+			 $("#spTitle").html("프로그램 수정");
+			 $("#btn_Update").text = "수정";
+			 
+			 
+		 }
 	 }
 	 function search_form(){
 		 $(":hidden[name=pageIndex]").val("1");	
 		 $("form[name=regist]").attr("action", "/backoffice/sub/equiManage/progList.do").submit();		 
+	 }
+	 function fn_CheckForm(){
+		 if (any_empt_line_id("groupTitle", "제목을 입력 하지 않았습니다.") == false) return;
 	 }
 	 function ch_all(){
 			if ($("#checkAll").prop("checked")){
@@ -179,9 +235,16 @@
 		$("form[name=regist]").attr("action", "/backoffice/sub/equiManage/progList.do").submit();
 	 }	 
 	 //reset
-	 
 	 $(document).ready(function() {
-		 
+			//시작시 넣을 파일
+		needPopup.config.custom = {
+			'removerPlace': 'outside',
+			'closeOnOutside': false,
+			onShow: function() {},
+			onHide: function() {}
+		};
+		needPopup.init();
+		
 	 });	  	 
 	</script>
 </body>
