@@ -43,13 +43,12 @@
 	    <div class="content">
 		<!--//상단 탭메뉴-->
 		<ul class="topMenu" >
-				<li class="active"><a href="/backoffice/sub/equiManage/didList.do" class="did">단말기 관리</a></li>
-				
-				<%-- <c:if test="${groupCode ne 'EMART_00000000000005' and authorCode == 'ROLE_ADMIN' }"> --%>
-				<li><a href="/backoffice/sub/equiManage/did_groupList.do" class="didGroup">그룹 관리</a></li>
-				<li><a href="/backoffice/sub/equiManage/didSendMessage.do" class="didGroup">메세지 관리</a></li>
-				<li><a href="/backoffice/sub/equiManage/didSendMessageLst.do" class="didGroup">메세지 현황</a></li>
-				<%-- </c:if> --%>
+				<li><a href="/backoffice/sub/basicManage/manageList.do" class="manage">관리자관리</a></li>
+				<li><a href="/backoffice/sub/basicManage/codeList.do" class="code">기초코드관리</a></li>
+				<li><a href="/backoffice/sub/basicManage/selectGroupLst.do" class="selectG">부서관리</a></li>
+				<li class="active"><a href="/backoffice/sub/basicManage/centerList.do" class="playCenter">지점관리</a></li>				
+				<li><a href="/backoffice/sub/basicManage/menuList.do" class="tmenu">메뉴관리(지점)</a></li>
+				<li><a href="/backoffice/sub/equiManage/progList.do" class="tmenu">프로그램 버전관리</a></li>
 				<div class="clear"></div>
 		</ul>
 		<div class="con">			
@@ -63,10 +62,6 @@
 						<option value="30" <c:if test="${searchVO.pageUnit == '30' }"> selected="selected" </c:if>>30개</option>
 						<option value="40" <c:if test="${searchVO.pageUnit == '40' }"> selected="selected" </c:if>>40개</option>
 					</select>
-					<form:select path="centerId" id="centerId" title="지점">
-				         <form:option value="" label="--선택하세요--"/>
-                        <form:options items="${selectCenter}" itemValue="centerId" itemLabel="centerNm"/>
-				   </form:select>
 					<select name="searchCondition"  id="searchCondition">
 						<option value="progTitle" <c:if test="${searchVO.searchCondition == 'progTitle' }"> selected="selected" </c:if>>제목</option>
 						<option value="fileInfo" <c:if test="${searchVO.searchCondition == 'fileInfo' }"> selected="selected" </c:if>>파일명</option>
@@ -178,12 +173,13 @@
 								<td>
 								   <form:select path="progOstype" id="progOstype" title="기본음원선택">
 										         <form:option value="" label="--선택하세요--"/>
-						                        <form:options items="${groupTimegubun}" itemValue="code" itemLabel="codeNm"/>
+						                        <form:options items="${progOstype}" itemValue="code" itemLabel="codeNm"/>
 								    </form:select>
 								</td>
 								<th>업데이트 프로그램</th>
 								<td>
 								  <span id="fileInfoTxt"></span>
+								  <input multiple="multiple" type="file" id="fileInfo" name="fileInfo[]" />
 								  <input type="hidden" id="fileInfo" />
 								</td>
 							</tr>
@@ -193,7 +189,7 @@
 							</tr>
 							<tr>
 							  <td colspan="4" style="text-align:center">
-							  <a href="javascript:fn_CheckForm();" class="yellowBtn" id="btn_Update">등록</a>
+							  <a href="javascript:fn_upload();" class="yellowBtn" id="btn_Update">등록</a>
 							  </td>
 							</tr>
 						</tbody>
@@ -201,7 +197,8 @@
 			</div>
 		</div>
 	</div>
-		
+	<form id="FILE_FORM" method="post" enctype="multipart/form-data" action="">
+    </form>	
     <script type="text/javascript" src="/js/needpopup.min.js"></script>
 	<script type="text/javascript">
 	 function fn_Porg(mode, progCode){	  
@@ -239,6 +236,24 @@
 	 function search_form(){
 		 $(":hidden[name=pageIndex]").val("1");	
 		 $("form[name=regist]").attr("action", "/backoffice/sub/equiManage/progList.do").submit();		 
+	 }
+	 function fn_upload(){
+		
+  	     var form = $('#FILE_FORM')[0];
+         var formData = new FormData(form);
+         formData.append("fileInfo", $("#fileInfo").val());
+         alert($("#fileInfo").val());
+         $.ajax({
+                     url: '/backoffice/sub/equiManage/progFileUpload.do',
+                     processData: false,
+                     contentType: false,
+                     data: formData,
+                     type: 'POST',
+                     success: function(result){
+                         alert("업로드 성공!!");
+                     }
+             });
+
 	 }
 	 function fn_CheckForm(){
 		 if (any_empt_line_id("progTitle", "버전을 입력 하지 않았습니다.") == false) return;

@@ -63,7 +63,7 @@
 						<li><a href="/backoffice/sub/basicManage/selectGroupLst.do" class="selectG">부서관리</a></li>
 						<li class="active"><a href="/backoffice/sub/basicManage/centerList.do" class="playCenter">지점관리</a></li>				
 						<li><a href="/backoffice/sub/basicManage/menuList.do" class="tmenu">메뉴관리(지점)</a></li>
-						<li><a href="/backoffice/sub/basicManage/tmenuList.do" class="tmenu">메뉴관리(타입)</a></li>
+						<li><a href="/backoffice/sub/equiManage/progList.do" class="tmenu">프로그램 버전관리</a></li>
 				<div class="clear"></div>
 			</ul>
 	        <div class="con">			

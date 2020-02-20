@@ -26,8 +26,17 @@ public class ProgrameInfoVO extends ProgrameInfo implements Serializable {
     private String codeNm;
     private String progOstypeTxt = "";
     
+    private String menuGubun = "";
     
     
+    
+    
+	public String getMenuGubun() {
+		return menuGubun;
+	}
+	public void setMenuGubun(String menuGubun) {
+		this.menuGubun = menuGubun;
+	}
 	public String getProgOstypeTxt() {
 		return progOstypeTxt;
 	}

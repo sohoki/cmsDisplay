@@ -1,5 +1,7 @@
 package com.cms.sohoki.sym.pro.web;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -14,6 +16,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
@@ -27,6 +31,7 @@ import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import com.cms.sohoki.sym.pro.service.ProgrameInfo;
 import com.cms.sohoki.sym.pro.service.ProgrameInfoVO;
 import com.cms.sohoki.sym.pro.service.ProgrameInfoService;
+
 import egovframework.com.cmm.service.Globals;
 
 @Controller
@@ -86,6 +91,7 @@ public class ProgrameInfoController {
 		model.addAttribute("paginationInfo", paginationInfo);
 		model.addAttribute("totalCnt", totCnt);		       
 		model.addAttribute("regist", searchVO);		    
+		model.addAttribute("progOstype", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT011"));
 		
 		return "/backoffice/sub/equiManage/programList";
 		
@@ -170,5 +176,35 @@ public class ProgrameInfoController {
     		model.addObject("message", "프로그램 삭제 실패");	
     	}
     	return model;
+    }
+    @RequestMapping("/backoffice/sub/equiManage/progFileUpload.do")
+    public ModelAndView requestupload (MultipartHttpServletRequest mtfRequest){
+    	
+    	ModelAndView model = new ModelAndView();
+    	LOGGER.debug("step01");
+    	List<MultipartFile> fileList = mtfRequest.getFiles("fileInfo");
+        
+        String path = "C:\\image\\";
+        LOGGER.debug("step02");
+        for (MultipartFile mf : fileList) {
+            String originFileName = mf.getOriginalFilename(); // 원본 파일 명
+            long fileSize = mf.getSize(); // 파일 사이즈
+
+            System.out.println("originFileName : " + originFileName);
+            System.out.println("fileSize : " + fileSize);
+
+            String safeFile = path + System.currentTimeMillis() + originFileName;
+           /* try {
+                mf.transferTo(new File(safeFile));
+            } catch (IllegalStateException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }*/
+        }
+        LOGGER.debug("step03");
+        return model;
     }
 }
