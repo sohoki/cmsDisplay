@@ -35,6 +35,6 @@
 	</bean>
 
 	<bean class="egovframework.rte.psl.dataaccess.mapper.MapperConfigurer">
-		<property name="basePackage" value="egovframework.**.mapper" />
+		<property name="basePackage" value="egovframework.**.mapper, com.cms.**.mapper" />
 	</bean>
 </beans>  

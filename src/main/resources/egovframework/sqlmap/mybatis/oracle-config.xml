@@ -127,6 +127,6 @@
 		<mapper resource="egovframework/sqlmap/let/utl/UniTableManagerMapper.xml"/>
 		
 		<!--  프로그램 관리  -->
-		<mapper resource="sohoki/sqlmap/ProgramInfoManageMapper.xml"/>				
+		<mapper resource="sohoki/sqlmap/prog/ProgramInfoManageMapper.xml"/>				
 	</mappers>
 </configuration>
