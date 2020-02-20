@@ -43,6 +43,8 @@
 		<package name="egovframework.let.sym.dbd.service"/>
 		<package name="egovframework.let.sts.mhs.service"/>
 		
+		<package name="com.cms.sohoki.sym.pro.service"/>
+		
 		
 	</typeAliases>
 	
@@ -124,6 +126,7 @@
 		<!--  기초 코드 -->
 		<mapper resource="egovframework/sqlmap/let/utl/UniTableManagerMapper.xml"/>
 		
-						
+		<!--  프로그램 관리  -->
+		<mapper resource="sohoki/sqlmap/ProgramInfoManageMapper.xml"/>				
 	</mappers>
 </configuration>

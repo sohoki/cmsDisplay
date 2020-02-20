@@ -176,7 +176,7 @@
 							<tr>
 								<th>OS Type</th>
 								<td>
-								   <form:select path="groupTimegubun" id="groupTimegubun" title="기본음원선택">
+								   <form:select path="progOstype" id="progOstype" title="기본음원선택">
 										         <form:option value="" label="--선택하세요--"/>
 						                        <form:options items="${groupTimegubun}" itemValue="code" itemLabel="codeNm"/>
 								    </form:select>
@@ -213,7 +213,27 @@
 			 $("#spTitle").html("프로그램 수정");
 			 $("#btn_Update").text = "수정";
 			 
-			 
+			 uniAjax(	"/backoffice/sub/equiManage/progInfo.do",
+						{
+							mode: $("#mode").val(),
+							progCode : $("#progCode").val()
+						},				
+						function(result) {	
+							if (result.status == "SUCCESS"){
+								//리스트 보여주기
+								var obj = result.result;
+								$("#progTitle").val(obj.progTitle);
+								$("#progOstype").val(obj.progOstype);
+								$("#fileInfoTxt").html(obj.fileInfoTxt);
+								$("#progRemark").val(obj.progRemark);
+							}else {
+								alert(result.message);
+							}							
+						},
+	                    function (request){
+							alert("ERROR:" + request.state);
+						}
+				 );
 		 }
 	 }
 	 function search_form(){
@@ -221,7 +241,31 @@
 		 $("form[name=regist]").attr("action", "/backoffice/sub/equiManage/progList.do").submit();		 
 	 }
 	 function fn_CheckForm(){
-		 if (any_empt_line_id("groupTitle", "제목을 입력 하지 않았습니다.") == false) return;
+		 if (any_empt_line_id("progTitle", "버전을 입력 하지 않았습니다.") == false) return;
+		 if (any_empt_line_id("progOstype", "os type을 선택 하지 않았습니다.") == false) return;
+		 uniAjax(	"/backoffice/sub/equiManage/progInfo.do",
+					{
+						mode: $("#mode").val(),
+						progCode : $("#progCode").val(),
+						progTitle : $("#progTitle").val(),
+						progOstype : $("#progOstype").val(),
+						progRemark : $("#progRemark").val(),
+						fileInfo : $("#fileInfo").val()
+					},				
+					function(result) {	
+						if (result.status == "SUCCESS"){
+							//리스트 보여주기
+							location.reload();
+						}else {
+							alert(result.message);
+						}							
+					},
+                 function (request){
+						alert("ERROR:" + request.state);
+					}
+			 );
+		 
+		 
 	 }
 	 function ch_all(){
 			if ($("#checkAll").prop("checked")){
