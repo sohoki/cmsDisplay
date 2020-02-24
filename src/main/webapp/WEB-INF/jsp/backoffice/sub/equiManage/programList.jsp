@@ -179,7 +179,10 @@
 								<th>업데이트 프로그램</th>
 								<td>
 								  <span id="fileInfoTxt"></span>
-								  <input multiple="multiple" type="file" id="fileInfo" name="fileInfo[]" />
+								  <div id="attach">
+								  <label class="waves-effect waves-teal btn-flat" for="uploadInputBox">파일첨부</label>
+								  <input id="uploadInputBox" style="display: none" type="file" name="filedata" multiple />
+								  </div>
 								  <input type="hidden" id="fileInfo" />
 								</td>
 							</tr>
@@ -201,6 +204,9 @@
     </form>	
     <script type="text/javascript" src="/js/needpopup.min.js"></script>
 	<script type="text/javascript">
+	 var files = {};
+     var previewIndex = 0;
+     var fileInfo = ""; 
 	 function fn_Porg(mode, progCode){	  
 		 if (mode == "Ins"){
 			 $("#spTitle").html("프로그램 등록");
@@ -241,23 +247,70 @@
 		
   	     var form = $('#FILE_FORM')[0];
          var formData = new FormData(form);
-         formData.append("fileInfo", $("#fileInfo").val());
-         alert($("#fileInfo").val());
+         for (var index = 0; index < Object.keys(files).length; index++) {
+        	 alert(index);
+             formData.append('files',files[index]);
+         }
          $.ajax({
                      url: '/backoffice/sub/equiManage/progFileUpload.do',
+                     enctype : 'multipart/form-data',
                      processData: false,
                      contentType: false,
+                     cache : false,
                      data: formData,
+                     timeout : 600000,
+                     dataType : 'JSON',
                      type: 'POST',
                      success: function(result){
-                         alert("업로드 성공!!");
+                    	 fileInfo = result;
+                    	 console.log("result:" + result);
+                    	 //alert("업로드 성공!!");
                      }
              });
 
 	 }
+	 
+	 function addPreview(input) {
+		  if (input[0].files) {
+             //파일 선택이 여러개였을 시의 대응
+             for (var fileIndex = 0; fileIndex < input[0].files.length; fileIndex++) {
+                 var file = input[0].files[fileIndex];
+                 var reader = new FileReader();
+                 
+                 var imgNum = previewIndex++;
+                 files[imgNum] = file;
+                 /* reader.onload = function(img) {
+                     //div id="preview" 내에 동적코드추가.
+                     //이 부분을 수정해서 이미지 링크 외 파일명, 사이즈 등의 부가설명을 할 수 있을 것이다.
+                     var imgNum = previewIndex++;
+                     console.log("file.name:" +file.name + ":" + imgNum);
+                     /*$("#preview")
+                             .append(
+                                     "<div class=\"preview-box\" value=\"" + imgNum +"\">"
+                                             + "<img class=\"thumbnail\" src=\"" + img.target.result + "\"\/>"
+                                             + "<p>"
+                                             + file.name
+                                             + "</p>"
+                                             + "<a href=\"#\" value=\""
+                                             + imgNum
+                                             + "\" onclick=\"deletePreview(this)\">"
+                                             + "삭제" + "</a>" + "</div>"); 
+                    // files[imgNum] = file;
+                 }; */
+                 reader.readAsDataURL(file);
+             }
+         } else
+             alert('invalid file input'); // 첨부클릭 후 취소시의 대응책은 세우지 않았다.
+     }
 	 function fn_CheckForm(){
 		 if (any_empt_line_id("progTitle", "버전을 입력 하지 않았습니다.") == false) return;
 		 if (any_empt_line_id("progOstype", "os type을 선택 하지 않았습니다.") == false) return;
+		 
+		 if (Object.keys(files).length > 0){
+			 fileInfo = fn_upload();
+		 }
+		 
+		 
 		 uniAjax(	"/backoffice/sub/equiManage/progInfo.do",
 					{
 						mode: $("#mode").val(),
@@ -265,7 +318,7 @@
 						progTitle : $("#progTitle").val(),
 						progOstype : $("#progOstype").val(),
 						progRemark : $("#progRemark").val(),
-						fileInfo : $("#fileInfo").val()
+						fileInfo : fileInfo
 					},				
 					function(result) {	
 						if (result.status == "SUCCESS"){
@@ -304,6 +357,9 @@
 		};
 		needPopup.init();
 		
+		$('#attach input[type=file]').change(function() {
+	         addPreview($(this)); //preview form 추가하기
+	     });
 	 });	  	 
 	</script>
 </body>

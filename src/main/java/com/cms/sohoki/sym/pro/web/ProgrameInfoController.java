@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -178,33 +179,42 @@ public class ProgrameInfoController {
     	return model;
     }
     @RequestMapping("/backoffice/sub/equiManage/progFileUpload.do")
-    public ModelAndView requestupload (MultipartHttpServletRequest mtfRequest){
+    public ModelAndView requestupload (@RequestParam("files")List<MultipartFile> images){
     	
-    	ModelAndView model = new ModelAndView();
-    	LOGGER.debug("step01");
-    	List<MultipartFile> fileList = mtfRequest.getFiles("fileInfo");
-        
-        String path = "C:\\image\\";
-        LOGGER.debug("step02");
-        for (MultipartFile mf : fileList) {
-            String originFileName = mf.getOriginalFilename(); // 원본 파일 명
-            long fileSize = mf.getSize(); // 파일 사이즈
-
-            System.out.println("originFileName : " + originFileName);
-            System.out.println("fileSize : " + fileSize);
-
-            String safeFile = path + System.currentTimeMillis() + originFileName;
-           /* try {
-                mf.transferTo(new File(safeFile));
-            } catch (IllegalStateException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }*/
-        }
-        LOGGER.debug("step03");
+    	 ModelAndView model = new ModelAndView();
+    	 
+    	 try{
+    		 long sizeSum = 0;
+        	 
+        	 String filePath = propertiesService.getString("Globals.fileStorePath");
+        	 
+        	 //디렉토리 생성
+        	 String inDate   = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());            	
+         	 File filedir = new File(filePath+"\\software\\"+inDate);
+         	
+         	 if (!filedir.isDirectory()){
+         		filedir.mkdir();
+         	 }
+         	 String fileFullPath = "";
+         	 String fileList = "";
+             for(MultipartFile image : images) {
+                 String originalName = image.getOriginalFilename();
+                 //확장자 검사
+                 System.out.println(originalName);
+                 System.out.println(originalName.substring(originalName.lastIndexOf(".") + 1));
+                 System.out.println(image.getSize());
+                 //용량 검사
+                
+                 fileFullPath = filePath+"/software/"+inDate+"/" + originalName.substring(originalName.lastIndexOf(".") + 1)+ ".jpg";  
+                 File file = new File(fileFullPath);
+                 image.transferTo(file);
+                 fileList += originalName;
+             }
+             model.addObject("status", "SUCCESS");
+         	 model.addObject("fileInfo", fileList);
+    	 }catch(Exception e){
+    		 model.addObject("status", "Fail");
+    	 }
         return model;
     }
 }
