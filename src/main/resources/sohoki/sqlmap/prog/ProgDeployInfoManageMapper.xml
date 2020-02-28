@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cms.sohoki.mapper.ProgDeployInfoManageMapper">
+   <select id="selectProgramDeployListInfo" resultType="ProgDeployInfoVO">  	   
+	   SELECT * FROM ( SELECT rownum RNUM, SUM(1) OVER(PARTITION BY NULL) AS TOTAL_RECORD_COUNT, TB.* FROM (
+	     SELECT c.PROG_CODE, c.PROG_TITLE, c.FILE_INFO, c.PROG_REMARK,
+                A.DEP_SEQ, a.DEPLY_SENDDATE, a.DEPLY_RECDATE, a.DEPLY_RESULT
+                FN_DETAILCODENM(c.PROG_OSTYPE) progOstypeTxt
+         FROM TB_DIDDEPLOYINFO a , TB_DIDINFO b, TB_PROGRAMUPDATEINFO c
+         WHERE a.PROG_CODE = b.PROG_CODE and a.DID_ID = b.DID_ID
+	           <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'progTitle'">
+								and c.PROG_TITLE LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and c.PROG_REMARK LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>	
+				<if test="searchProgOstype != ''">
+				    and c.PROG_OSTYPE =  #{searchProgOstype}
+				</if>
+           order by c.DEPLY_SENDDATE desc , c.PROG_CODE desc
+	   ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+	</select>
+	<select id="selectProgramDeployDetail" resultType="ProgDeployInfoVO">
+	     SELECT c.PROG_CODE, c.PROG_TITLE, c.FILE_INFO, c.PROG_REMARK,
+                A.DEP_SEQ, a.DEPLY_SENDDATE, a.DEPLY_RECDATE, a.DEPLY_RESULT
+                FN_DETAILCODENM(c.PROG_OSTYPE) progOstypeTxt
+         FROM TB_DIDDEPLOYINFO a , TB_DIDINFO b, TB_PROGRAMUPDATEINFO c
+         WHERE a.PROG_CODE = b.PROG_CODE and a.DID_ID = b.DID_ID
+               and a.DEP_SEQ = #{depSeq}
+	</select>
+	<insert id="insertProgramDeploy">
+	  INSERT INTO TB_DIDDEPLOYINFO (DEP_SEQ, PROG_CODE, DID_ID, DEPLY_SENDDATE)
+	  VALUE (DEPLOY_SEQ.NEXTVAL, #{progCode}, #{didId}, sysdate)
+	</insert>
+    <update id="updateProgramDeploy">
+      UPDATE TB_DIDDEPLOYINFO set PROG_CODE = #{progCode} ,
+                                  DEPLY_RECDATE = sysdate, 
+                                  DEPLY_RESULT = #{deployResult}
+      WHERE DEP_SEQ = #{depSeq}
+    </update>
+    <delete id="deleteProgramDeploy">
+        DELETE FROM TB_DIDDEPLOYINFO WHERE DEP_SEQ = #{depSeq}
+    </delete>
+ 
+</mapper>
