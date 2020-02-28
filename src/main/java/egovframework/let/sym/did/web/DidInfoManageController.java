@@ -53,6 +53,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
+import com.cms.sohoki.sym.pro.service.ProgrameInfoService;
+import com.cms.sohoki.sym.pro.service.ProgrameInfoVO;
+
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.fdl.security.userdetails.util.EgovUserDetailsHelper;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
@@ -99,6 +102,10 @@ public class DidInfoManageController {
     
     @Resource(name="GroupDidInfoManageService")
     private GroupDidInfoManageService groupDidInfoManageService;
+    
+    
+    @Resource(name="ProgrameInfoService")
+    private ProgrameInfoService progInfo;
 
 	@Autowired
 	private DefaultBeanValidator beanValidator;
@@ -590,9 +597,14 @@ public class DidInfoManageController {
 		model.addAttribute("selectMoniterCnt", cmmnDetailCodeManageService.selectCmmnDetailCombo("EMT014"));
 		
 		
+		
 		model.addAttribute("regist", vo);
 		
 		if (!vo.getMode().equals("Ins")){
+			//신규 추가 
+			ProgrameInfoVO progVo = new ProgrameInfoVO();
+			progVo.setProgOstype(vo.getDidOs()); 
+			model.addAttribute("selectProgVersion", progInfo.selectProgramComboInfo(progVo));
 	     	model.addAttribute("regist", didInfoManageService.selectDidrInfoManageDetail(vo.getDidId()) );	     		     
 		}		
 		return "/backoffice/sub/equiManage/didDetail";		
@@ -667,18 +679,14 @@ public class DidInfoManageController {
 		try{
 			
 			int ret  = 0;
+			LOGGER.debug("didSwver:" + vo.getDidSwver());
 			if (vo.getMode().equals("Ins")){
 				
 				String insertDid = didInfoManageService.selectLastInsertDid(vo.getCenterId());
-				LOGGER.info((new StringBuilder("insert try get didid : ")).append(insertDid).toString());
-                
 				vo.setDidId(insertDid);
 				
-				System.out.println("DID INSERT DATA CEHCK >> " + vo.toString());
-				
                 ret = didInfoManageService.insertDidInfoManage(vo);
-                LOGGER.info((new StringBuilder("insert try resultValue : ")).append(ret).toString());
-               
+                
                 if(ret > 0){
                 	 if(vo.getGroupId() != null && !vo.getGroupId().equals("")){
                          LOGGER.info((new StringBuilder("insert try group info : ")).append(vo.getGroupId()).toString());

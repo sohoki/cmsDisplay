@@ -103,7 +103,7 @@ public class ProgrameInfoController {
 							               , HttpServletRequest request
 										   , BindingResult bindingResult)throws Exception {
     	
-    	ModelAndView mv = new ModelAndView();
+    	ModelAndView mv = new ModelAndView("jsonView");
     	
 		
     	try{
@@ -128,7 +128,7 @@ public class ProgrameInfoController {
 											      , @RequestBody ProgrameInfoVO VO
 								                  , HttpServletRequest request
 											      , BindingResult bindingResult)throws Exception {
-    	ModelAndView model = new ModelAndView();
+    	ModelAndView model = new ModelAndView("jsonView");
     	try{
     		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
             if(!isAuthenticated) {
@@ -147,13 +147,25 @@ public class ProgrameInfoController {
     	}catch(Exception e){
     		LOGGER.debug("selectProgrameUpdateInfo error: " + e.toString());
     		model.addObject("status", Globals.STATUS_FAIL);
-    		model.addObject("message", "프로그램 조회 실패");	
+    		model.addObject("message", "프로그램 등록 실패");	
+    	}
+    	return model;
+    }
+    @RequestMapping("/backoffice/sub/equiManage/progCombo.do")
+    public ModelAndView selectProgrameComboInfo ( @RequestBody ProgrameInfoVO VO )throws Exception {
+    	ModelAndView model = new ModelAndView("jsonView");
+    	try{
+    		model.addObject("status", "SUCCESS");
+    		model.addObject("progList", programeService.selectProgramComboInfo(VO));
+    	}catch(Exception e){
+    		model.addObject("status", "FAIL");
+    		model.addObject("message", "조회 실패:" + e.toString());
     	}
     	return model;
     }
     @RequestMapping("/backoffice/sub/equiManage/progDelete.do")
     public ModelAndView selectProgrameDeleteInfo ( HttpServletRequest request  )throws Exception {
-    	ModelAndView model = new ModelAndView();
+    	ModelAndView model = new ModelAndView("jsonView");
     	try{
     		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
             if(!isAuthenticated) {
@@ -179,9 +191,9 @@ public class ProgrameInfoController {
     	return model;
     }
     @RequestMapping("/backoffice/sub/equiManage/progFileUpload.do")
-    public ModelAndView requestupload (@RequestParam("files")List<MultipartFile> images){
+    public ModelAndView requestupload (@RequestParam("files")List<MultipartFile> images)throws Exception{
     	
-    	 ModelAndView model = new ModelAndView();
+    	 ModelAndView model = new ModelAndView("jsonView");
     	 
     	 try{
     		 long sizeSum = 0;
@@ -190,30 +202,36 @@ public class ProgrameInfoController {
         	 
         	 //디렉토리 생성
         	 String inDate   = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());            	
-         	 File filedir = new File(filePath+"\\software\\"+inDate);
-         	
-         	 if (!filedir.isDirectory()){
-         		filedir.mkdir();
-         	 }
+         	 
          	 String fileFullPath = "";
          	 String fileList = "";
              for(MultipartFile image : images) {
+            	 
+            	 File filedir = new File(filePath+"software\\"+inDate);
+             	 if (!filedir.isDirectory()){
+             		filedir.mkdir();
+             	 }
+             	 
                  String originalName = image.getOriginalFilename();
                  //확장자 검사
-                 System.out.println(originalName);
-                 System.out.println(originalName.substring(originalName.lastIndexOf(".") + 1));
                  System.out.println(image.getSize());
                  //용량 검사
-                
-                 fileFullPath = filePath+"/software/"+inDate+"/" + originalName.substring(originalName.lastIndexOf(".") + 1)+ ".jpg";  
+                 //리눅스 관련시 path 변경
+                 fileFullPath = filePath+"software\\"+inDate+"\\" + originalName.substring(0,originalName.lastIndexOf(".") - 1)+ ".jpg"; 
+                 
+                 LOGGER.debug("fileFullPath: " + fileFullPath);
                  File file = new File(fileFullPath);
                  image.transferTo(file);
-                 fileList += originalName;
+                 fileList += ","+originalName;
              }
+             LOGGER.debug("fileList: " + fileList);
              model.addObject("status", "SUCCESS");
          	 model.addObject("fileInfo", fileList);
     	 }catch(Exception e){
+    		 System.out.println("requestupload error:" + e.toString());
+    		 LOGGER.debug("requestupload error:" + e.toString());
     		 model.addObject("status", "Fail");
+    		 model.addObject("message", "error:" + e.toString());
     	 }
         return model;
     }

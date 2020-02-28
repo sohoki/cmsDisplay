@@ -4,12 +4,15 @@ import java.util.List;
 
 import com.cms.sohoki.sym.pro.service.ProgrameInfoVO;
 import com.cms.sohoki.sym.pro.service.ProgrameInfo;
+
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
 @Mapper("ProgrameInfoManageMapper")
 public interface ProgrameInfoManageMapper {
 
 	public List<ProgrameInfoVO> selectProgramPageListInfo (ProgrameInfoVO searchVO);
+	
+	public List<ProgrameInfoVO> selectProgramComboInfo (ProgrameInfoVO searchVO);
 	
 	public ProgrameInfoVO selectProgramPageInfoDetail(String prodCode);
 	

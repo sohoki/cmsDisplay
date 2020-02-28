@@ -89,8 +89,8 @@
 									<td><c:out value="${regist.didIpaddr}" /></td>
 									<th>IP타입</th>
 									<td><c:out value="${regist.didIptype}" /></td>
-									<th>단말 OS</th>
-									<td><c:out value="${regist.didOs}" /></td>
+									<th>단말 OS/Version</th>
+									<td style="text-aling:left"><c:out value="${regist.didOs}" /> | <c:out value="${regist.didSwver}" /></td>
 								</tr>
 								<tr>
 									<th>관리부서</th>
@@ -153,8 +153,6 @@
 									<td><a href="javascript:view_DidTime();" class="blueBtn fontSize12">장비통신 이력조회</a></td>												
 								</tr>
 								<tr class="hideItem">
-									<th>Agent ver</th>
-									<td><c:out value="${regist.didSwver}" /></td>
 									<th>지원해상도</th>
 									<td><c:out value="${regist.didType}" /></td>				
 									<th>시리얼 사용</th>

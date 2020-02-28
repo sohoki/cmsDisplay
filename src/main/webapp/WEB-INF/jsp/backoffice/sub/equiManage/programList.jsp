@@ -72,6 +72,7 @@
 				       <a href="javascript:search_form()" class="blueBtn">검색</a>
 				       <div class="footerBox">
 				            <a href="javascript:fn_Porg('Ins','0')" class="yellowBtn" data-needpopup-show="#small-popup-reg">프로그램 등록</a>
+				            <a href="javascript:fn_Porg('Del','0')" class="yellowBtn">프로그램 삭제</a>
 						</div>
 						<div class="clear"> </div>
 					</div>			
@@ -81,36 +82,22 @@
 							<th>프로그램</th>							
 							<th>OS 구분</th>
 							<th>업데이트내용</th>
+							<th>업데이트 파일</th>
 							<th>등록일</th>
 							<th>등록자</th>							
-							<th><input type="checkbox" id="checkAll" onClick="javascript:ch_all();"></th>				
+							<th><input type="checkbox" id="checkAll" onClick="javascript:fn_allCheck();"></th>				
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach items="${resultList }" var="didinfo" varStatus="status">
+						<c:forEach items="${resultList }" var="progInfo" varStatus="status">
 						<tr>
-							<%-- <td><c:out value="${(searchVO.pageIndex - 1) * searchVO.pageSize + status.count}"/></td> --%>
-							<td>${didinfo.roleNm  }</td>
-							<td>${didinfo.centerNm  }</td>
-							<td><a href="javascript:view_Did('Edt','${didinfo.didId  }')"> ${didinfo.didNm  }</a><br>${didinfo.didId  }</td>
-							<td><a href="javascript:view_Did('Edt','${didinfo.didId  }')">${didinfo.didIpaddr  }</a></td>
-							<td>${didinfo.schCnt} 개</td>									
-							<td>
+							<td>${progInfo.progTitle  }</td>
+							<td><a href="javascript:fn_didOsType('${progInfo.progCode  }')">${progInfo.progOstypeTxt  }</a>
 							<c:choose>
-							   <c:when test="${didinfo.didSttus eq 'ON' }">
-									<img src="/img/on_icon.png" width="16px" height="16px" />
-							   </c:when>
-							   <c:otherwise>
-							   		<img src="/img/off_icon.png" width="16px" height="16px" />
-							   </c:otherwise>
-							</c:choose>
-							</td>
-							<td>
-							<c:choose>
-							   <c:when test="${didinfo.didOs eq '안드로이드' }">
+							   <c:when test="${progInfo.progOstypeTxt eq '안드로이드' }">
 									<img src="/img/android_icon.png" width="16px" height="16px" />
 							   </c:when>
-							   <c:when test="${didinfo.didOs eq '윈도우' }">
+							   <c:when test="${progInfo.progOstypeTxt eq '윈도우' }">
 									<img src="/img/windows_icon.png" width="16px" height="16px" />
 							   </c:when>
 							   <c:otherwise>
@@ -118,22 +105,16 @@
 							   </c:otherwise>
 							</c:choose>
 							</td>
-							<td>
-							<c:choose>
-							   <c:when test="${didinfo.didUseYn eq 'Y' }">
-									<img src="/img/use_icon.png" width="16px" height="16px" />
-							   </c:when>
-							   <c:otherwise>
-							   		<img src="/img/no_use_icon.png" width="16px" height="16px" />
-							   </c:otherwise>
-							</c:choose>
-							</td>
-							<td><input type="checkbox" name="didCheck" value="<c:out value="${didinfo.didId}"/>|<c:out value="${didinfo.didMac}"/>"></td>
+							<td><a href="#" onClick="fn_Porg('Edt','${progInfo.progCode  }')" data-needpopup-show="#small-popup-reg"> ${progInfo.progRemark  }</a></td>
+							<td><a href="#" onClick="fn_Porg('Edt','${progInfo.progCode  }')" data-needpopup-show="#small-popup-reg"> ${progInfo.fileInfo  }</a></td>
+							<td>${progInfo.lastRegistPnttm  }</td>
+							<td>${progInfo.lastUpdusrId  }</td>
+							<td><input type="checkbox" name="progCodeLst" value="<c:out value="${progInfo.progCode}"/>"></td>
 						</tr>	
 						</c:forEach>
 						<c:if test="${fn:length(resultList) == 0 }">
 						<tr>
-						  <td colspan="8">등록된 DID 가 없습니다</td>
+						  <td colspan="8">등록된  업데이트 프로그램이  없습니다</td>
 						</tr>
 						</c:if>		
 					</tbody>
@@ -166,7 +147,7 @@
 						<tbody class="text_left" style="background-color:#fff;">
 							<tr>
 								<th>프로그램 버전</th>
-								<td colspan="3"><input type="text" id="progTitle" name="progTitle" max="200" size="80" title="내용"></td>
+								<td colspan="3"><input type="text" id="progTitle" name="progTitle" max="200" size="80" title="내용" /></td>
 							</tr>
 							<tr>
 								<th>OS Type</th>
@@ -188,7 +169,7 @@
 							</tr>
 							<tr>
 								<th>업데이트 내역</th>
-								<td colspan="3"><input type="text" id="progRemark" name="progRemark" max="2000" size="80" title="내용"></td>
+								<td colspan="3"><input type="text" id="progRemark" name="progRemark" max="2000" size="80" title="내용" /></td>
 							</tr>
 							<tr>
 							  <td colspan="4" style="text-align:center">
@@ -207,12 +188,36 @@
 	 var files = {};
      var previewIndex = 0;
      var fileInfo = ""; 
-	 function fn_Porg(mode, progCode){	  
+     function fn_didOsType(progCode){
+    	 
+     }
+     function 
+     function allCheck(code){
+		 if (code == "L"){
+			 //좌측 체크 박스
+			 if ($("#L_checkAll").prop("checked")) {
+					$("input[name=ck_fileId]").prop("checked", true);
+			 } else {
+					$("input[name=ck_fileId]").prop("checked", false);
+			 }
+		 }else {
+			 //우측 체크 박스 
+			 if ($("#checkAll").prop("checked")) {
+					$("input[name=ck_basicSeq]").prop("checked", true);
+			 } else {
+					$("input[name=ck_basicSeq]").prop("checked", false);
+			 }	 
+		 }
+		 
+	 }
+	 function fn_Porg(mode, progCode){
+		 alert(mode);
+		 $("#mode").val(mode);
+		 $("#progCode").val(progCode);
 		 if (mode == "Ins"){
 			 $("#spTitle").html("프로그램 등록");
 			 $("#btn_Update").text = "등록";
 		 }else{
-			 $("#progCode").val(progCode);
 			 $("#spTitle").html("프로그램 수정");
 			 $("#btn_Update").text = "수정";
 			 
@@ -244,29 +249,39 @@
 		 $("form[name=regist]").attr("action", "/backoffice/sub/equiManage/progList.do").submit();		 
 	 }
 	 function fn_upload(){
-		
-  	     var form = $('#FILE_FORM')[0];
-         var formData = new FormData(form);
-         for (var index = 0; index < Object.keys(files).length; index++) {
-        	 alert(index);
-             formData.append('files',files[index]);
-         }
-         $.ajax({
-                     url: '/backoffice/sub/equiManage/progFileUpload.do',
-                     enctype : 'multipart/form-data',
-                     processData: false,
-                     contentType: false,
-                     cache : false,
-                     data: formData,
-                     timeout : 600000,
-                     dataType : 'JSON',
-                     type: 'POST',
-                     success: function(result){
-                    	 fileInfo = result;
-                    	 console.log("result:" + result);
-                    	 //alert("업로드 성공!!");
-                     }
-             });
+		 if (any_empt_line_id("progTitle", "버전을 입력 하지 않았습니다.") == false) return;
+		 if (any_empt_line_id("progOstype", "os type을 선택 하지 않았습니다.") == false) return;
+		 
+		 if (Object.keys(files).length > 0){
+			 var form = $('#FILE_FORM')[0];
+	         var formData = new FormData(form);
+	         for (var index = 0; index < Object.keys(files).length; index++) {
+	        	 //alert(index);
+	             formData.append('files',files[index]);
+	         }
+	         $.ajax({
+	                     url: '/backoffice/sub/equiManage/progFileUpload.do',
+	                     enctype : 'multipart/form-data',
+	                     processData: false,
+	                     contentType: false,
+	                     cache : false,
+	                     data: formData,
+	                     timeout : 600000,
+	                     dataType : 'JSON',
+	                     type: 'POST',
+	                     success: function(result){
+	                    	 if (result.status == "SUCCESS"){
+	                    		 fileInfo = result.fileInfo.substring(1);
+	                    		 fn_CheckForm();
+	                    	 }else {
+	                    		 alert(result.message);	 
+	                    	 }
+	                     }
+	             });	 
+		 }else {
+			 fn_CheckForm();
+		 }
+  	     
 
 	 }
 	 
@@ -303,15 +318,8 @@
              alert('invalid file input'); // 첨부클릭 후 취소시의 대응책은 세우지 않았다.
      }
 	 function fn_CheckForm(){
-		 if (any_empt_line_id("progTitle", "버전을 입력 하지 않았습니다.") == false) return;
-		 if (any_empt_line_id("progOstype", "os type을 선택 하지 않았습니다.") == false) return;
-		 
-		 if (Object.keys(files).length > 0){
-			 fileInfo = fn_upload();
-		 }
-		 
-		 
-		 uniAjax(	"/backoffice/sub/equiManage/progInfo.do",
+		 $("#mode").val("Ins");
+		 uniAjax(	"/backoffice/sub/equiManage/progUpdate.do",
 					{
 						mode: $("#mode").val(),
 						progCode : $("#progCode").val(),

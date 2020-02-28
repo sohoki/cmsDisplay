@@ -28,9 +28,16 @@ public class ProgrameInfoVO extends ProgrameInfo implements Serializable {
     
     private String menuGubun = "";
     
+    private String searchProgOstype = "";
     
     
     
+	public String getSearchProgOstype() {
+		return searchProgOstype;
+	}
+	public void setSearchProgOstype(String searchProgOstype) {
+		this.searchProgOstype = searchProgOstype;
+	}
 	public String getMenuGubun() {
 		return menuGubun;
 	}

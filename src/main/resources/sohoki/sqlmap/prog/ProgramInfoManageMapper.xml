@@ -21,10 +21,37 @@
 							</otherwise>
 						</choose>
 				</if>	
+				<if test="searchProgOstype != ''">
+				    and a.PROG_OSTYPE =  #{searchProgOstype}
+				</if>
            order by a.PROG_CODE desc
 	   ) TB ) WHERE RNUM  BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
 	   
 	</select>
+	
+	<select id="selectProgramComboInfo" resultType="ProgrameInfoVO">  
+	     SELECT a.PROG_CODE, a.PROG_TITLE, a.FILE_INFO, a.PROG_OSTYPE , PROG_REMARK,
+             a.FRST_REGIST_PNTTM, a.FRST_REGISTER_ID, a.LAST_UPDT_PNTTM, a.LAST_UPDUSR_ID,
+             FN_DETAILCODENM(a.PROG_OSTYPE) progOstypeTxt
+         FROM TB_PROGRAMUPDATEINFO a 
+         WHERE 1=1
+	           <if test="searchKeyword != ''">
+						<choose>
+							<when test="searchCondition == 'progTitle'">
+								and PROG_TITLE LIKE '%'|| #{searchKeyword} || '%'
+							</when>
+							<otherwise>
+								and PROG_REMARK LIKE '%'|| #{searchKeyword} || '%'
+							</otherwise>
+						</choose>
+				</if>	
+				<if test="searchProgOstype != ''">
+				    and a.PROG_OSTYPE =  #{searchProgOstype}
+				</if>
+           order by a.PROG_CODE desc	   
+	</select>
+	
+	
 	<select id="selectProgramPageInfoDetail" resultType="ProgrameInfoVO">  
 	   SELECT PROG_CODE, PROG_TITLE, FILE_INFO, PROG_OSTYPE ,
               FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID,
@@ -33,9 +60,9 @@
 	   WHERE PROG_CODE = #{progCode}
 	</select>
     <insert id="insertProgrameInfo" >
-       INSERT INTO TB_PROGRAMUPDATEINFO (PROG_CODE, PROG_TITLE, FILE_INFO, PROG_OSTYPE ,
+       INSERT INTO TB_PROGRAMUPDATEINFO (PROG_CODE, PROG_TITLE, FILE_INFO, PROG_OSTYPE,
                                         FRST_REGIST_PNTTM, FRST_REGISTER_ID, LAST_UPDT_PNTTM, LAST_UPDUSR_ID, PROG_REMARK)
-       VALUES (#{progCode},#{progTitle},#{fileInfo, jdbcType=VARCHAR},#{progOstype} 
+       VALUES (#{progCode}, #{progTitle}, #{fileInfo, jdbcType=VARCHAR}, #{progOstype, jdbcType=VARCHAR},  
                sysdate, #{userId}, sysdate, #{userId}, #{progRemark, jdbcType=VARCHAR})
     </insert>
     <update id="updateProgrameInfo">

@@ -55,6 +55,13 @@ public class ProgrameInfoServiceImpl extends EgovAbstractServiceImpl implements 
 		// TODO Auto-generated method stub
 		return progMapper.deleteProgrameInfo(prodCode);
 	}
+
+	@Override
+	public List<ProgrameInfoVO> selectProgramComboInfo(ProgrameInfoVO searchVO)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return progMapper.selectProgramComboInfo(searchVO);
+	}
 	
 	
 }

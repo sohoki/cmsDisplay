@@ -104,11 +104,15 @@
 									<form:options items="${selectIpType}" itemValue="code" itemLabel="codeNm"/>
 								</form:select>
 							</td>
-							<th>단말 OS</th>
+							<th>단말 OS/Version</th>
 							<td style="text-align:left">
-							  <form:select path="didOs" id="didOs" title="OSType">
+							   <form:select path="didOs" id="didOs" title="OSType" onChange="fn_Swver()">
 							        <form:option value="" label="--선택하세요--"/>
 			                        <form:options items="${selectOs}" itemValue="code" itemLabel="codeNm"/>
+							   </form:select>
+							   <form:select path="didSwver" id="didSwver" title="프로그램 버전">
+							        <form:option value="" label="--선택하세요--"/>
+			                        <form:options items="${selectProgVersion}" itemValue="progCode" itemLabel="progTitle"/>
 							   </form:select>
 							</td>
 						</tr>
@@ -216,14 +220,6 @@
 							<td class="hideItem" style="text-align:left">
 								<form:input path="didTimeInterval" id="didTimeInterval" title="did 명칭" size="5" maxLength="5"/>분
 							</td>
-							<th class="hideItem">Agent ver</th>
-							<td class="hideItem" style="text-align:left">
-							   <form:select path="didSwver" id="didSwver" title="소속">
-							         <form:option value="" label="--선택하세요--"/>
-			                        <form:options items="${selectSwver}" itemValue="code" itemLabel="codeNm"/>
-							   </form:select>
-							   
-							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -240,10 +236,10 @@
     <script type="text/javascript">
 		$(document).ready(function() { 
 		   
-			/* Layout and Data Setting :: START */
-			
 			$(".hideItem").hide();
-			
+			if ($("#mode").val() == "Ins"){
+				$("#didSwver").attr("display","none");
+			}
 			// 단말 해상도 데이터
 			$("#didResolution").change(function(){
 				if($(this).val() != "DIDRES00"){
@@ -264,8 +260,29 @@
 			selectTime($("#didStartTime"), "00:00", "시작시간", $("#startTime").val());
 			selectTime($("#didEndTime"), "00:00", "종료시간", $("#endTime").val());
 			
-			/* Layout and Data Setting :: FINISH */
-			
+			/* software version  신규 추가*/
+			function fn_Swver(){
+				 $("#didSwver").attr("display","");
+				 uniAjax(	"/backoffice/sub/equiManage/progCombo.do",
+							{	progOstype : $("#didOs option:selected").val() },				
+							function(result) {	
+								if (result.status == "SUCCESS"){
+									//리스트 보여주기
+									$("#didSwver").empty();
+									for(var count = 0; count < result.progList.size(); count++){   
+										var obj = result.progList[count];
+						                var option = $("<option value='"+obj.progCode +"'>"+obj.progTitle+"</option>");
+						                $('#didSwver').append(option);
+						            }
+								}else {
+									alert(result.message);
+								}							
+							},
+		                    function (request){
+								alert("ERROR:" + request.state);
+							}
+					 );
+			}
 			if ("${status}" != ""){
 				if ("${status}" == "SUCCESS") {
 					alert("정상 처리 되었습니다");    			    			
@@ -292,28 +309,10 @@
 		    // osChange();
 		});    
       function check_form(){
-    	  
-    	  // didMoniterCnt 1대 선택 / didSerialType 미사용 선택 / didSerialPort 선택 안해도 됨 / didSerialjavascript 공백 / didTimeInterval 공백 / didSwver 1.0ver
-    	  
+    	  //화면 부분 정리 하기
     	  $("#didMonitercnt").val("Mointer01");
     	  $("#didSerialtype").val("SERIAL_N");
-
-    	  $("#didSwver").val("DIDSW02");
-
     	  $("form[name=regist]").attr("action", "/backoffice/sub/equiManage/didUpdate.do").submit();		           	 
-      }
-      //os 변경 관련 사항
-      function osChange(){
-    	  // 의도 ? 2018.06.27 : 답변 전 상태
-    	  /* if ($("#didOs").val() == "DID_OS_02"){
-    		  $(".os_txt01").css("display","block");
-    		  $(".os_txt02").css("display","block");
-    		  $("input[name=didStartTime]").attr("disabled", true);    		  
-    	  }else {    		  
-    		  $(".os_txt01").css("display","none");
-    		  $(".os_txt02").css("display","none");
-    		  $("input[name=didStartTime]").attr("disabled", false);
-    	  }    	   */
       }
       function SerailView(){
     	  if ($("#didSerialtype").val() == "SERIAL_Y"){

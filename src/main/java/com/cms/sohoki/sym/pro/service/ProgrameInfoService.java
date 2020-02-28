@@ -6,6 +6,8 @@ public interface ProgrameInfoService  {
 
 	List<ProgrameInfoVO> selectProgramPageListInfo (ProgrameInfoVO searchVO) throws Exception;
 	
+	List<ProgrameInfoVO> selectProgramComboInfo (ProgrameInfoVO searchVO) throws Exception;
+	
 	ProgrameInfoVO selectProgramPageInfoDetail(String prodCode) throws Exception;
 	
 	int updateProgrameInfo(ProgrameInfo VO) throws Exception;

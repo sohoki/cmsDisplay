@@ -137,7 +137,7 @@
     </select>
     <select id="selectDidrInfoManageDetailView"  resultType="DidInfoVO">
           SELECT  a.DID_ID as didId , a.DID_NM as didNm, a.DID_MAC as didMac, a.DID_IPADDR as didIpaddr, 
-                        fn_DetailCodeNm(a.DID_SWVER) as didSwver, b.CENTER_NM as centerNM, 
+                        Fn_ProgInfo(a.DID_SWVER) as didSwver, b.CENTER_NM as centerNM, 
                         fn_DetailCodeNm( a.DID_TYPE)  as didType, fn_DetailCodeNm( a.DID_RESOLUTION ) as didResolution, DID_WIDTH as didWidth, DID_HEIGHT as didHeight,
 						fn_DetailCodeNm( a.DID_IPTYPE) as didIptype, fn_DetailCodeNm(a.DID_MODELTYPE) as didModelType, DID_USEYN as didUseYn, 
 						TO_CHAR(DID_ENDCONTIME, 'YYYY-MM-DD HH24:MI:SS') as didEndContime, DID_ENDTIME as didEndTime ,  
