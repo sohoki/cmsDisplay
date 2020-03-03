@@ -8,6 +8,9 @@
                 FN_DETAILCODENM(c.PROG_OSTYPE) progOstypeTxt
          FROM TB_DIDDEPLOYINFO a , TB_DIDINFO b, TB_PROGRAMUPDATEINFO c
          WHERE a.PROG_CODE = b.PROG_CODE and a.DID_ID = b.DID_ID
+         
+         
+         
 	           <if test="searchKeyword != ''">
 						<choose>
 							<when test="searchCondition == 'progTitle'">
